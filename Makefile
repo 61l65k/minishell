@@ -2,7 +2,7 @@ NAME		=	minishell
 PATH_M		=	./srcs/
 HEADER		=	-I./includes -I./libft
 LIBS		=	./libft/libft.a
-CFLAG =			-g -lm -Wall -Wextra -Werror
+CFLAG =			-g -lm -Wall -Wextra -Werror -lreadline
 MANDATORY	=	main.c
 OBJS_MANDATORY = $(addprefix $(PATH_M), $(MANDATORY:.c=.o))
 
