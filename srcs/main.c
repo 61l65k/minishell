@@ -169,19 +169,19 @@ void	openHelp(void)
 	return ;
 }
 
-void	displayHistory(void)
+void displayHistory(void)
 {
-	HIST_ENTRY	**the_list;
-	int			i;
+    HIST_ENTRY *entry;
+    int i = 0;
 
-	using_history();
-	the_list = history_list();
-	if (the_list)
-	{
-		for (i = 0; the_list[i]; i++)
-			printf("%d: %s\n", i + history_base, the_list[i]->line);
-	}
+    using_history();
+    
+    while ((entry = history_get(history_base + i)) != NULL) {
+        printf("%d: %s\n", i + 1, entry->line);
+        i++;
+    }
 }
+
 
 int	ownCmdHandler(char **parsed)
 {
