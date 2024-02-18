@@ -6,7 +6,7 @@
 /*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/01/23 12:17:21 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/02/18 21:50:06 by apyykone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,8 @@ void	init_shell(void)
 	char	*username;
 
 	clear();
-	printf("\n\n\n\n******************"
-			"************************");
-	printf("\n\n\n\t****MY SHELL****");
-	printf("\n\n\t-USE AT YOUR OWN RISK-");
-	printf("\n\n\n\n*******************"
-			"***********************");
+
+
 	username = getenv("USER");
 	printf("\n\n\nUSER is: @%s", username);
 	printf("\n");
