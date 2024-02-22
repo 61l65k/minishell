@@ -87,6 +87,8 @@ int	main(void)
 {
 	t_ShellState	state;
 
+	init_signals();
+	printf(CLEAR_SCREEN);
 	while (1)
 	{
 		ft_memset(&state, 0, sizeof(t_ShellState));

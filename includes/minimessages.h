@@ -12,7 +12,7 @@
 
 #ifndef MINIMESSAGES_H
 # define MINIMESSAGES_H
-# define CLEAR "\033[H\033[J"
+# define CLEAR_SCREEN "\033[H\033[J"
 # define CYAN "\033[0;36m"
 # define RESET "\033[0m"
 # define RED "\033[0;31m"
@@ -22,6 +22,7 @@
 # define ERR_GETCWD "\033[0;31mError: getcwd() failed \n \033[0m"
 # define ERR_PIPE "\033[0;31mError: pipe() failed\n \033[0m"
 # define ERR_FORK "\033[0;31mError: fork() failed\n \033[0m"
+# define ERR_SIGACTION "\033[0;31mError: sigaction() failed\n \033[0m"
 # define HELLO_MSG \
 	"\nHello %s.\nMind that this is \
 not a place to play around.\

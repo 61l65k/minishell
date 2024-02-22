@@ -31,6 +31,7 @@
 # include <string.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <termios.h>
 # include <unistd.h>
 
 typedef struct ShellState
@@ -48,5 +49,5 @@ int			ft_cmdhandler(t_ShellState *state, char **parsed);
 void		ft_executecmd(t_ShellState *state);
 void		ft_free_resets(t_ShellState *state);
 void		ft_displayhistory(void);
-
+int			init_signals(void);
 #endif

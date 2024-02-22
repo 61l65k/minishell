@@ -1,4 +1,7 @@
 
+
+
+- [ ] Dont dont print the signalhandler signals when blocked !
 - [ ] Add handlers for $ bash sign $?
 - [ ] Add redirections 
 - [ ] Add semicolon ; & special char \n handler in the parser
