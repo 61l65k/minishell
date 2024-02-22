@@ -3,14 +3,14 @@ PATH_M		=	./srcs/
 HEADER		=	-I./includes -I./libft
 LIBS		=	./libft/libft.a
 CFLAG =			-g -lm -Wall -Wextra -Werror -lreadline
-MANDATORY	=	main.c
+MANDATORY	=	main.c signals.c utils.c commands.c 
 OBJS_MANDATORY = $(addprefix $(PATH_M), $(MANDATORY:.c=.o))
 
 all: $(NAME)
 
 
 $(NAME): ${OBJS_MANDATORY}
-	@make -C ./libft
+	@make -s -C ./libft
 	@cc ${OBJS_MANDATORY} ${LIBS} ${CFLAG} -o ${NAME} ${HEADER}
 	@printf "\033[0;32m📟$(NAME) succesfully created.📟 \033[0m\n"
 
@@ -19,7 +19,7 @@ $(NAME): ${OBJS_MANDATORY}
 
 clean:
 	@rm -f ${OBJS_MANDATORY} ${OBJS_BONUS}
-	@make clean -C ./libft
+	@make clean -s -C ./libft
 
 
 

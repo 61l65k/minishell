@@ -15,35 +15,28 @@
 double	ft_atof(const char *str)
 {
 	double	res;
-	double	divider;
 	double	neg;
+	double	divider;
 	size_t	i;
 
-	res = 0.0;
 	divider = 0.1;
-	neg = 1.0;
-	i = 0;
-	while (str[i] && (str[i] == ' ' || str[i] == '\t'))
-		i++;
-	if (str[i] == '-')
-	{
-		neg = -1.0;
-		i++;
-	}
+	res = 0;
+	neg = 1;
+	i = -1;
+	while (str[i] < '0' || str[i] > '9')
+		if (str[i++] == '-')
+			neg = -1;
 	while (str[i] >= '0' && str[i] <= '9')
 	{
-		res = res * 10.0 + (str[i] - '0');
-		i++;
+		res = res * 10 + str[i++] - 48;
 	}
 	if (str[i] == '.' || str[i] == ',')
-	{
 		i++;
-		while (str[i] >= '0' && str[i] <= '9')
-		{
-			res += (str[i] - '0') * divider;
-			divider /= 10.0;
-			i++;
-		}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		res = res + (str[i] - 48) * divider;
+		divider /= 10;
+		i++;
 	}
 	return (res * neg);
 }

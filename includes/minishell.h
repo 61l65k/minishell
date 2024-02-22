@@ -1,5 +1,17 @@
-#ifndef MINI_SHELL_H
-# define MINI_SHELL_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
+/*   Updated: 2024/02/22 04:54:52 by apyykone         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MINISHELL_H
+# define MINISHELL_H
 # define MAXCOM 1000
 # define MAXLIST 100
 # define MAX_PROMPT 1060
@@ -29,8 +41,12 @@ typedef struct ShellState
 	int		cmd_count;
 }			t_ShellState;
 
-void		ft_free_exit(t_ShellState *shellState, const char *errorMsg,
-				int exitCode);
+void		ft_free_exit(t_ShellState *state, const char *errormsg,
+				int exitcode);
 char		*trim_spaces(char *str);
-int			ownCmdHandler(char **parsed);
+int			ft_cmdhandler(t_ShellState *state, char **parsed);
+void		ft_executecmd(t_ShellState *state);
+void		ft_free_resets(t_ShellState *state);
+void		ft_displayhistory(void);
+
 #endif

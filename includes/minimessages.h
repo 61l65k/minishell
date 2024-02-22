@@ -1,5 +1,17 @@
-#ifndef MINIERROR_H
-# define MINIERROR_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minimessages.h                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/22 04:54:43 by apyykone          #+#    #+#             */
+/*   Updated: 2024/02/22 04:54:44 by apyykone         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef MINIMESSAGES_H
+# define MINIMESSAGES_H
 # define CLEAR "\033[H\033[J"
 # define CYAN "\033[0;36m"
 # define RESET "\033[0m"
@@ -10,6 +22,10 @@
 # define ERR_GETCWD "\033[0;31mError: getcwd() failed \n \033[0m"
 # define ERR_PIPE "\033[0;31mError: pipe() failed\n \033[0m"
 # define ERR_FORK "\033[0;31mError: fork() failed\n \033[0m"
+# define HELLO_MSG \
+	"\nHello %s.\nMind that this is \
+not a place to play around.\
+\nUse help to know more..\n"
 # define HELP_MSG \
 	"\n***WELCOME TO MINISHELL HELP***\
 \n-Use the shell at your own risk...\
