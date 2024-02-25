@@ -34,9 +34,6 @@
 # include <termios.h>
 # include <unistd.h>
 
-extern volatile sig_atomic_t g_sigint_received;
-
-
 typedef struct ShellState
 {
 	char	input_string[MAXCOM];
@@ -53,5 +50,6 @@ void		ft_executecmd(t_ShellState *state);
 void		ft_free_resets(t_ShellState *state);
 void		ft_displayhistory(void);
 int			init_signals(void);
+void		setup_terminal(void);
 
 #endif

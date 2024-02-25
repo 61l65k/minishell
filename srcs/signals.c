@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+/**
+ * @brief Sets the terminal to no echo mode.
+*/
 void setup_terminal(void)
 {
     struct termios term;
@@ -20,29 +23,33 @@ void setup_terminal(void)
     tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
-
-void	ft_signal_handler(int signo, siginfo_t *info, void *context)
+/**
+ * @brief Callback handler for signals received
+*/
+static void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 {
 	(void)context;
-	if (signo == SIGINT){
-	    g_sigint_received = 1;
+	(void)info;
+	if (signo == SIGINT)
+	{
+		write(1, "\n", 1);
 		rl_replace_line("", 0);
-        printf("\n");
-		}
-	else if (signo == SIGUSR1)
-		ft_printf("Received SIGUSR1 %d\n", info->si_pid);
+		rl_on_new_line();
+		rl_redisplay();
+	}
 	else if (signo == SIGQUIT)
 		printf("\n");
 	else
 		printf("Uknown signal\n");
 }
 
+/**
+ * @brief Initializes all signal handlers & their callbacks.
+*/
 int	init_signals(void)
 {
 	struct sigaction	action;
 	struct sigaction	ignoreaction;
-
-	setup_terminal();
 
 	action.sa_flags = SA_SIGINFO;
 	action.sa_sigaction = ft_signal_handler;

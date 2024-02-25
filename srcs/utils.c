@@ -17,7 +17,7 @@
  */
 void	ft_free_exit(t_ShellState *state, const char *errorMsg, int exitCode)
 {
-	if (errorMsg || exitCode != 0)
+	if (errorMsg)
 		perror(errorMsg);
 	ft_free_resets(state);
 	exit(exitCode);
