@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+volatile sig_atomic_t g_sigint_received = 0;
+
 /**
  * @brief Takes the input from the user.
  * & Returns 1 if the input is empty, otherwise 0.
@@ -83,21 +85,25 @@ static void	ft_parseinput(t_ShellState *state)
 	}
 }
 
-int	main(void)
-{
-	t_ShellState	state;
+int main(void) {
+    t_ShellState state;
 
-	init_signals();
-	printf(CLEAR_SCREEN);
-	while (1)
-	{
-		ft_memset(&state, 0, sizeof(t_ShellState));
-		if (ft_takeinput(&state))
-			continue ;
-		ft_parseinput(&state);
-		ft_executecmd(&state);
-		ft_free_resets(&state);
-	}
-	ft_free_exit(&state, NULL, EXIT_SUCCESS);
-	return (0);
+    init_signals();
+    printf(CLEAR_SCREEN);
+
+    while (1) {
+        ft_memset(&state, 0, sizeof(t_ShellState));
+
+        if (ft_takeinput(&state) == 0) {
+            ft_parseinput(&state);
+            ft_executecmd(&state);
+            ft_free_resets(&state);
+        } else if (g_sigint_received) {
+            g_sigint_received = 0;
+            printf("\n");
+        }
+    }
+
+    ft_free_exit(&state, NULL, EXIT_SUCCESS);
+    return 0;
 }
