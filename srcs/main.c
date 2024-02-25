@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/18 21:50:06 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/02/25 13:19:07 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ int ft_takeinput(t_ShellState *state) {
  */
 int	ft_cmdhandler(t_ShellState *state, char **parsed)
 {
+	if (!parsed || !parsed[0])
+		return (0);
 	if (strcmp(parsed[0], "exit") == 0)
 		ft_free_exit(state, NULL, EXIT_SUCCESS);
 	else if (strcmp(parsed[0], "cd") == 0)
