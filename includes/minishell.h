@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/22 04:54:52 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:20:02 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,7 @@ void		ft_free_resets(t_ShellState *state);
 void		ft_displayhistory(void);
 int			init_signals(void);
 void		setup_terminal(void);
+
+void		execute_cmd(char *file, char **cmd_argv);
 
 #endif

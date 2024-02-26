@@ -3,7 +3,7 @@ PATH_M		=	./srcs/
 HEADER		=	-I./includes -I./libft
 LIBS		=	./libft/libft.a
 CFLAG =			-g -lm -Wall -Wextra -Werror -lreadline
-MANDATORY	=	main.c signals.c utils.c commands.c 
+MANDATORY	=	main.c signals.c utils.c commands.c execute_cmd.c
 OBJS_MANDATORY = $(addprefix $(PATH_M), $(MANDATORY:.c=.o))
 
 all: $(NAME)

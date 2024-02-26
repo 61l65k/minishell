@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   commands.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/22 04:18:07 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/02/26 12:21:15 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,7 @@ void	ft_executecmd(t_ShellState *state)
 				dup2(pipefd[1], STDOUT_FILENO);
 				close(pipefd[1]);
 			}
-			if (execvp(cmd_args[0], cmd_args) < 0)
-			{
-				perror("execvp");
-				exit(EXIT_FAILURE);
-			}
+			execute_cmd(cmd_args[0], cmd_args);
 			exit(EXIT_SUCCESS);
 		}
 		else
