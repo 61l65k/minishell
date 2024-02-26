@@ -1,21 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute_cmd.c                                      :+:      :+:    :+:   */
+/*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/26 17:02:28 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 18:56:41 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minishell.h"
 #include <sys/stat.h>
 
-#include "minishell.h"
-
-static
-int	is_directory(const char *path)
+static int	is_directory(const char *path)
 {
 	struct stat	statbuf;
 
@@ -24,8 +22,7 @@ int	is_directory(const char *path)
 	return (S_ISDIR(statbuf.st_mode));
 }
 
-static
-void	free_str_array(char **str_arr)
+static void	free_str_array(char **str_arr)
 {
 	char	**tmp;
 
@@ -39,8 +36,7 @@ void	free_str_array(char **str_arr)
 	free(str_arr);
 }
 
-static
-char	*get_full_path(char **env_paths_arr, char *executable_name)
+static char	*get_full_path(char **env_paths_arr, char *executable_name)
 {
 	char	*result;
 	char	*executable_name_with_slash;
@@ -64,11 +60,10 @@ char	*get_full_path(char **env_paths_arr, char *executable_name)
 	return (NULL);
 }
 
-static
-char	*get_path_to_cmd(char *cmd, const char *env_path)
+static char	*get_path_to_cmd(char *cmd, const char *env_path)
 {
-	char		**str_arr_paths;
-	char		*full_path;
+	char	**str_arr_paths;
+	char	*full_path;
 
 	if (!cmd || !*cmd)
 		return (NULL);
