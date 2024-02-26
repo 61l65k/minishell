@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   commands.c                                         :+:      :+:    :+:   */
+/*   exec_main.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 14:23:00 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 19:51:08 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 int	ft_cmdhandler(t_shellstate *state, char **parsed)
 {
 	if (!parsed || !parsed[0])
-		return (0);
+		return (1);
 	if (ft_strcmp(parsed[0], "exit") == 0)
 		ft_free_exit(state, NULL, EXIT_SUCCESS);
 	else if (ft_strcmp(parsed[0], "cd") == 0)
@@ -73,7 +73,7 @@ void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 	free(helper->cmd_args);
 }
 
-void	ft_executecmd(t_shellstate *state)
+int	ft_executecmd(t_shellstate *state)
 {
 	pid_t			pid;
 	t_exechelper	h;
@@ -85,7 +85,10 @@ void	ft_executecmd(t_shellstate *state)
 		if (!h.cmd_args)
 			ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
 		if (ft_cmdhandler(state, h.cmd_args) == 1)
+		{
+			h.i++;
 			continue ;
+		}
 		if (h.i < state->cmd_count - 1)
 		{
 			if (pipe(h.pipefd) < 0)
@@ -100,5 +103,6 @@ void	ft_executecmd(t_shellstate *state)
 			handle_parent_process(state, &h);
 		h.i++;
 	}
-	waitpid(pid, NULL, 0);
+	waitpid(pid, &h.status, 0);
+	return (WEXITSTATUS(h.status));
 }

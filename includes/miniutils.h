@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   miniutils.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:52:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 17:52:46 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/02/26 19:44:37 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef struct s_exechelper
 	int						pipefd[2];
 	int						fd_in;
 	int						i;
+	int						status;
 }							t_exechelper;
 
 int							ft_parseinput(t_shellstate *state);

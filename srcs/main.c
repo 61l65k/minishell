@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 10:38:04 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 19:48:15 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,21 @@ static int	ft_takeinput(t_shellstate *state)
 int	main(void)
 {
 	t_shellstate	state;
+	int				last_exit_status;
 
+	last_exit_status = 0;
 	setup_terminal();
 	init_signals();
 	printf(CLEAR_SCREEN);
 	while (1)
 	{
 		ft_memset(&state, 0, sizeof(t_shellstate));
+		state.last_exit_status = last_exit_status;
 		if (ft_takeinput(&state) == SUCCESS)
 		{
 			if (ft_parseinput(&state) != SUCCESS)
 				continue ;
-			ft_executecmd(&state);
+			last_exit_status = ft_executecmd(&state);
 			ft_free_resets(&state);
 		}
 	}
