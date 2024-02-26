@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/26 12:34:33 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 12:57:53 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ char	*get_full_path(char **env_paths_arr, char *executable_name)
 	char	*result;
 	char	*executable_name_with_slash;
 
-	executable_name_with_slash = NULL;
 	executable_name_with_slash = ft_strjoin("/", executable_name);
 	if (!executable_name_with_slash)
 		return (NULL);
@@ -59,10 +58,10 @@ char	*get_path_to_cmd(char *cmd, const char *env_path)
 	char		**str_arr_paths;
 	char		*full_path;
 
-	if (!cmd || !*cmd || cmd[0] == '/' || cmd[0] == '.')
+	if (!cmd || !*cmd)
 		return (NULL);
-	if (!env_path)
-		return (NULL);
+	if (!env_path || cmd[0] == '/' || cmd[0] == '.')
+		return (ft_strdup(cmd));
 	str_arr_paths = ft_split(env_path, ':');
 	if (!str_arr_paths)
 		return (NULL);
@@ -75,7 +74,7 @@ char	*get_path_to_cmd(char *cmd, const char *env_path)
 		return (full_path);
 	}
 	free_str_array(str_arr_paths);
-	return (NULL);
+	return (ft_strdup(cmd));
 }
 
 void	execute_cmd(char *cmd, char **cmd_argv)
@@ -102,5 +101,6 @@ void	execute_cmd(char *cmd, char **cmd_argv)
 	printf("%s: command not found\n", cmd);
 	free_str_array(cmd_argv);
 	free(cmd_path);
+	free(cmd);
 	exit(EXIT_FAILURE);
 }
