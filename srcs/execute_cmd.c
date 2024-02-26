@@ -6,11 +6,23 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/26 13:24:56 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 17:02:28 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/stat.h>
+
 #include "minishell.h"
+
+static
+int	is_directory(const char *path)
+{
+	struct stat	statbuf;
+
+	if (stat(path, &statbuf) == -1)
+		return (0);
+	return (S_ISDIR(statbuf.st_mode));
+}
 
 static
 void	free_str_array(char **str_arr)
@@ -83,22 +95,16 @@ void	execute_cmd(char *cmd, char **cmd_argv)
 	char		*cmd_path;
 
 	cmd_path = get_path_to_cmd(cmd, env_path);
-	if (cmd_path && (cmd_path[0] == '.' || ft_strchr(cmd_path, '/') != NULL))
-	{
-		if (execve(cmd_path, cmd_argv, __environ) == -1)
-		{
-			if (access(cmd_path, F_OK) == 0)
-			{
-				if (access(cmd_path, X_OK) == 0)
-					printf("%s: Is a directory\n", cmd_path);
-				else
-					printf("%s: Permission denied\n", cmd_path);
-			}
-			else
-				printf("%s: No such file or directory\n", cmd_path);
-		}
-	}
-	printf("%s: command not found\n", cmd);
+	if (!cmd_path || (cmd_path[0] != '.' && ft_strchr(cmd_path, '/') == NULL))
+		printf("%s: command not found\n", cmd);
+	else if (is_directory(cmd_path))
+		printf("%s: Is a directory\n", cmd_path);
+	else if (access(cmd_path, F_OK) != 0)
+		printf("%s: No such file or directory\n", cmd_path);
+	else if (access(cmd_path, X_OK) != 0)
+		printf("%s: Permission denied\n", cmd_path);
+	else if (execve(cmd_path, cmd_argv, __environ) == -1)
+		printf("%s: command not found\n", cmd);
 	free(cmd_path);
 	exit(EXIT_FAILURE);
 }
