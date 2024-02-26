@@ -15,7 +15,7 @@
 /**
  * @brief Frees all & Exit the shell with an error message or with success.
  */
-void	ft_free_exit(t_ShellState *state, const char *errorMsg, int exitCode)
+void	ft_free_exit(t_shellstate *state, const char *errorMsg, int exitCode)
 {
 	if (errorMsg)
 		perror(errorMsg);
@@ -26,7 +26,7 @@ void	ft_free_exit(t_ShellState *state, const char *errorMsg, int exitCode)
 /**
  * @brief Frees the shellState and resets the terminal.
  */
-void	ft_free_resets(t_ShellState *state)
+void	ft_free_resets(t_shellstate *state)
 {
 	int	i;
 

@@ -16,7 +16,7 @@
  * @brief Takes the input from the user.
  * & Returns 1 if the input is empty, otherwise 0.
  */
-static int	ft_takeinput(t_ShellState *state)
+static int	ft_takeinput(t_shellstate *state)
 {
 	char	cwd[1024];
 	char	prompt[MAX_PROMPT];
@@ -33,22 +33,23 @@ static int	ft_takeinput(t_ShellState *state)
 	if (ft_strlen(buf))
 		add_history(buf);
 	ft_strlcpy(state->input_string, buf, sizeof(state->input_string));
-	return (free(buf), 0);
+	return (free(buf), SUCCESS);
 }
 
 int	main(void)
 {
-	t_ShellState	state;
+	t_shellstate	state;
 
 	setup_terminal();
 	init_signals();
 	printf(CLEAR_SCREEN);
 	while (1)
 	{
-		ft_memset(&state, 0, sizeof(t_ShellState));
-		if (ft_takeinput(&state) == 0)
+		ft_memset(&state, 0, sizeof(t_shellstate));
+		if (ft_takeinput(&state) == SUCCESS)
 		{
-			ft_parseinput(&state);
+			if (ft_parseinput(&state) != SUCCESS)
+				continue ;
 			ft_executecmd(&state);
 			ft_free_resets(&state);
 		}

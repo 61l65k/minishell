@@ -14,18 +14,19 @@
 
 /**
  * @brief Sets the terminal to no echo mode.
-*/
-void setup_terminal(void)
+ */
+void	setup_terminal(void)
 {
-    struct termios term;
-    tcgetattr(STDIN_FILENO, &term);
-    term.c_lflag &= ~(ECHOCTL);
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+	struct termios	term;
+
+	tcgetattr(STDIN_FILENO, &term);
+	term.c_lflag &= ~(ECHOCTL);
+	tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
 /**
  * @brief Callback handler for signals received
-*/
+ */
 static void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 {
 	(void)context;
@@ -45,7 +46,7 @@ static void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 
 /**
  * @brief Initializes all signal handlers & their callbacks.
-*/
+ */
 int	init_signals(void)
 {
 	struct sigaction	action;
