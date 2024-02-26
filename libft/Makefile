@@ -53,13 +53,9 @@ BONUS_FILES = 	ft_lstnew_bonus \
 	  		ft_lstiter_bonus \
 	  		ft_lstmap_bonus
 
-PRINTF_FILES = 	ft_m_printf \
-                ft_m_put_uint \
-                ft_m_putchar \
-                ft_m_puthex \
-                ft_m_putnbr \
-                ft_m_putpointer \
-                ft_m_putstr \
+PRINTF_FILES = 	ft_printf \
+                ft_printf_nbr \
+                ft_printf_hex \
 
 GNL_FILES = get_next_line_bonus \
 			get_next_line_utils_bonus
