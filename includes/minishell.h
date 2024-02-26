@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 19:46:19 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 20:42:19 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,6 @@ void			ft_displayhistory(void);
 int				init_signals(void);
 void			setup_terminal(void);
 void			execute_cmd(char *file, char **cmd_argv);
+void			change_dir(char *path);
 
 #endif

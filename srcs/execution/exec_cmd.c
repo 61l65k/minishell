@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/26 18:56:41 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 20:59:26 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,15 +91,15 @@ void	execute_cmd(char *cmd, char **cmd_argv)
 
 	cmd_path = get_path_to_cmd(cmd, env_path);
 	if (!cmd_path || (cmd_path[0] != '.' && ft_strchr(cmd_path, '/') == NULL))
-		printf("%s: command not found\n", cmd);
+		ft_fprintf(2, "%s: command not found\n", cmd);
 	else if (is_directory(cmd_path))
-		printf("%s: Is a directory\n", cmd_path);
+		ft_fprintf(2, "%s: Is a directory\n", cmd_path);
 	else if (access(cmd_path, F_OK) != 0)
-		printf("%s: No such file or directory\n", cmd_path);
+		ft_fprintf(2, "%s: No such file or directory\n", cmd_path);
 	else if (access(cmd_path, X_OK) != 0)
-		printf("%s: Permission denied\n", cmd_path);
+		ft_fprintf(2, "%s: Permission denied\n", cmd_path);
 	else if (execve(cmd_path, cmd_argv, __environ) == -1)
-		printf("%s: command not found\n", cmd);
+		ft_fprintf(2, "%s: command not found\n", cmd);
 	free(cmd_path);
 	exit(EXIT_FAILURE);
 }

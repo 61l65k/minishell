@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 19:51:08 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 20:41:18 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	ft_cmdhandler(t_shellstate *state, char **parsed)
 	if (ft_strcmp(parsed[0], "exit") == 0)
 		ft_free_exit(state, NULL, EXIT_SUCCESS);
 	else if (ft_strcmp(parsed[0], "cd") == 0)
-		return (chdir(parsed[1]), 1);
+		return (change_dir(parsed[1]), 1);
 	else if (ft_strcmp(parsed[0], "help") == 0)
 		return (printf(HELP_MSG), 1);
 	else if (ft_strcmp(parsed[0], "hello") == 0)
