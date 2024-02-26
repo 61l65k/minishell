@@ -12,8 +12,7 @@
 
 #include "minishell.h"
 
-static
-void	free_str_array(char **str_arr)
+static void	free_str_array(char **str_arr)
 {
 	char	**tmp;
 
@@ -27,8 +26,7 @@ void	free_str_array(char **str_arr)
 	free(str_arr);
 }
 
-static
-char	*get_full_path(char **env_paths_arr, char *executable_name)
+static char	*get_full_path(char **env_paths_arr, char *executable_name)
 {
 	char	*result;
 	char	*executable_name_with_slash;
@@ -52,11 +50,10 @@ char	*get_full_path(char **env_paths_arr, char *executable_name)
 	return (NULL);
 }
 
-static
-char	*get_path_to_cmd(char *cmd, const char *env_path)
+static char	*get_path_to_cmd(char *cmd, const char *env_path)
 {
-	char		**str_arr_paths;
-	char		*full_path;
+	char	**str_arr_paths;
+	char	*full_path;
 
 	if (!cmd || !*cmd)
 		return (NULL);

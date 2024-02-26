@@ -13,6 +13,29 @@
 #include "minishell.h"
 
 /**
+ * @brief Handles the built-in commands.
+ * & Returns 1 if the command is handled, otherwise 0.
+ */
+int	ft_cmdhandler(t_ShellState *state, char **parsed)
+{
+	if (!parsed || !parsed[0])
+		return (0);
+	if (ft_strcmp(parsed[0], "exit") == 0)
+		ft_free_exit(state, NULL, EXIT_SUCCESS);
+	else if (ft_strcmp(parsed[0], "cd") == 0)
+		return (chdir(parsed[1]), 1);
+	else if (ft_strcmp(parsed[0], "help") == 0)
+		return (printf(HELP_MSG), 1);
+	else if (ft_strcmp(parsed[0], "hello") == 0)
+		return (printf(HELLO_MSG, getenv("USER")), 1);
+	else if (ft_strcmp(parsed[0], "history") == 0)
+		return (ft_displayhistory(), 1);
+	else if (ft_strcmp(parsed[0], "$?") == 0)
+		return (printf("%d\n", state->last_exit_status), 1);
+	return (0);
+}
+
+/**
  * @brief Displays the history of the shell.
  */
 void	ft_displayhistory(void)
@@ -34,10 +57,10 @@ void	ft_displayhistory(void)
 
 void	ft_executecmd(t_ShellState *state)
 {
-	pid_t pid;
-	char **cmd_args;
-	int pipefd[2];
-	int fd_in;
+	pid_t	pid;
+	char	**cmd_args;
+	int		pipefd[2];
+	int		fd_in;
 
 	fd_in = 0;
 	for (int i = 0; i < state->cmd_count; i++)

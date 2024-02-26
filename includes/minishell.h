@@ -34,12 +34,21 @@
 # include <termios.h>
 # include <unistd.h>
 
+typedef struct s_Command
+{
+	char	*command;
+	char	*input_file;
+	char	*output_file;
+	bool	append;
+}			t_Command;
+
 typedef struct ShellState
 {
 	char	input_string[MAXCOM];
 	char	**parsed_args;
 	bool	is_piped;
 	int		cmd_count;
+	int		last_exit_status;
 }			t_ShellState;
 
 void		ft_free_exit(t_ShellState *state, const char *errormsg,
@@ -51,7 +60,7 @@ void		ft_free_resets(t_ShellState *state);
 void		ft_displayhistory(void);
 int			init_signals(void);
 void		setup_terminal(void);
-
+void		ft_parseinput(t_ShellState *state);
 void		execute_cmd(char *file, char **cmd_argv);
 
 #endif
