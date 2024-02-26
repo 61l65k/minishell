@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 12:21:15 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 14:23:00 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ void	ft_executecmd(t_ShellState *state)
 				fd_in = pipefd[0];
 				close(pipefd[1]);
 			}
-			wait(NULL);
 			for (int j = 0; cmd_args[j] != NULL; j++)
 			{
 				free(cmd_args[j]);
@@ -88,4 +87,5 @@ void	ft_executecmd(t_ShellState *state)
 			free(cmd_args);
 		}
 	}
+	waitpid(pid, NULL, 0);
 }

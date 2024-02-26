@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/26 12:57:53 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 13:24:56 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,6 @@ void	execute_cmd(char *cmd, char **cmd_argv)
 		}
 	}
 	printf("%s: command not found\n", cmd);
-	free_str_array(cmd_argv);
 	free(cmd_path);
-	free(cmd);
 	exit(EXIT_FAILURE);
 }
