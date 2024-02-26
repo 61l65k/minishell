@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 23:55:43 by apyykone          #+#    #+#             */
-/*   Updated: 2024/01/11 12:52:10 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/02/26 10:37:04 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
+int					ft_strcmp(const char *s1, const char *s2);
 double				ft_atof(const char *str);
 long				ft_atol(const char *str);
 int					ft_isalnum(int c);

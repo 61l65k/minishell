@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/25 13:19:07 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/26 10:38:04 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,15 @@ int	ft_cmdhandler(t_ShellState *state, char **parsed)
 {
 	if (!parsed || !parsed[0])
 		return (0);
-	if (strcmp(parsed[0], "exit") == 0)
+	if (ft_strcmp(parsed[0], "exit") == 0)
 		ft_free_exit(state, NULL, EXIT_SUCCESS);
-	else if (strcmp(parsed[0], "cd") == 0)
+	else if (ft_strcmp(parsed[0], "cd") == 0)
 		return (chdir(parsed[1]), 1);
-	else if (strcmp(parsed[0], "help") == 0)
+	else if (ft_strcmp(parsed[0], "help") == 0)
 		return (printf(HELP_MSG), 1);
-	else if (strcmp(parsed[0], "hello") == 0)
+	else if (ft_strcmp(parsed[0], "hello") == 0)
 		return (printf(HELLO_MSG, getenv("USER")), 1);
-	else if (strcmp(parsed[0], "history") == 0)
+	else if (ft_strcmp(parsed[0], "history") == 0)
 		return (ft_displayhistory(), 1);
 	return (0);
 }
