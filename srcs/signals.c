@@ -14,11 +14,27 @@
 
 /**
  * @brief Sets the terminal to no echo mode.
+ * & Executes the .minishellrc file.
  */
 void	setup_terminal(void)
 {
+	int				fd;
+	char			*line;
 	struct termios	term;
 
+	fd = open(".minishellrc", O_RDONLY);
+	if (fd != -1)
+	{
+		while (true)
+		{
+			line = get_next_line(fd);
+			if (!line)
+				break ;
+			system(line);
+			free(line);
+		}
+		close(fd);
+	}
 	tcgetattr(STDIN_FILENO, &term);
 	term.c_lflag &= ~(ECHOCTL);
 	tcsetattr(STDIN_FILENO, TCSANOW, &term);
@@ -39,7 +55,7 @@ static void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 		rl_redisplay();
 	}
 	else if (signo == SIGQUIT)
-		printf("\n");
+		write(1, "\n", 1);
 	else
 		printf("Unknown signal\n");
 }

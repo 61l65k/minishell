@@ -17,6 +17,12 @@
 
 typedef struct s_shellstate	t_shellstate;
 
+enum						e_returnvalues
+{
+	SUCCESS = 0,
+	IS_QUOTE = 1,
+};
+
 typedef struct s_redirs
 {
 	char					*command;
@@ -53,16 +59,26 @@ typedef struct s_envhelper
 	int						var_name_len;
 	char					*var_value;
 	int						value_len;
-	char					*new_command;
 	size_t					req_size;
 }							t_envhelper;
 
+typedef struct s_charflags
+{
+	bool					is_escaped;
+	bool					is_env_var;
+	bool					is_pipe;
+	bool					is_and;
+	bool					is_or;
+}							t_charflags;
+
 int							ft_parseinput(t_shellstate *state);
-char						*trim_spaces(char *str);
+char						*trim_spaces(const char *str);
 int							ft_isenv_var(int c);
 void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);
 void						ensure_memory_for_cmd(t_parsehelper *h,
 								t_shellstate *state, size_t additional_length);
+int							init_char_flags(t_charflags *flags, char *c,
+								t_parsehelper *h);
 
 #endif
