@@ -39,17 +39,20 @@ static int	count_commands(const char *input_string)
 /**
  * @brief Parses the command character by character.
  */
-static char	**split_cmds(const char *input_string)
+static char	**split_cmds(t_shellstate *state)
 {
 	t_parsehelper	h;
 
 	ft_memset(&h, 0, sizeof(t_parsehelper));
-	h.command_count = count_commands(input_string);
+	h.curr_alloc_size = ft_strlen(state->input_string) + 1;
+	h.command_count = count_commands(state->input_string);
 	h.commands = malloc(sizeof(char *) * (h.command_count + 1));
-	h.current_command = malloc(strlen(input_string) + 1);
-	while (input_string[h.i] != '\0')
+	h.current_command = malloc(ft_strlen(state->input_string) + 1);
+	if (!h.commands || !h.current_command)
+		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+	while (state->input_string[h.i] != '\0')
 	{
-		parse_cmd_char(&h, input_string);
+		parse_cmd_char(&h, state);
 		h.i++;
 	}
 	if (h.in_single_quote || h.in_double_quote)
@@ -62,6 +65,8 @@ static char	**split_cmds(const char *input_string)
 	{
 		h.current_command[h.j] = '\0';
 		h.commands[h.command_index++] = ft_strdup(h.current_command);
+		if (!h.commands[h.command_index - 1])
+			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	}
 	free(h.current_command);
 	h.commands[h.command_index] = NULL;
@@ -78,7 +83,7 @@ int	ft_parseinput(t_shellstate *state)
 	char	*trimmed_command;
 
 	i = -1;
-	state->parsed_args = split_cmds(state->input_string);
+	state->parsed_args = split_cmds(state);
 	if (!state->parsed_args)
 		return (EXIT_FAILURE);
 	while (state->parsed_args[state->cmd_count])
@@ -92,6 +97,7 @@ int	ft_parseinput(t_shellstate *state)
 		if (trimmed_command != state->parsed_args[i])
 			free(state->parsed_args[i]);
 		state->parsed_args[i] = trimmed_command;
+		// printf("parsed_args[%d]: %s\n", i, state->parsed_args[i]);
 	}
 	return (EXIT_SUCCESS);
 }

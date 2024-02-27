@@ -90,6 +90,7 @@ void	execute_cmd(char *cmd, char **cmd_argv)
 	char		*cmd_path;
 
 	cmd_path = get_path_to_cmd(cmd, env_path);
+	//printf("command %s cmd_path: %s\n",cmd, cmd_path);
 	if (!cmd_path || (cmd_path[0] != '.' && ft_strchr(cmd_path, '/') == NULL))
 		ft_fprintf(2, "%s: command not found\n", cmd);
 	else if (is_directory(cmd_path))

@@ -16,7 +16,7 @@
 # define MAXLIST 100
 # define MAX_PROMPT 1060
 # define SUCCESS 0
-# define MAX_VAR_LENGTH 100
+# define INITIAL_VAR_NAME_SIZE 64
 # include "libft.h"
 # include "minimessages.h"
 # include "miniutils.h"
