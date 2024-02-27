@@ -10,10 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdarg.h>
-
 #include "ft_printf_internal.h"
+#include <stdarg.h>
+#include <unistd.h>
 
 static void	ft_printf_conversion_handler(va_list args, char spec, t_ret *ret);
 
