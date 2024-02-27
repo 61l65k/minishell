@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:52:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/27 04:07:19 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/02/27 21:25:05 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ typedef struct s_exechelper
 	int						fd_in;
 	int						i;
 	int						status;
+	pid_t					pid;
 }							t_exechelper;
 
 typedef struct s_envhelper
@@ -57,6 +58,7 @@ typedef struct s_envhelper
 	size_t					req_size;
 }							t_envhelper;
 
+void						free_str_array(char **str_arr);
 int							ft_parseinput(t_shellstate *state);
 char						*trim_spaces(char *str);
 int							ft_isenv_var(int c);

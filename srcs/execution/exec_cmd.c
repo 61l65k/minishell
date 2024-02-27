@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/26 20:59:26 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/27 21:10:59 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	is_directory(const char *path)
 	return (S_ISDIR(statbuf.st_mode));
 }
 
-static void	free_str_array(char **str_arr)
+void	free_str_array(char **str_arr)
 {
 	char	**tmp;
 
@@ -90,7 +90,6 @@ void	execute_cmd(char *cmd, char **cmd_argv)
 	char		*cmd_path;
 
 	cmd_path = get_path_to_cmd(cmd, env_path);
-	//printf("command %s cmd_path: %s\n",cmd, cmd_path);
 	if (!cmd_path || (cmd_path[0] != '.' && ft_strchr(cmd_path, '/') == NULL))
 		ft_fprintf(2, "%s: command not found\n", cmd);
 	else if (is_directory(cmd_path))
