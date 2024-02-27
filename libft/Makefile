@@ -44,6 +44,7 @@ SRCS_FILES = ft_memset \
 		ft_strcmp \
 		ft_isenv \
 		ft_realloc \
+		ft_strncat \
 
 BONUS_FILES = 	ft_lstnew_bonus \
 	  		ft_lstadd_front_bonus \
