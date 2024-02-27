@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 20:41:18 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/27 21:26:53 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,12 @@ void	handle_child_process(t_shellstate *state, t_exechelper *helper)
 		close(helper->pipefd[1]);
 	}
 	execute_cmd(helper->cmd_args[0], helper->cmd_args);
-	exit(EXIT_SUCCESS);
 }
 
 /**
 
-	* @brief Handles execution for the parent process. if piped closes the pipe and frees the memory.
+	* @brief Handles execution for the parent process,
+	if piped, closes the pipe and frees the memory.
  */
 void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 {
@@ -73,9 +73,24 @@ void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 	free(helper->cmd_args);
 }
 
+static void	handle_fork(t_shellstate *state, t_exechelper *h)
+{
+	if (h->i < state->cmd_count - 1)
+	{
+		if (pipe(h->pipefd) < 0)
+			ft_free_exit(state, ERR_PIPE, EXIT_FAILURE);
+	}
+	h->pid = fork();
+	if (h->pid < 0)
+		ft_free_exit(state, ERR_FORK, EXIT_FAILURE);
+	if (h->pid == 0)
+		handle_child_process(state, h);
+	else
+		handle_parent_process(state, h);
+}
+
 int	ft_executecmd(t_shellstate *state)
 {
-	pid_t			pid;
 	t_exechelper	h;
 
 	ft_memset(&h, 0, sizeof(t_exechelper));
@@ -85,24 +100,11 @@ int	ft_executecmd(t_shellstate *state)
 		if (!h.cmd_args)
 			ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
 		if (ft_cmdhandler(state, h.cmd_args) == 1)
-		{
-			h.i++;
-			continue ;
-		}
-		if (h.i < state->cmd_count - 1)
-		{
-			if (pipe(h.pipefd) < 0)
-				ft_free_exit(state, ERR_PIPE, EXIT_FAILURE);
-		}
-		pid = fork();
-		if (pid < 0)
-			ft_free_exit(state, ERR_FORK, EXIT_FAILURE);
-		if (pid == 0)
-			handle_child_process(state, &h);
+			free_str_array(h.cmd_args);
 		else
-			handle_parent_process(state, &h);
+			handle_fork(state, &h);
 		h.i++;
 	}
-	waitpid(pid, &h.status, 0);
+	waitpid(h.pid, &h.status, 0);
 	return (WEXITSTATUS(h.status));
 }
