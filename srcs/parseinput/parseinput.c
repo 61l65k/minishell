@@ -44,11 +44,11 @@ static char	**split_cmds(t_shellstate *state)
 	t_parsehelper	h;
 
 	ft_memset(&h, 0, sizeof(t_parsehelper));
-	h.curr_alloc_size = ft_strlen(state->input_string) + 1;
+	h.curr_size = ft_strlen(state->input_string) + 1;
 	h.command_count = count_commands(state->input_string);
 	h.commands = malloc(sizeof(char *) * (h.command_count + 1));
-	h.current_command = malloc(ft_strlen(state->input_string) + 1);
-	if (!h.commands || !h.current_command)
+	h.curr_cmd = malloc(ft_strlen(state->input_string) + 1);
+	if (!h.commands || !h.curr_cmd)
 		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	while (state->input_string[h.i] != '\0')
 	{
@@ -57,18 +57,18 @@ static char	**split_cmds(t_shellstate *state)
 	}
 	if (h.in_single_quote || h.in_double_quote)
 	{
-		free(h.current_command);
+		free(h.curr_cmd);
 		free(h.commands);
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), NULL);
 	}
 	if (h.j > 0)
 	{
-		h.current_command[h.j] = '\0';
-		h.commands[h.command_index++] = ft_strdup(h.current_command);
+		h.curr_cmd[h.j] = '\0';
+		h.commands[h.command_index++] = ft_strdup(h.curr_cmd);
 		if (!h.commands[h.command_index - 1])
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	}
-	free(h.current_command);
+	free(h.curr_cmd);
 	h.commands[h.command_index] = NULL;
 	return (h.commands);
 }

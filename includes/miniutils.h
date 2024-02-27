@@ -31,11 +31,11 @@ typedef struct s_parsehelper
 	bool					in_double_quote;
 	int						command_count;
 	char					**commands;
-	char					*current_command;
+	char					*curr_cmd;
 	int						command_index;
 	size_t					j;
 	size_t					i;
-	size_t					curr_alloc_size;
+	size_t					curr_size;
 }							t_parsehelper;
 
 typedef struct s_exechelper
@@ -50,14 +50,11 @@ typedef struct s_exechelper
 typedef struct s_envhelper
 {
 	char					*var_name;
-	int						var_name_size;
-	int						var_name_index;
-	int						old_var_name_size;
-	char					*new_var_name;
+	int						var_name_len;
 	char					*var_value;
 	int						value_len;
 	char					*new_command;
-	size_t					required_size;
+	size_t					req_size;
 }							t_envhelper;
 
 int							ft_parseinput(t_shellstate *state);
@@ -65,5 +62,7 @@ char						*trim_spaces(char *str);
 int							ft_isenv_var(int c);
 void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);
+void						ensure_memory_for_cmd(t_parsehelper *h,
+								t_shellstate *state, size_t additional_length);
 
 #endif
