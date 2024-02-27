@@ -28,9 +28,16 @@ static int	count_commands(const char *input_string)
 			h.in_single_quote = !h.in_single_quote;
 		else if (input_string[h.i] == '"' && !h.in_single_quote)
 			h.in_double_quote = !h.in_double_quote;
-		else if (input_string[h.i] == '|' && !h.in_single_quote
-			&& !h.in_double_quote)
-			h.command_count++;
+		else if (!h.in_single_quote && !h.in_double_quote)
+		{
+			if (input_string[h.i] == '|' || input_string[h.i] == '&'
+				|| input_string[h.i] == '>' || input_string[h.i] == '<')
+			{
+				h.command_count++;
+				if (input_string[h.i + 1] == input_string[h.i])
+					h.i++;
+			}
+		}
 		h.i++;
 	}
 	return (h.command_count);

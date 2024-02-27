@@ -34,3 +34,26 @@ void	ensure_memory_for_cmd(t_parsehelper *h, t_shellstate *state,
 		h->curr_size = new_size;
 	}
 }
+
+/**
+ * @brief Initializes the flags for the current character.
+ * The flags are used to determine the state of the current character.
+ */
+int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
+{
+	if ((*c == '\'' && !h->in_double_quote) || (*c == '"'
+			&& !h->in_single_quote))
+	{
+		h->in_single_quote ^= (*c == '\'');
+		h->in_double_quote ^= (*c == '"');
+		return (IS_QUOTE);
+	}
+	flags->is_escaped = (*c == '\\');
+	flags->is_env_var = (*c == '$');
+	flags->is_pipe = (*c == '|' && !h->in_single_quote && !h->in_double_quote);
+	flags->is_and = (*c == '&' && *(c + 1) == '&' && !h->in_single_quote
+			&& !h->in_double_quote);
+	flags->is_or = (*c == '|' && *(c + 1) == '|' && !h->in_single_quote
+			&& !h->in_double_quote);
+	return (SUCCESS);
+}

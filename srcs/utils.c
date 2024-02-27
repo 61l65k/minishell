@@ -43,27 +43,20 @@ void	ft_free_resets(t_shellstate *state)
  * @brief Trims the leading and trailing spaces from a string.
  * & returns a new string.
  */
-char	*trim_spaces(char *str)
+char	*trim_spaces(const char *str)
 {
-	char	*start;
-	char	*end;
-	size_t	length;
-	char	*trimmed;
+	const char	*start = str;
+	const char	*end = str + strlen(str) - 1;
+	size_t		length;
 
 	if (str == NULL)
 		return (NULL);
-	start = str;
 	while (*start && *start == ' ')
 		start++;
 	if (*start == '\0')
 		return (ft_strdup(""));
-	end = start + ft_strlen(start) - 1;
 	while (end > start && *end == ' ')
 		end--;
 	length = end - start + 1;
-	trimmed = malloc(length + 1);
-	if (trimmed == NULL)
-		return (NULL);
-	ft_strlcpy(trimmed, start, length + 1);
-	return (trimmed);
+	return (ft_strndup(start, length));
 }

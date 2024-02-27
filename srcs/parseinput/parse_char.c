@@ -10,13 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include <stdlib.h>
 
 /**
  * @brief Handles the escape sequence in quoted strings.
+ * h->i += 1 to skip the escape character.
  */
 static void	handle_escape_sequence(t_parsehelper *h, const char *input_string)
 {
@@ -39,7 +37,7 @@ static void	handle_escape_sequence(t_parsehelper *h, const char *input_string)
 
 /**
  * @brief Turns The env variables to their values. Reallocates new memory
- * if needed for the command.
+ * if needed for the command. h->i += 1 to skip the $ character.
  */
 static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
 {
@@ -50,7 +48,7 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
 	eh.var_name = ft_strndup(state->input_string + h->i, eh.var_name_len);
 	if (!eh.var_name)
 		return (ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE));
-	h->i += eh.var_name_len;
+	h->i += eh.var_name_len - 1;
 	eh.var_value = getenv(eh.var_name);
 	if (eh.var_value)
 	{
@@ -60,25 +58,7 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
 		ft_strncat(h->curr_cmd, eh.var_value, eh.value_len);
 		h->j = ft_strlen(h->curr_cmd);
 	}
-	h->i--;
 	free(eh.var_name);
-}
-
-/**
- * @brief Characters inside duoble quoted strings are handled here.
- */
-static void	handle_double_quote_char(t_parsehelper *h, t_shellstate *state)
-{
-	if (state->input_string[h->i] == '\\')
-		handle_escape_sequence(h, state->input_string);
-	else if (state->input_string[h->i] == '$')
-		handle_env_variable(h, state);
-	else
-	{
-		ensure_memory_for_cmd(h, state, 1);
-		h->curr_cmd[h->j++] = state->input_string[h->i];
-		h->curr_cmd[h->j] = '\0';
-	}
 }
 
 /**
@@ -89,34 +69,33 @@ static void	handle_double_quote_char(t_parsehelper *h, t_shellstate *state)
  */
 void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 {
-	if ((state->input_string[h->i] == '\'' && !h->in_double_quote)
-			|| (state->input_string[h->i] == '"' && !h->in_single_quote))
+	t_charflags	flags;
+	char		c;
+
+	c = state->input_string[h->i];
+	if (init_char_flags(&flags, &state->input_string[h->i], h) == IS_QUOTE)
+		return ;
+	if (h->in_single_quote || h->in_double_quote)
 	{
-		h->in_single_quote ^= (state->input_string[h->i] == '\'');
-		h->in_double_quote ^= (state->input_string[h->i] == '"');
-	}
-	else if (h->in_single_quote)
-	{
-		if (state->input_string[h->i] == '\\')
+		if (flags.is_escaped)
 			handle_escape_sequence(h, state->input_string);
+		else if (h->in_double_quote && flags.is_env_var)
+			handle_env_variable(h, state);
 		else
-			h->curr_cmd[h->j++] = state->input_string[h->i];
+			h->curr_cmd[h->j++] = c;
 	}
-	else if (h->in_double_quote)
-		handle_double_quote_char(h, state);
-	else if (state->input_string[h->i] == '|' && !h->in_single_quote
-		&& !h->in_double_quote)
+	else if (flags.is_pipe)
 	{
 		h->curr_cmd[h->j] = '\0';
 		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
 		h->j = 0;
 	}
-	else if (state->input_string[h->i] == '$')
+	else if (flags.is_env_var)
 		handle_env_variable(h, state);
 	else
 	{
 		ensure_memory_for_cmd(h, state, 1);
-		h->curr_cmd[h->j++] = state->input_string[h->i];
-		h->curr_cmd[h->j] = '\0';
+		h->curr_cmd[h->j++] = c;
 	}
+	h->curr_cmd[h->j] = '\0';
 }
