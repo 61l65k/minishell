@@ -40,7 +40,7 @@ void	builtin_unset(char **args)
 {
 	char	*ptr_to_value;
 	int		i;
-
+char ** env = NULL;
 	if (!args || !args[0] || !args[1])
 		return ;
 	i = 0;
@@ -48,6 +48,6 @@ void	builtin_unset(char **args)
 	{
 		ptr_to_value = getenv(args[i]);
 		if (ptr_to_value)
-			remove_str_from_str_arr(__environ, args[i]);
+			remove_str_from_str_arr(env, args[i]);
 	}
 }

@@ -11,3 +11,4 @@
 - [ ] Add double quote handler for arguments
 - [ ] Add signal handlers for required signals and maybe more ?
 - [ ] Add all builtin cmds to ownCmdhandler export, unset? 
+- [ ] Add to darwin Makefile for cloning the homebrew and installing it when in mac

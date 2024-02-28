@@ -14,6 +14,7 @@
 # define MINISHELL_H
 # define MAXCOM 1000
 # define MAX_PROMPT 100
+#include <stdio.h>
 # include "libft.h"
 # include "minimessages.h"
 # include "miniutils.h"
@@ -24,7 +25,6 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/types.h>

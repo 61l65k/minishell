@@ -88,6 +88,7 @@ void	execute_cmd(char *cmd, char **cmd_argv)
 {
 	const char	*env_path = getenv("PATH");
 	char		*cmd_path;
+	char *const * __environ = NULL;
 
 	cmd_path = get_path_to_cmd(cmd, env_path);
 	if (!cmd_path || (cmd_path[0] != '.' && ft_strchr(cmd_path, '/') == NULL))
