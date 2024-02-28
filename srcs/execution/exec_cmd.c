@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/27 21:10:59 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/28 19:22:35 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,10 @@ static char	*get_path_to_cmd(char *cmd, const char *env_path)
 	return (ft_strdup(cmd));
 }
 
-void	execute_cmd(char *cmd, char **cmd_argv)
+void	execute_cmd(char *cmd, char **cmd_argv, char **envp)
 {
 	const char	*env_path = getenv("PATH");
 	char		*cmd_path;
-	char *const * __environ = NULL;
 
 	cmd_path = get_path_to_cmd(cmd, env_path);
 	if (!cmd_path || (cmd_path[0] != '.' && ft_strchr(cmd_path, '/') == NULL))
@@ -99,7 +98,7 @@ void	execute_cmd(char *cmd, char **cmd_argv)
 		ft_fprintf(2, "%s: No such file or directory\n", cmd_path);
 	else if (access(cmd_path, X_OK) != 0)
 		ft_fprintf(2, "%s: Permission denied\n", cmd_path);
-	else if (execve(cmd_path, cmd_argv, __environ) == -1)
+	else if (execve(cmd_path, cmd_argv, envp) == -1)
 		ft_fprintf(2, "%s: command not found\n", cmd);
 	free(cmd_path);
 	exit(EXIT_FAILURE);

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/28 12:01:51 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/28 19:29:12 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_cmdhandler(t_shellstate *state, char **parsed)
 	else if (ft_strcmp(parsed[0], "hello") == 0)
 		return (printf(HELLO_MSG, getenv("USER")), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "unset") == 0)
-		return (builtin_unset(parsed), FOUNDCMD);
+		return (builtin_unset(parsed, state), FOUNDCMD);
 	return (SUCCESS);
 }
 
@@ -51,7 +51,7 @@ void	handle_child_process(t_shellstate *state, t_exechelper *helper)
 		dup2(helper->pipefd[1], STDOUT_FILENO);
 		close(helper->pipefd[1]);
 	}
-	execute_cmd(helper->cmd_args[0], helper->cmd_args);
+	execute_cmd(helper->cmd_args[0], helper->cmd_args, state->envp);
 }
 
 /**

@@ -6,10 +6,11 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 19:48:15 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/28 19:21:34 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 /**
@@ -36,24 +37,33 @@ static int	ft_takeinput(t_shellstate *state)
 	return (free(buf), SUCCESS);
 }
 
-int	main(void)
+void	reset_state(t_shellstate *state)
+{
+	ft_memset(state->input_string, 0, sizeof(state->input_string));
+	state->parsed_args = NULL;
+	state->operators = NULL;
+	state->cmd_count = 0;
+}
+
+int	main(int argc, char **argv, char **envp)
 {
 	t_shellstate	state;
-	int				last_exit_status;
 
-	last_exit_status = 0;
+	(void)argc;
+	(void)argv;
 	setup_terminal();
 	init_signals();
+	ft_memset(&state, 0, sizeof(state));
+	state.envp = envp;
 	printf(CLEAR_SCREEN);
 	while (1)
 	{
-		ft_memset(&state, 0, sizeof(t_shellstate));
-		state.last_exit_status = last_exit_status;
+		reset_state(&state);
 		if (ft_takeinput(&state) == SUCCESS)
 		{
 			if (ft_parseinput(&state) != SUCCESS)
 				continue ;
-			last_exit_status = ft_executecmd(&state);
+			state.last_exit_status = ft_executecmd(&state);
 			ft_free_resets(&state);
 		}
 	}

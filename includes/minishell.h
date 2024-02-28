@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/28 12:01:20 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/28 19:29:58 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define MINISHELL_H
 # define MAXCOM 1000
 # define MAX_PROMPT 100
-#include <stdio.h>
+# include <stdio.h>
 # include "libft.h"
 # include "minimessages.h"
 # include "miniutils.h"
@@ -39,6 +39,8 @@ typedef struct s_shellstate
 	char	**operators;
 	int		cmd_count;
 	int		last_exit_status;
+	char	**envp;
+	bool	envp_malloced;
 }			t_shellstate;
 
 void		ft_free_exit(t_shellstate *state, const char *errormsg,
@@ -49,8 +51,8 @@ void		ft_free_resets(t_shellstate *state);
 void		ft_displayhistory(void);
 int			init_signals(void);
 void		setup_terminal(void);
-void		execute_cmd(char *file, char **cmd_argv);
+void		execute_cmd(char *cmd, char **cmd_argv, char **envp);
 void		change_dir(char *path);
-void		builtin_unset(char **args);
+void		builtin_unset(char **args, t_shellstate *state);
 
 #endif
