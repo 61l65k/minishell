@@ -46,7 +46,7 @@ void	ft_free_resets(t_shellstate *state)
 char	*trim_spaces(const char *str)
 {
 	const char	*start = str;
-	const char	*end = str + strlen(str) - 1;
+	const char	*end = str + ft_strlen(str) - 1;
 	size_t		length;
 
 	if (str == NULL)

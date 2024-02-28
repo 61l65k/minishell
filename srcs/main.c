@@ -18,15 +18,15 @@
  */
 static int	ft_takeinput(t_shellstate *state)
 {
-	char	cwd[1024];
-	char	prompt[MAX_PROMPT];
+	char	cwd[PATH_MAX];
+	char	prompt[PATH_MAX + MAX_PROMPT];
 	char	*buf;
 
 	ft_strlcpy(prompt, GREEN "➜ " RESET CYAN, MAX_PROMPT);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		ft_free_exit(state, ERR_GETCWD, EXIT_FAILURE);
-	ft_strlcat(prompt, cwd, MAX_PROMPT);
-	ft_strlcat(prompt, " " RESET, MAX_PROMPT);
+	ft_strlcat(prompt, cwd, PATH_MAX);
+	ft_strlcat(prompt, " " RESET, PATH_MAX);
 	buf = readline(prompt);
 	if (buf == NULL)
 		ft_free_exit(state, NULL, EXIT_FAILURE);

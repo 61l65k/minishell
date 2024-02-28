@@ -10,7 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+#include "minimessages.h"
 #include "minishell.h"
+#include <unistd.h>
 
 /**
  * @brief Counts the amount of commands in the input string.
@@ -30,8 +33,9 @@ static int	count_commands(const char *input_string)
 			h.in_double_quote = !h.in_double_quote;
 		else if (!h.in_single_quote && !h.in_double_quote)
 		{
-			if (input_string[h.i] == '|' || input_string[h.i] == '&'
-				|| input_string[h.i] == '>' || input_string[h.i] == '<')
+			if (input_string[h.i] == '|' || (input_string[h.i] == '&'
+					&& input_string[h.i + 1] == '&') || input_string[h.i] == '>'
+				|| input_string[h.i] == '<')
 			{
 				h.command_count++;
 				if (input_string[h.i + 1] == input_string[h.i])
@@ -51,7 +55,7 @@ static char	**split_cmds(t_shellstate *state)
 	t_parsehelper	h;
 
 	ft_memset(&h, 0, sizeof(t_parsehelper));
-	h.curr_size = ft_strlen(state->input_string) + 1;
+	h.alloc_size = ft_strlen(state->input_string) + 1;
 	h.command_count = count_commands(state->input_string);
 	h.commands = malloc(sizeof(char *) * (h.command_count + 1));
 	h.curr_cmd = malloc(ft_strlen(state->input_string) + 1);
@@ -63,21 +67,14 @@ static char	**split_cmds(t_shellstate *state)
 		h.i++;
 	}
 	if (h.in_single_quote || h.in_double_quote)
-	{
-		free(h.curr_cmd);
-		free(h.commands);
-		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), NULL);
-	}
+		return (free(h.curr_cmd), free(h.commands), NULL);
+	h.curr_cmd[h.j] = '\0';
 	if (h.j > 0)
-	{
-		h.curr_cmd[h.j] = '\0';
 		h.commands[h.command_index++] = ft_strdup(h.curr_cmd);
-		if (!h.commands[h.command_index - 1])
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-	}
-	free(h.curr_cmd);
+	if (!h.commands[h.command_index - 1] && h.j > 0)
+		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	h.commands[h.command_index] = NULL;
-	return (h.commands);
+	return (free(h.curr_cmd), h.commands);
 }
 
 /**
@@ -92,19 +89,17 @@ int	ft_parseinput(t_shellstate *state)
 	i = -1;
 	state->parsed_args = split_cmds(state);
 	if (!state->parsed_args)
-		return (EXIT_FAILURE);
+		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), EXIT_FAILURE);
 	while (state->parsed_args[state->cmd_count])
 		state->cmd_count++;
 	if (!state->parsed_args)
 		ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
-	state->is_piped = (state->cmd_count > 1);
 	while (++i < state->cmd_count)
 	{
 		trimmed_command = trim_spaces(state->parsed_args[i]);
 		if (trimmed_command != state->parsed_args[i])
 			free(state->parsed_args[i]);
 		state->parsed_args[i] = trimmed_command;
-		// printf("parsed_args[%d]: %s\n", i, state->parsed_args[i]);
 	}
 	return (EXIT_SUCCESS);
 }

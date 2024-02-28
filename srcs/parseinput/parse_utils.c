@@ -24,14 +24,14 @@ void	ensure_memory_for_cmd(t_parsehelper *h, t_shellstate *state,
 	char	*new_command;
 
 	required_size = h->j + additional_length + 1;
-	if (required_size > h->curr_size)
+	if (required_size > h->alloc_size)
 	{
 		new_size = required_size * 2;
-		new_command = ft_realloc(h->curr_cmd, h->curr_size, new_size);
+		new_command = ft_realloc(h->curr_cmd, h->alloc_size, new_size);
 		if (!new_command)
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 		h->curr_cmd = new_command;
-		h->curr_size = new_size;
+		h->alloc_size = new_size;
 	}
 }
 

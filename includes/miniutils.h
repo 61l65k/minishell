@@ -21,15 +21,8 @@ enum						e_returnvalues
 {
 	SUCCESS = 0,
 	IS_QUOTE = 1,
+	FOUNDCMD = 2,
 };
-
-typedef struct s_redirs
-{
-	char					*command;
-	char					*input_file;
-	char					*output_file;
-	bool					append;
-}							t_redirs;
 
 typedef struct s_parsehelper
 {
@@ -41,7 +34,7 @@ typedef struct s_parsehelper
 	int						command_index;
 	size_t					j;
 	size_t					i;
-	size_t					curr_size;
+	size_t					alloc_size;
 }							t_parsehelper;
 
 typedef struct s_exechelper
@@ -62,15 +55,6 @@ typedef struct s_envhelper
 	int						value_len;
 	size_t					req_size;
 }							t_envhelper;
-
-typedef struct s_charflags
-{
-	bool					is_escaped;
-	bool					is_env_var;
-	bool					is_pipe;
-	bool					is_and;
-	bool					is_or;
-}							t_charflags;
 
 typedef struct s_charflags
 {

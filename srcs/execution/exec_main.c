@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "miniutils.h"
 
 /**
  * @brief Handles the built-in commands.
@@ -19,16 +20,16 @@
 int	ft_cmdhandler(t_shellstate *state, char **parsed)
 {
 	if (!parsed || !parsed[0])
-		return (1);
+		return (FOUNDCMD);
 	if (ft_strcmp(parsed[0], "exit") == 0)
 		ft_free_exit(state, NULL, EXIT_SUCCESS);
 	else if (ft_strcmp(parsed[0], "cd") == 0)
-		return (change_dir(parsed[1]), 1);
+		return (change_dir(parsed[1]), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "help") == 0)
-		return (printf(HELP_MSG), 1);
+		return (printf(HELP_MSG), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "hello") == 0)
-		return (printf(HELLO_MSG, getenv("USER")), 1);
-	return (0);
+		return (printf(HELLO_MSG, getenv("USER")), FOUNDCMD);
+	return (SUCCESS);
 }
 
 /**
@@ -99,7 +100,7 @@ int	ft_executecmd(t_shellstate *state)
 		h.cmd_args = ft_split(state->parsed_args[h.i], ' ');
 		if (!h.cmd_args)
 			ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
-		if (ft_cmdhandler(state, h.cmd_args) == 1)
+		if (ft_cmdhandler(state, h.cmd_args) == FOUNDCMD)
 			free_str_array(h.cmd_args);
 		else
 			handle_fork(state, &h);
