@@ -6,11 +6,12 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 21:56:23 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/25 12:05:17 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/28 20:33:07 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <signal.h>
 
 /**
  * @brief Sets the terminal to no echo mode.
@@ -68,6 +69,8 @@ int	init_signals(void)
 	struct sigaction	action;
 	struct sigaction	ignoreaction;
 
+	sigemptyset(&action.sa_mask);
+	sigemptyset(&ignoreaction.sa_mask);
 	action.sa_flags = SA_SIGINFO;
 	action.sa_sigaction = ft_signal_handler;
 	ignoreaction.sa_handler = SIG_IGN;
