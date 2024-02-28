@@ -65,6 +65,11 @@ PRINTF_FILES = 	ft_printf \
 GNL_FILES = get_next_line_bonus \
 			get_next_line_utils_bonus
 
+VEC_FILES = vec_append_prepend \
+			vec_iter_map_filter_reduce_find \
+			vec_new_free_from_copy_resize \
+			vec_push_pop_get_insert_remove
+
 # ft_printf
 PRINTF_DIR = ./ft_printf/
 PRINTF_SRCS = $(addprefix $(PRINTF_DIR), $(addsuffix .c, $(PRINTF_FILES)))
@@ -74,6 +79,11 @@ PRINTF_OBJS = $(addprefix $(PRINTF_DIR), $(addsuffix .o, $(PRINTF_FILES)))
 GNL_DIR = ./get_next_line/
 GNL_SRCS = $(addprefix $(GNL_DIR), $(addsuffix .c, $(GNL_FILES)))
 GNL_OBJS = $(addprefix $(GNL_DIR), $(addsuffix .o, $(GNL_FILES)))
+
+# vec
+VEC_DIR = ./vec/
+VEC_SRCS = $(addprefix $(VEC_DIR), $(addsuffix .c, $(VEC_FILES)))
+VEC_OBJS = $(addprefix $(VEC_DIR), $(addsuffix .o, $(VEC_FILES)))
 
 # libft
 SRCS_DIR = ./
@@ -85,7 +95,7 @@ BONUS_OBJ = $(addprefix $(OBJS_DIR), $(addsuffix .o, $(BONUS_FILES)))
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(BONUS_OBJ) $(GNL_OBJS) $(PRINTF_OBJS)
+$(NAME): $(OBJS) $(BONUS_OBJ) $(GNL_OBJS) $(PRINTF_OBJS) $(VEC_OBJS)
 	@ar rcs $@ $^
 	@printf "\033[0;32mLibrary $(NAME) created. 📖\033[0m\n"
 
@@ -94,7 +104,7 @@ $(NAME): $(OBJS) $(BONUS_OBJ) $(GNL_OBJS) $(PRINTF_OBJS)
 	@gcc $(CFLAGS) -c $< -o $@ $(INCLUDES)
 
 clean:
-	@rm -f $(OBJS) $(BONUS_OBJ) $(GNL_OBJS) $(PRINTF_OBJS)
+	@rm -f $(OBJS) $(BONUS_OBJ) $(GNL_OBJS) $(PRINTF_OBJS) $(VEC_OBJS)
 
 fclean: clean
 	@rm -f $(NAME)

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/23 23:55:43 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 10:37:04 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/28 13:01:25 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # endif
 # include "./ft_printf/ft_printf.h"
 # include "./get_next_line/get_next_line_bonus.h"
+# include "./vec/vec.h"
 # include <limits.h>
 # include <stddef.h>
 # include <stdlib.h>
