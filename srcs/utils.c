@@ -37,6 +37,13 @@ void	ft_free_resets(t_shellstate *state)
 			free(state->parsed_args[i++]);
 		free(state->parsed_args);
 	}
+	if (state->operators)
+	{
+		i = 0;
+		while (state->operators[i])
+			free(state->operators[i++]);
+		free(state->operators);
+	}
 }
 
 /**
