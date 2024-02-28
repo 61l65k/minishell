@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 20:42:19 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/28 12:01:20 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,6 @@ int			init_signals(void);
 void		setup_terminal(void);
 void		execute_cmd(char *file, char **cmd_argv);
 void		change_dir(char *path);
+void		builtin_unset(char **args);
 
 #endif

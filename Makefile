@@ -6,7 +6,7 @@ CFLAG =			-g -lm -Wall -Wextra -Werror -lreadline
 MANDATORY	=	main.c signals.c utils.c execution/exec_main.c \
 				execution/exec_cmd.c parseinput/parseinput.c \
 				parseinput/parse_char.c built-in/built-in_cd.c \
-				parseinput/parse_utils.c
+				parseinput/parse_utils.c built-in/built-in_unset.c \
  
 OBJS_MANDATORY = $(addprefix $(PATH_M), $(MANDATORY:.c=.o))
 
