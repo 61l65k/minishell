@@ -1,14 +1,8 @@
-NAME = nanoshell
+NAME = minishell
 CC = gcc
-MAIN_SRCS =  $(wildcard srcs/*.c)
-PARSE_SRCS = $(wildcard srcs/parseinput/*.c)
-EXEC_SRCS= $(wildcard srcs/execution/*.c)
-BUILTIN_SRCS = $(wildcard srcs/built-in/*.c)
-LIBFT_SRCS = make -C libft
-MAIN_OBJS = $(MAIN_SRCS:.c=.o)
-PARSE_OBJS = $(PARSE_SRCS:.c=.o)
-EXEC_OBJS = $(EXEC_SRCS:.c=.o)
-BUILTIN_OBJS = $(BUILTIN_SRCS:.c=.o)
+SRCS := $(shell find srcs -name '*.c')
+LIBFT = libft/libft.a
+OBJS = $(SRCS:.c=.o)
 
 # Default flags for macOS (Darwin)
 CFLAGS_DARWIN = -Werror -Wall -Wextra 
@@ -32,25 +26,25 @@ else
     HEADER := $(HEADER_LINUX)
 endif
 
-all : $(NAME)
+all: $(NAME)
 
-$(NAME) : $(MAIN_OBJS) $(LIBFT_OBJS) $(PARSE_OBJS) $(EXEC_OBJS) $(BUILTIN_OBJS) libft/libft.a
-	$(CC) $(CFLAGS) $(COMFILE_FLAGS) $(MAIN_OBJS) $(PARSE_OBJS) $(EXEC_OBJS) $(BUILTIN_OBJS) -Llibft -lft $(COMFILE_FLAGS) -o $(NAME)
+$(NAME): $(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(COMFILE_FLAGS) $(OBJS) -Llibft -lft $(COMFILE_FLAGS) -o $(NAME)
 
-libft/libft.a:
-	$(LIBFT_SRCS)
+$(LIBFT):
+	make -C libft
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(HEADER) -c $< -o $@
 
-clean :
-	rm -rf $(MAIN_OBJS) $(LIBFT_OBJS) $(PARSE_OBJS) $(EXEC_OBJS) $(BUILTIN_OBJS)
+clean:
+	rm -rf $(OBJS)
 	make -C libft clean
 
-fclean : clean
+fclean: clean
 	rm -rf $(NAME)
 	make -C libft fclean
 
-re : fclean all
+re: fclean all
 
-.PHONY : all clean fclean re
+.PHONY: all clean fclean re
