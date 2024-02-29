@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/28 19:29:12 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 10:54:55 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ int	ft_cmdhandler(t_shellstate *state, char **parsed)
 	if (ft_strcmp(parsed[0], "exit") == 0)
 		ft_free_exit(state, NULL, EXIT_SUCCESS);
 	else if (ft_strcmp(parsed[0], "cd") == 0)
-		return (change_dir(parsed[1]), FOUNDCMD);
+		return (change_dir(parsed[1], state->envp), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "help") == 0)
 		return (printf(HELP_MSG), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "hello") == 0)
-		return (printf(HELLO_MSG, getenv("USER")), FOUNDCMD);
+		return (printf(HELLO_MSG, ft_getenv("USER", state->envp)), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "unset") == 0)
 		return (builtin_unset(parsed, state), FOUNDCMD);
 	return (SUCCESS);

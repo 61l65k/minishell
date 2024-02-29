@@ -1,36 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built-in_cd.c                                      :+:      :+:    :+:   */
+/*   ft_getenv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/26 20:32:17 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/29 11:00:24 by ttakala          ###   ########.fr       */
+/*   Created: 2024/02/29 10:16:57 by ttakala           #+#    #+#             */
+/*   Updated: 2024/02/29 11:12:16 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	change_dir(char *path, char **envp)
+/**
+ * Returns a pointer to the value of an environment variable
+ * in envp, or NULL if the variable is not found.
+ */
+char	*ft_getenv(char *name, char **envp)
 {
-	char	*home_path;
+	int	i;
+	int	len;
 
-	if (path == NULL)
+	if (!name || !envp)
+		return (NULL);
+	i = 0;
+	len = ft_strlen(name);
+	while (envp[i])
 	{
-		home_path = ft_getenv("HOME", envp);
-		if (home_path == NULL)
+		if (ft_strncmp(envp[i], name, len) == 0)
 		{
-			ft_putstr_fd("cd: HOME not set\n", 2);
-			return ;
+			if (envp[i][len] == '=')
+				return (envp[i] + len + 1);
 		}
-		else if (chdir(home_path) == -1)
-		{
-			ft_fprintf(2, "cd: %s: %s\n", home_path, strerror(errno));
-		}
+		i++;
 	}
-	else if (chdir(path) == -1)
-	{
-		ft_fprintf(2, "cd: %s: %s\n", path, strerror(errno));
-	}
+	return (NULL);
 }

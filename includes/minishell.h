@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/28 19:29:58 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 10:51:13 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ typedef struct s_shellstate
 	int		cmd_count;
 	int		last_exit_status;
 	char	**envp;
-	bool	envp_malloced;
 }			t_shellstate;
 
 void		ft_free_exit(t_shellstate *state, const char *errormsg,
@@ -52,7 +51,9 @@ void		ft_displayhistory(void);
 int			init_signals(void);
 void		setup_terminal(void);
 void		execute_cmd(char *cmd, char **cmd_argv, char **envp);
-void		change_dir(char *path);
+
+char		*ft_getenv(char *name, char **envp);
+void		change_dir(char *path, char **envp);
 void		builtin_unset(char **args, t_shellstate *state);
 
 #endif

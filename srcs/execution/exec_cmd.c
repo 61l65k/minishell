@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/28 19:22:35 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 10:55:27 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,6 @@ static int	is_directory(const char *path)
 	if (stat(path, &statbuf) == -1)
 		return (0);
 	return (S_ISDIR(statbuf.st_mode));
-}
-
-void	free_str_array(char **str_arr)
-{
-	char	**tmp;
-
-	tmp = str_arr;
-	while (tmp && *tmp)
-	{
-		free(*tmp);
-		*tmp = NULL;
-		tmp++;
-	}
-	free(str_arr);
 }
 
 static char	*get_full_path(char **env_paths_arr, char *executable_name)
@@ -86,7 +72,7 @@ static char	*get_path_to_cmd(char *cmd, const char *env_path)
 
 void	execute_cmd(char *cmd, char **cmd_argv, char **envp)
 {
-	const char	*env_path = getenv("PATH");
+	const char	*env_path = ft_getenv("PATH", envp);
 	char		*cmd_path;
 
 	cmd_path = get_path_to_cmd(cmd, env_path);

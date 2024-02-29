@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/28 19:21:34 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 11:26:47 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	reset_state(t_shellstate *state)
 	state->cmd_count = 0;
 }
 
-int	main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, const char **envp)
 {
 	t_shellstate	state;
 
@@ -54,7 +54,9 @@ int	main(int argc, char **argv, char **envp)
 	setup_terminal();
 	init_signals();
 	ft_memset(&state, 0, sizeof(state));
-	state.envp = envp;
+	state.envp = ft_strdup_array(envp);
+	if (!state.envp)
+		ft_free_exit(&state, ERR_MALLOC, EXIT_FAILURE);
 	printf(CLEAR_SCREEN);
 	while (1)
 	{

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 23:48:56 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/28 19:33:03 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 10:56:23 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ void	ft_free_exit(t_shellstate *state, const char *errorMsg, int exitCode)
 	if (errorMsg)
 		perror(errorMsg);
 	ft_free_resets(state);
-	if (state->envp_malloced)
-		free_str_array(state->envp);
+	free_str_array(state->envp);
+	state->envp = NULL;
 	exit(exitCode);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 11:31:35 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/28 21:40:24 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 11:24:32 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ static void	remove_env_var(char *var_key, t_shellstate *s)
 				s->envp[i] = s->envp[i + 1];
 				i++;
 			}
-			if (s->envp_malloced)
-				free(tmp);
+			free(tmp);
 			break ;
 		}
 		i++;
@@ -49,7 +48,7 @@ void	builtin_unset(char **args, t_shellstate *state)
 	i = 0;
 	while (args[++i])
 	{
-		ptr_to_value = getenv(args[i]);
+		ptr_to_value = ft_getenv(args[i], state->envp);
 		if (ptr_to_value)
 			remove_env_var(args[i], state);
 	}

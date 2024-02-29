@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_char.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:03:52 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 17:03:53 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/02/29 10:54:13 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
 	if (!eh.var_name)
 		return (ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE));
 	h->i += eh.var_name_len - 1;
-	eh.var_value = getenv(eh.var_name);
+	eh.var_value = ft_getenv(eh.var_name, state->envp);
 	if (eh.var_value)
 	{
 		eh.value_len = ft_strlen(eh.var_value);
