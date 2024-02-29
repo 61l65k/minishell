@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/29 10:55:27 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 18:13:00 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,22 +70,29 @@ static char	*get_path_to_cmd(char *cmd, const char *env_path)
 	return (ft_strdup(cmd));
 }
 
+static void	exec_error_exit(char *cmd_path, char *error_msg, int exit_code)
+{
+	ft_fprintf(2, "%s: %s\n", cmd_path, error_msg);
+	free(cmd_path);
+	exit(exit_code);
+}
+
 void	execute_cmd(char *cmd, char **cmd_argv, char **envp)
 {
 	const char	*env_path = ft_getenv("PATH", envp);
 	char		*cmd_path;
 
 	cmd_path = get_path_to_cmd(cmd, env_path);
-	if (!cmd_path || (cmd_path[0] != '.' && ft_strchr(cmd_path, '/') == NULL))
-		ft_fprintf(2, "%s: command not found\n", cmd);
+	(void)cmd;
+	(void)env_path;
+	if (ft_strchr(cmd_path, '/') == NULL)
+		exec_error_exit(cmd_path, "command not found", 127);
 	else if (is_directory(cmd_path))
-		ft_fprintf(2, "%s: Is a directory\n", cmd_path);
+		exec_error_exit(cmd_path, "Is a directory", 126);
 	else if (access(cmd_path, F_OK) != 0)
-		ft_fprintf(2, "%s: No such file or directory\n", cmd_path);
+		exec_error_exit(cmd_path, "No such file or directory", 127);
 	else if (access(cmd_path, X_OK) != 0)
-		ft_fprintf(2, "%s: Permission denied\n", cmd_path);
+		exec_error_exit(cmd_path, "Permission denied", 126);
 	else if (execve(cmd_path, cmd_argv, envp) == -1)
-		ft_fprintf(2, "%s: command not found\n", cmd);
-	free(cmd_path);
-	exit(EXIT_FAILURE);
+		exec_error_exit(cmd_path, strerror(errno), errno);
 }
