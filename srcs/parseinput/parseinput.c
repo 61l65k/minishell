@@ -10,130 +10,108 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
-#include <unistd.h>
+
+static int	check_for_op(t_operatorhelper *op, t_shellstate *state)
+{
+	op->op[0] = '\0';
+	if (ft_strncmp(state->input_string + op->i, "&&", 2) == 0
+		|| ft_strncmp(state->input_string + op->i, "||", 2) == 0
+		|| ft_strncmp(state->input_string + op->i, "<<", 2) == 0
+		|| ft_strncmp(state->input_string + op->i, ">>", 2) == 0)
+	{
+		ft_strlcpy(op->op, state->input_string + op->i, 3);
+		op->op[2] = '?';
+		op->op[3] = '\0';
+		op->i++;
+		return (FOUNDOP);
+	}
+	else if (state->input_string[op->i] == '|'
+		|| state->input_string[op->i] == '>'
+		|| state->input_string[op->i] == '<')
+	{
+		op->op[0] = state->input_string[op->i];
+		op->op[1] = '?';
+		op->op[2] = '\0';
+		op->i++;
+		return (FOUNDOP);
+	}
+	return (SUCCESS);
+}
+
+static void	ensure_mem_cpy_op(t_operatorhelper *op, t_shellstate *state)
+{
+	char	*new_operators;
+
+	op->op_len = ft_strlen(op->op);
+	if (op->operators_size + op->op_len + 1 > op->operators_capacity)
+	{
+		op->operators_capacity *= 2;
+		new_operators = ft_realloc(op->operators, op->operators_size,
+				op->operators_capacity);
+		if (!new_operators)
+			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+		op->operators = new_operators;
+	}
+	ft_strlcpy(op->operators + op->operators_size, op->op,
+		op->operators_capacity - op->operators_size);
+	op->operators_size += op->op_len;
+	op->command_count++;
+}
 
 /**
  * @brief Counts the amount of commands in the input string.
  * & Returns the amount of commands.
  */
-static int	count_operators_cmds(t_shellstate *state)
+static int	count_op_cmds(t_shellstate *state)
 {
-	t_parsehelper	h;
-	char			*operators;
-	size_t			operators_size;
-	size_t			operators_capacity;
-	char			*input_string;
-	const char		*op = NULL;
-	size_t			op_len;
+	t_operatorhelper	op;
 
-	operators_size = 0;
-	operators_capacity = 10;
-	input_string = state->input_string;
-	input_string = state->input_string;
-	ft_memset(&h, 0, sizeof(t_parsehelper));
-	operators = ft_calloc(10, (h.alloc_size += 10));
-	if (!operators)
+	ft_memset(&op, 0, sizeof(t_operatorhelper));
+	op.operators = ft_calloc((op.operators_capacity += 100), 1);
+	op.command_count = 1;
+	if (!op.operators)
 		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-	h.command_count = 1;
-	while (input_string[h.i])
+	while (state->input_string[op.i])
 	{
-		if (input_string[h.i] == '\'' && !h.in_double_quote)
-			h.in_single_quote = !h.in_single_quote;
-		else if (input_string[h.i] == '"' && !h.in_single_quote)
-			h.in_double_quote = !h.in_double_quote;
-		else if (!h.in_single_quote && !h.in_double_quote)
-		{
-			op = NULL;
-			if (input_string[h.i] == '|')
-			{
-				op = "|?";
-				if (input_string[h.i + 1] == '|')
-				{
-					h.i++;
-					op = "||?";
-				}
-				h.command_count++;
-			}
-			else if (input_string[h.i] == '&' && input_string[h.i + 1] == '&')
-			{
-				op = "&&?";
-				h.i++;
-				h.command_count++;
-			}
-			else if (input_string[h.i] == '>')
-			{
-				op = ">?";
-				if (input_string[h.i + 1] == '>')
-				{
-					op = ">>?";
-					h.i++;
-				}
-				h.command_count++;
-			}
-			else if (input_string[h.i] == '<')
-			{
-				op = "<?";
-				if (input_string[h.i + 1] == '<')
-				{
-					op = "<<?";
-					h.i++;
-				}
-				h.command_count++;
-			}
-			if (op)
-			{
-				op_len = ft_strlen(op);
-				if (operators_size + op_len + 1 > operators_capacity)
-				{
-					operators_capacity *= 2;
-					operators = ft_realloc(operators, operators_size,
-							operators_capacity);
-					if (!operators)
-						ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-				}
-				ft_strlcpy(operators + operators_size, op, operators_capacity
-					- operators_size);
-				operators_size += op_len;
-				h.command_count++;
-			}
-		}
-		h.i++;
+		if (state->input_string[op.i] == '\'' && !op.in_double_quote)
+			op.in_single_quote = !op.in_single_quote;
+		else if (state->input_string[op.i] == '"' && !op.in_single_quote)
+			op.in_double_quote = !op.in_double_quote;
+		else if (!op.in_single_quote && !op.in_double_quote && check_for_op(&op,
+				state) == FOUNDOP)
+			ensure_mem_cpy_op(&op, state);
+		op.i++;
 	}
-	if (operators)
+	if (op.operators)
 	{
-		state->operators = ft_split(operators, '?');
+		state->operators = ft_split(op.operators, '?');
 		if (!state->operators)
-		{
-			free(operators);
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		}
+			return (free(op.operators), ft_free_exit(state, ERR_MALLOC, 1), 1);
 	}
-	return (free(operators), h.command_count);
+	return (free(op.operators), op.command_count);
 }
 
 /**
- * @brief Parses the command character by character.
+ * @brief Splits the input string into commands delimeted by operators.
+ * & Returns a NULL-terminated array of strings.
  */
 static char	**split_cmds(t_shellstate *state)
 {
 	t_parsehelper	h;
 
 	ft_memset(&h, 0, sizeof(t_parsehelper));
+	h.i = -1;
 	h.alloc_size = ft_strlen(state->input_string) + 1;
-	h.command_count = count_operators_cmds(state);
+	h.command_count = count_op_cmds(state);
 	h.commands = ft_calloc(h.command_count + 1, sizeof(char *));
 	h.curr_cmd = ft_calloc(h.alloc_size, 1);
 	if (!h.commands || !h.curr_cmd)
 		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-	while (state->input_string[h.i] != '\0')
-	{
+	while (state->input_string[++h.i] != '\0')
 		parse_cmd_char(&h, state);
-		h.i++;
-	}
+	if (h.in_double_quote || h.in_single_quote)
+		return (free(h.curr_cmd), free(h.commands), NULL);
 	h.curr_cmd[h.j] = '\0';
 	if (h.j > 0 && h.command_index < h.command_count)
 	{

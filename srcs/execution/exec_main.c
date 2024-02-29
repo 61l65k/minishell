@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "miniutils.h"
 
 /**
  * @brief Handles the built-in commands.
@@ -94,6 +93,10 @@ static void	handle_fork(t_shellstate *state, t_exechelper *h)
 		handle_parent_process(state, h);
 }
 
+/**
+ * @brief Executes the parsed commands and handles all operators.
+ * & Returns the exit status of the last command.
+ */
 int	ft_executecmd(t_shellstate *state)
 {
 	t_exechelper	h;

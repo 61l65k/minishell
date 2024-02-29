@@ -37,7 +37,8 @@ void	setup_terminal(void)
 		close(fd);
 	}
 	tcgetattr(STDIN_FILENO, &term);
-	term.c_lflag &= ~(ECHOCTL);
+	term.c_lflag &= ~ECHOCTL;
+	term.c_lflag |= (ICANON | ISIG);
 	tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 

@@ -22,6 +22,7 @@ enum						e_returnvalues
 	SUCCESS = 0,
 	IS_QUOTE = 1,
 	FOUNDCMD = 2,
+	FOUNDOP = 3,
 };
 
 typedef struct s_parsehelper
@@ -36,6 +37,19 @@ typedef struct s_parsehelper
 	size_t					i;
 	size_t					alloc_size;
 }							t_parsehelper;
+
+typedef struct s_operatorhelper
+{
+	bool					in_single_quote;
+	bool					in_double_quote;
+	size_t					i;
+	int						command_count;
+	char					*operators;
+	size_t					operators_size;
+	size_t					operators_capacity;
+	char					op[5];
+	size_t					op_len;
+}							t_operatorhelper;
 
 typedef struct s_exechelper
 {
@@ -63,6 +77,10 @@ typedef struct s_charflags
 	bool					is_pipe;
 	bool					is_and;
 	bool					is_or;
+	bool					is_redirect;
+	bool					is_input;
+	bool					is_append;
+	bool					is_heredoc;
 }							t_charflags;
 
 char						**strarrjoin(const char **arr, const char *str);

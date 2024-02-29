@@ -62,6 +62,32 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
 }
 
 /**
+ * @brief Checks if the current character is operator & puts the new command
+ * in the commands array from the input string.
+ */
+static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
+		t_charflags *flags)
+{
+	if (flags->is_pipe || flags->is_and || flags->is_or || flags->is_redirect
+		|| flags->is_append || flags->is_heredoc)
+	{
+		h->curr_cmd[h->j] = '\0';
+		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
+		h->j = 0;
+		if (flags->is_and || flags->is_or || flags->is_append
+			|| flags->is_heredoc)
+			h->i++;
+	}
+	else if (flags->is_env_var)
+		handle_env_variable(h, state);
+	else
+	{
+		ensure_memory_for_cmd(h, state, 1);
+		h->curr_cmd[h->j++] = state->input_string[h->i];
+	}
+}
+
+/**
  * @brief Parses the characer from input string.
  * & Handles single and double quotes,
 	escape sequences and environment variables.
@@ -70,32 +96,20 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
 void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 {
 	t_charflags	flags;
-	char		c;
 
-	c = state->input_string[h->i];
-	if (init_char_flags(&flags, &state->input_string[h->i], h) == IS_QUOTE)
-		return ;
-	if (h->in_single_quote || h->in_double_quote)
+	if (init_char_flags(&flags, &state->input_string[h->i], h) != IS_QUOTE)
 	{
-		if (flags.is_escaped)
-			handle_escape_sequence(h, state->input_string);
-		else if (h->in_double_quote && flags.is_env_var)
-			handle_env_variable(h, state);
+		if (h->in_single_quote || h->in_double_quote)
+		{
+			if (flags.is_escaped)
+				handle_escape_sequence(h, state->input_string);
+			else if (h->in_double_quote && flags.is_env_var)
+				handle_env_variable(h, state);
+			else
+				h->curr_cmd[h->j++] = state->input_string[h->i];
+		}
 		else
-			h->curr_cmd[h->j++] = c;
-	}
-	else if (flags.is_pipe)
-	{
-		h->curr_cmd[h->j] = '\0';
-		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
-		h->j = 0;
-	}
-	else if (flags.is_env_var)
-		handle_env_variable(h, state);
-	else
-	{
-		ensure_memory_for_cmd(h, state, 1);
-		h->curr_cmd[h->j++] = c;
+			check_for_new_cmd(h, state, &flags);
 	}
 	h->curr_cmd[h->j] = '\0';
 }

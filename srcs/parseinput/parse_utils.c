@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 /**
@@ -41,6 +42,7 @@ void	ensure_memory_for_cmd(t_parsehelper *h, t_shellstate *state,
  */
 int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 {
+	ft_memset(flags, 0, sizeof(t_charflags));
 	if ((*c == '\'' && !h->in_double_quote) || (*c == '"'
 			&& !h->in_single_quote))
 	{
@@ -50,10 +52,15 @@ int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 	}
 	flags->is_escaped = (*c == '\\');
 	flags->is_env_var = (*c == '$');
-	flags->is_pipe = (*c == '|' && !h->in_single_quote && !h->in_double_quote);
-	flags->is_and = (*c == '&' && *(c + 1) == '&' && !h->in_single_quote
-			&& !h->in_double_quote);
-	flags->is_or = (*c == '|' && *(c + 1) == '|' && !h->in_single_quote
-			&& !h->in_double_quote);
+	if (!h->in_single_quote && !h->in_double_quote)
+	{
+		flags->is_pipe = (*c == '|' && *(c + 1) != '|');
+		flags->is_input = (*c == '<' && *(c + 1) != '<');
+		flags->is_redirect = (*c == '>' && *(c + 1) != '>');
+		flags->is_and = (*c == '&' && *(c + 1) == '&');
+		flags->is_or = (*c == '|' && *(c + 1) == '|');
+		flags->is_append = (*c == '>' && *(c + 1) == '>');
+		flags->is_heredoc = (*c == '<' && *(c + 1) == '<');
+	}
 	return (SUCCESS);
 }
