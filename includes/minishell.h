@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 14:26:20 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 19:49:11 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_shellstate
 	int		cmd_count;
 	int		last_exit_status;
 	char	**envp;
+	t_vec	pid;
 }			t_shellstate;
 
 void		ft_free_exit(t_shellstate *state, const char *errormsg,

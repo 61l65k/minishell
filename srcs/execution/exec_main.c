@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 14:11:24 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 20:00:30 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,18 +79,23 @@ void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 
 static void	handle_fork(t_shellstate *state, t_exechelper *h)
 {
+	pid_t	pid;
+
 	if (h->i < state->cmd_count - 1)
 	{
 		if (pipe(h->pipefd) < 0)
 			ft_free_exit(state, ERR_PIPE, EXIT_FAILURE);
 	}
-	h->pid = fork();
-	if (h->pid < 0)
+	pid = fork();
+	if (pid < 0)
 		ft_free_exit(state, ERR_FORK, EXIT_FAILURE);
-	if (h->pid == 0)
+	if (pid == 0)
 		handle_child_process(state, h);
 	else
+	{
+		vec_push(&state->pid, &pid);
 		handle_parent_process(state, h);
+	}
 }
 
 /**
@@ -100,7 +105,9 @@ static void	handle_fork(t_shellstate *state, t_exechelper *h)
 int	ft_executecmd(t_shellstate *state)
 {
 	t_exechelper	h;
+	pid_t			pid;
 
+	vec_new(&state->pid, state->cmd_count, sizeof(pid_t));
 	ft_memset(&h, 0, sizeof(t_exechelper));
 	while (h.i < state->cmd_count)
 	{
@@ -110,9 +117,16 @@ int	ft_executecmd(t_shellstate *state)
 		if (ft_cmdhandler(state, h.cmd_args) == FOUNDCMD)
 			free_str_array(h.cmd_args);
 		else
+		{
 			handle_fork(state, &h);
+		}
 		h.i++;
 	}
-	waitpid(h.pid, &h.status, 0);
+	while (state->pid.len > 0)
+	{
+		vec_pop(&pid, &state->pid);
+		waitpid(pid, &h.status, 0);
+	}
+	vec_free(&state->pid);
 	return (WEXITSTATUS(h.status));
 }
