@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/29 18:13:00 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 18:26:59 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,10 @@ static char	*get_path_to_cmd(char *cmd, const char *env_path)
 
 static void	exec_error_exit(char *cmd_path, char *error_msg, int exit_code)
 {
-	ft_fprintf(2, "%s: %s\n", cmd_path, error_msg);
+	if (cmd_path)
+		ft_fprintf(2, "%s: %s\n", cmd_path, error_msg);
+	else
+		ft_printf("%s\n", error_msg);
 	free(cmd_path);
 	exit(exit_code);
 }
@@ -85,7 +88,9 @@ void	execute_cmd(char *cmd, char **cmd_argv, char **envp)
 	cmd_path = get_path_to_cmd(cmd, env_path);
 	(void)cmd;
 	(void)env_path;
-	if (ft_strchr(cmd_path, '/') == NULL)
+	if (!cmd_path)
+		exec_error_exit(NULL, "malloc failed while parsing path", 1);
+	else if (ft_strchr(cmd_path, '/') == NULL)
 		exec_error_exit(cmd_path, "command not found", 127);
 	else if (is_directory(cmd_path))
 		exec_error_exit(cmd_path, "Is a directory", 126);
