@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 10:54:55 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 14:11:24 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ int	ft_cmdhandler(t_shellstate *state, char **parsed)
 		return (printf(HELLO_MSG, ft_getenv("USER", state->envp)), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "unset") == 0)
 		return (builtin_unset(parsed, state), FOUNDCMD);
+	else if (ft_strcmp(parsed[0], "export") == 0)
+		return (builtin_export(parsed, state), FOUNDCMD);
 	return (SUCCESS);
 }
 

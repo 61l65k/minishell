@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 10:51:13 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 14:26:20 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,6 @@ void		execute_cmd(char *cmd, char **cmd_argv, char **envp);
 char		*ft_getenv(char *name, char **envp);
 void		change_dir(char *path, char **envp);
 void		builtin_unset(char **args, t_shellstate *state);
+void		builtin_export(char **args, t_shellstate *state);
 
 #endif

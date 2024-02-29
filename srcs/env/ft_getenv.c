@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 10:16:57 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/29 11:12:16 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 12:06:29 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*ft_getenv(char *name, char **envp)
 		return (NULL);
 	i = 0;
 	len = ft_strlen(name);
-	while (envp[i])
+	while (len && envp[i])
 	{
 		if (ft_strncmp(envp[i], name, len) == 0)
 		{

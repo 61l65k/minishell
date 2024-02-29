@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:52:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 10:39:20 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/02/29 12:39:11 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ typedef struct s_charflags
 	bool					is_or;
 }							t_charflags;
 
+char						**strarrjoin(const char **arr, const char *str);
 char						**ft_strdup_array(const char **arr);
 void						free_str_array(char **str_arr);
 int							ft_parseinput(t_shellstate *state);
