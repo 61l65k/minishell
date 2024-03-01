@@ -139,6 +139,7 @@ int	ft_parseinput(t_shellstate *state)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), EXIT_FAILURE);
 	while (state->parsed_args[state->cmd_count])
 		state->cmd_count++;
+	state->operator_count = state->cmd_count - 1;
 	if (!state->parsed_args)
 		ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
 	while (++i < state->cmd_count)

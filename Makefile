@@ -29,22 +29,26 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -Llibft -lft $(LDFLAGS) -o $(NAME)
+$(NAME): $(LIBFT) $(OBJS)
+	@$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -Llibft -lft $(LDFLAGS) -o $(NAME)
+	@printf "\033[0;32m 🐚 $(NAME) succesfully created. 🐚\033[0m\n"
+
 
 $(LIBFT):
-	make -C libft
+	@make -s -C libft
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(HEADER) -c $< -o $@
+	@$(CC) $(CFLAGS) $(HEADER) -c $< -o $@
+	@printf "\033[0;33mCompiling $< 🔨\033[0m\n"
 
 clean:
-	rm -rf $(OBJS)
-	make -C libft clean
+	@rm -rf $(OBJS)
+	@make -s -C libft clean
 
 fclean: clean
-	rm -rf $(NAME)
-	make -C libft fclean
+	@rm -rf $(NAME)
+	@make -s -C libft fclean
+	@printf "\033[0;31m Succesfully Cleaned.\033[0m\n"
 
 re: fclean all
 

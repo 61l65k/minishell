@@ -14,6 +14,9 @@
 # define MINIUTILS_H
 # include <stdbool.h>
 # include <unistd.h>
+# include <linux/limits.h>
+
+#define MAX_ARG_LEN ARG_MAX
 
 typedef struct s_shellstate	t_shellstate;
 

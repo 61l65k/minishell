@@ -12,19 +12,17 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# define MAXCOM 1000
-# define MAX_PROMPT 100
-# include <stdio.h>
+
 # include "libft.h"
 # include "minimessages.h"
 # include "miniutils.h"
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
-# include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/types.h>
@@ -32,12 +30,15 @@
 # include <termios.h>
 # include <unistd.h>
 
+# define PROMPT_LEN 100
+
 typedef struct s_shellstate
 {
-	char	input_string[MAXCOM];
+	char	input_string[ARG_MAX];
 	char	**parsed_args;
 	char	**operators;
 	int		cmd_count;
+	int		operator_count;
 	int		last_exit_status;
 	char	**envp;
 	t_vec	pid;
