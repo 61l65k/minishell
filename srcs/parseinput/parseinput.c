@@ -12,51 +12,54 @@
 
 #include "minishell.h"
 
-static int	check_for_op(t_operatorhelper *op, t_shellstate *state)
+/**
+ * @brief Check if the the current character is operator.
+ */
+static t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state)
 {
-	op->op[0] = '\0';
-	if (ft_strncmp(state->input_string + op->i, "&&", 2) == 0
-		|| ft_strncmp(state->input_string + op->i, "||", 2) == 0
-		|| ft_strncmp(state->input_string + op->i, "<<", 2) == 0
-		|| ft_strncmp(state->input_string + op->i, ">>", 2) == 0)
-	{
-		ft_strlcpy(op->op, state->input_string + op->i, 3);
-		op->op[2] = '?';
-		op->op[3] = '\0';
-		op->i++;
-		return (FOUNDOP);
-	}
-	else if (state->input_string[op->i] == '|'
-		|| state->input_string[op->i] == '>'
-		|| state->input_string[op->i] == '<')
-	{
-		op->op[0] = state->input_string[op->i];
-		op->op[1] = '?';
-		op->op[2] = '\0';
-		op->i++;
-		return (FOUNDOP);
-	}
-	return (SUCCESS);
+	if (ft_strncmp(state->input_string + op->i, "&&", 2) == 0)
+		return (OP_AND);
+	if (ft_strncmp(state->input_string + op->i, "||", 2) == 0)
+		return (OP_OR);
+	if (ft_strncmp(state->input_string + op->i, "<<", 2) == 0)
+		return (OP_HEREDOC);
+	if (ft_strncmp(state->input_string + op->i, ">>", 2) == 0)
+		return (OP_APPEND);
+	if (state->input_string[op->i] == '|')
+		return (OP_PIPE);
+	if (state->input_string[op->i] == '>')
+		return (OP_REDIRECT_OUT);
+	if (state->input_string[op->i] == '<')
+		return (OP_REDIRECT_IN);
+	return (OP_NONE);
 }
 
-static void	ensure_mem_cpy_op(t_operatorhelper *op, t_shellstate *state)
+/**
+ * @brief ensures that there is enough memory for the operators array.
+ */
+static void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
+		t_shellstate *state)
 {
-	char	*new_operators;
+	size_t		new_capacity;
+	t_operators	*new_operators;
 
-	op->op_len = ft_strlen(op->op);
-	if (op->operators_size + op->op_len + 1 > op->operators_capacity)
+	if (operator_type == OP_NONE)
+		return ;
+	if (operator_type == OP_HEREDOC || operator_type == OP_APPEND
+		|| operator_type == OP_OR || operator_type == OP_AND)
+		op->i++;
+	if ((size_t)op->cmd_count >= op->operators_capacity)
 	{
-		op->operators_capacity *= 2;
-		new_operators = ft_realloc(op->operators, op->operators_size,
-				op->operators_capacity);
+		new_capacity = op->operators_capacity * 2;
+		new_operators = ft_realloc(op->ops, op->operators_capacity
+				* sizeof(t_operators), new_capacity * sizeof(t_operators));
 		if (!new_operators)
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		op->operators = new_operators;
+		op->ops = new_operators;
+		op->operators_capacity = new_capacity;
 	}
-	ft_strlcpy(op->operators + op->operators_size, op->op,
-		op->operators_capacity - op->operators_size);
-	op->operators_size += op->op_len;
-	op->command_count++;
+	op->ops[op->ops_i++] = operator_type;
+	op->cmd_count++;
 }
 
 /**
@@ -68,9 +71,10 @@ static int	count_op_cmds(t_shellstate *state)
 	t_operatorhelper	op;
 
 	ft_memset(&op, 0, sizeof(t_operatorhelper));
-	op.operators = ft_calloc((op.operators_capacity += 100), 1);
-	op.command_count = 1;
-	if (!op.operators)
+	op.operators_capacity = 100;
+	op.cmd_count = 1;
+	op.ops = ft_calloc(op.operators_capacity, sizeof(t_operators));
+	if (!op.ops)
 		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	while (state->input_string[op.i])
 	{
@@ -78,18 +82,15 @@ static int	count_op_cmds(t_shellstate *state)
 			op.in_single_quote = !op.in_single_quote;
 		else if (state->input_string[op.i] == '"' && !op.in_single_quote)
 			op.in_double_quote = !op.in_double_quote;
-		else if (!op.in_single_quote && !op.in_double_quote && check_for_op(&op,
-				state) == FOUNDOP)
-			ensure_mem_cpy_op(&op, state);
+		if (!op.in_single_quote && !op.in_double_quote)
+			ensure_mem_cpy_op(&op, check_for_op(&op, state), state);
 		op.i++;
 	}
-	if (op.operators)
-	{
-		state->operators = ft_split(op.operators, '?');
-		if (!state->operators)
-			return (free(op.operators), ft_free_exit(state, ERR_MALLOC, 1), 1);
-	}
-	return (free(op.operators), op.command_count);
+	state->operators = ft_realloc(state->operators, state->operator_count
+			* sizeof(t_operators), op.cmd_count * sizeof(t_operators));
+	ft_memcpy(state->operators, op.ops, op.cmd_count * sizeof(t_operators));
+	state->operator_count = op.cmd_count - 1;
+	return (free(op.ops), op.cmd_count);
 }
 
 /**

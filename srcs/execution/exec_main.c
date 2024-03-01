@@ -48,7 +48,7 @@ void	handle_child_process(t_shellstate *state, t_exechelper *helper)
 		close(helper->fd_in);
 	}
 	if (helper->i < state->cmd_count - 1
-		&& ft_strcmp(state->operators[helper->i], "|") == 0)
+		&& state->operators[helper->i] == OP_PIPE)
 	{
 		close(helper->pipefd[0]);
 		dup2(helper->pipefd[1], STDOUT_FILENO);
@@ -106,8 +106,7 @@ static int	handle_fork(t_shellstate *state, t_exechelper *h)
 	else
 	{
 		handle_parent_process(state, h);
-		if (h->i == state->cmd_count - 1 || ft_strcmp(state->operators[h->i],
-				"|") != 0)
+		if (h->i == state->cmd_count - 1 || state->operators[h->i] != OP_PIPE)
 			return (waitpid(h->pid_current, &h->status, 0),
 				WEXITSTATUS(h->status));
 		else
@@ -134,9 +133,8 @@ int	ft_executecmd(t_shellstate *state)
 			free_str_array(h.cmd_args);
 		else
 			h.status = handle_fork(state, &h);
-		if (h.i < state->operator_count && ((ft_strcmp(state->operators[h.i],
-						"&&") == 0 && h.status != 0)
-				|| (ft_strcmp(state->operators[h.i], "||") == 0
+		if (h.i < state->operator_count && ((state->operators[h.i] == OP_AND
+					&& h.status != 0) || (state->operators[h.i] == OP_OR
 					&& h.status == 0)))
 			break ;
 		h.i++;

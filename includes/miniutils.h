@@ -17,6 +17,7 @@
 # include <unistd.h>
 
 typedef struct s_shellstate	t_shellstate;
+typedef enum e_operators	t_operators;
 
 enum						e_returnvalues
 {
@@ -44,12 +45,10 @@ typedef struct s_operatorhelper
 	bool					in_single_quote;
 	bool					in_double_quote;
 	size_t					i;
-	int						command_count;
-	char					*operators;
-	size_t					operators_size;
+	size_t					ops_i;
+	int						cmd_count;
+	t_operators				*ops;
 	size_t					operators_capacity;
-	char					op[5];
-	size_t					op_len;
 }							t_operatorhelper;
 
 typedef struct s_exechelper

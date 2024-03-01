@@ -32,31 +32,43 @@
 
 # define PROMPT_LEN 100
 
+typedef enum e_operators
+{
+	OP_NONE,
+	OP_AND,
+	OP_OR,
+	OP_HEREDOC,
+	OP_APPEND,
+	OP_PIPE,
+	OP_REDIRECT_OUT,
+	OP_REDIRECT_IN,
+}				t_operators;
+
 typedef struct s_shellstate
 {
-	char	input_string[ARG_MAX];
-	char	**parsed_args;
-	char	**operators;
-	int		cmd_count;
-	int		operator_count;
-	int		last_exit_status;
-	char	**envp;
-	t_vec	pid;
-}			t_shellstate;
+	char		input_string[ARG_MAX];
+	char		**parsed_args;
+	t_operators	*operators;
+	int			cmd_count;
+	int			operator_count;
+	int			last_exit_status;
+	char		**envp;
+	t_vec		pid;
+}				t_shellstate;
 
-void		ft_free_exit(t_shellstate *state, const char *errormsg,
-				int exitcode);
-int			ft_cmdhandler(t_shellstate *state, char **parsed);
-int			ft_executecmd(t_shellstate *state);
-void		ft_free_resets(t_shellstate *state);
-void		ft_displayhistory(void);
-int			init_signals(void);
-void		setup_terminal(void);
-void		execute_cmd(char *cmd, char **cmd_argv, char **envp);
+void			ft_free_exit(t_shellstate *state, const char *errormsg,
+					int exitcode);
+int				ft_cmdhandler(t_shellstate *state, char **parsed);
+int				ft_executecmd(t_shellstate *state);
+void			ft_free_resets(t_shellstate *state);
+void			ft_displayhistory(void);
+int				init_signals(void);
+void			setup_terminal(void);
+void			execute_cmd(char *cmd, char **cmd_argv, char **envp);
 
-char		*ft_getenv(char *name, char **envp);
-void		change_dir(char *path, char **envp);
-void		builtin_unset(char **args, t_shellstate *state);
-void		builtin_export(char **args, t_shellstate *state);
+char			*ft_getenv(char *name, char **envp);
+void			change_dir(char *path, char **envp);
+void			builtin_unset(char **args, t_shellstate *state);
+void			builtin_export(char **args, t_shellstate *state);
 
 #endif
