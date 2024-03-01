@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/01 10:47:30 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 13:01:45 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,12 +134,12 @@ int	ft_executecmd(t_shellstate *state)
 			free_str_array(h.cmd_args);
 		else
 			h.status = handle_fork(state, &h);
-		h.i++;
 		if (h.i < state->operator_count && ((ft_strcmp(state->operators[h.i],
 						"&&") == 0 && h.status != 0)
 				|| (ft_strcmp(state->operators[h.i], "||") == 0
 					&& h.status == 0)))
 			break ;
+		h.i++;
 	}
 	while (state->pid.len > 0)
 	{
