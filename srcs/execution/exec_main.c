@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stdlib.h>
 
 /**
  * @brief Handles the built-in commands.
@@ -46,11 +47,20 @@ void	handle_child_process(t_shellstate *state, t_exechelper *helper)
 		dup2(helper->fd_in, STDIN_FILENO);
 		close(helper->fd_in);
 	}
-	if (helper->i < state->cmd_count - 1)
+	if (helper->i < state->cmd_count - 1
+		&& ft_strcmp(state->operators[helper->i], "|") == 0)
 	{
 		close(helper->pipefd[0]);
 		dup2(helper->pipefd[1], STDOUT_FILENO);
 		close(helper->pipefd[1]);
+	}
+	else
+	{
+		if (helper->i < state->cmd_count - 1)
+		{
+			close(helper->pipefd[0]);
+			close(helper->pipefd[1]);
+		}
 	}
 	execute_cmd(helper->cmd_args[0], helper->cmd_args, state->envp);
 }
@@ -77,10 +87,16 @@ void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 	free(helper->cmd_args);
 }
 
-static void	handle_fork(t_shellstate *state, t_exechelper *h)
+/**
+ * @brief Handles foking & executing the child & parent processes.
+ * & Returns the exit status of the last command.
+ */
+static int	handle_fork(t_shellstate *state, t_exechelper *h)
 {
 	pid_t	pid;
+	int		status;
 
+	status = 0;
 	if (h->i < state->cmd_count - 1)
 	{
 		if (pipe(h->pipefd) < 0)
@@ -95,7 +111,11 @@ static void	handle_fork(t_shellstate *state, t_exechelper *h)
 	{
 		vec_push(&state->pid, &pid);
 		handle_parent_process(state, h);
+		if (h->i == state->cmd_count - 1 || ft_strcmp(state->operators[h->i],
+				"|") != 0)
+			return (waitpid(pid, &status, 0), WEXITSTATUS(status));
 	}
+	return (0);
 }
 
 /**
@@ -117,16 +137,15 @@ int	ft_executecmd(t_shellstate *state)
 		if (ft_cmdhandler(state, h.cmd_args) == FOUNDCMD)
 			free_str_array(h.cmd_args);
 		else
-		{
-			handle_fork(state, &h);
-		}
+			h.status = handle_fork(state, &h);
 		h.i++;
+		if (h.i < state->operator_count && ((ft_strcmp(state->operators[h.i],
+						"&&") == 0 && h.status != 0)
+				|| (ft_strcmp(state->operators[h.i], "||") == 0
+					&& h.status == 0)))
+			break ;
 	}
 	while (state->pid.len > 0)
-	{
 		vec_pop(&pid, &state->pid);
-		waitpid(pid, &h.status, 0);
-	}
-	vec_free(&state->pid);
-	return (WEXITSTATUS(h.status));
+	return (vec_free(&state->pid), h.status);
 }
