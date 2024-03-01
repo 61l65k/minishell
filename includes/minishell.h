@@ -58,7 +58,7 @@ typedef struct s_shellstate
 
 void			ft_free_exit(t_shellstate *state, const char *errormsg,
 					int exitcode);
-int				ft_cmdhandler(t_shellstate *state, char **parsed);
+int				ft_builtin_cmdhandler(t_shellstate *state, char **parsed);
 int				ft_executecmd(t_shellstate *state);
 void			ft_free_resets(t_shellstate *state);
 void			ft_displayhistory(void);
