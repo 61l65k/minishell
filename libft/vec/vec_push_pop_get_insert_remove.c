@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 14:15:55 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/12 19:59:35 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 21:23:09 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	vec_insert(t_vec *dst, void *src, size_t index)
 		}
 	}
 	ft_memmove(
-		vec_get(dst, index + 1),
+		vec_get(dst, index) + dst->elem_size,
 		vec_get(dst, index),
 		(dst->len - index) * dst->elem_size);
 	ft_memcpy(
