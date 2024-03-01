@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 23:48:56 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/01 13:08:09 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 13:56:43 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,22 +31,12 @@ void	ft_free_exit(t_shellstate *state, const char *errorMsg, int exitCode)
  */
 void	ft_free_resets(t_shellstate *state)
 {
-	int	i;
-
-	i = 0;
-	if (state->parsed_args)
-	{
-		while (state->parsed_args[i])
-			free(state->parsed_args[i++]);
-		free(state->parsed_args);
-	}
-	if (state->operators)
-	{
-		i = 0;
-		while (state->operators[i])
-			free(state->operators[i++]);
-		free(state->operators);
-	}
+	free_str_array(state->parsed_args);
+	state->parsed_args = NULL;
+	state->cmd_count = 0;
+	free_str_array(state->operators);
+	state->operators = NULL;
+	state->operator_count = 0;
 }
 
 /**
