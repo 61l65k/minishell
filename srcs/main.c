@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 11:26:47 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 10:34:37 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ int	main(int argc, char **argv, const char **envp)
 	init_signals();
 	ft_memset(&state, 0, sizeof(state));
 	state.envp = ft_strdup_array(envp);
-	if (!state.envp)
+	vec_new(&state.pid, 10, sizeof(pid_t));
+	if (!state.envp || state.pid.memory == NULL)
 		ft_free_exit(&state, ERR_MALLOC, EXIT_FAILURE);
 	printf(CLEAR_SCREEN);
 	while (1)

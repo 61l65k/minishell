@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/29 18:26:59 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 10:26:04 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static void	exec_error_exit(char *cmd_path, char *error_msg, int exit_code)
 	if (cmd_path)
 		ft_fprintf(2, "%s: %s\n", cmd_path, error_msg);
 	else
-		ft_printf("%s\n", error_msg);
+		ft_fprintf(2, "%s\n", error_msg);
 	free(cmd_path);
 	exit(exit_code);
 }

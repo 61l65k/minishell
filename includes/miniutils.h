@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:52:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 19:40:44 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 10:42:45 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef struct s_exechelper
 	int						fd_in;
 	int						i;
 	int						status;
+	pid_t					pid_current;
 }							t_exechelper;
 
 typedef struct s_envhelper

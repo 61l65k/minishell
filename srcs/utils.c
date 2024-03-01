@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 23:48:56 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 19:51:22 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 10:32:49 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	ft_free_exit(t_shellstate *state, const char *errorMsg, int exitCode)
 	ft_free_resets(state);
 	free_str_array(state->envp);
 	state->envp = NULL;
-	vec_free(&state->pid);
 	exit(exitCode);
 }
 
@@ -47,6 +46,7 @@ void	ft_free_resets(t_shellstate *state)
 			free(state->operators[i++]);
 		free(state->operators);
 	}
+	vec_free(&state->pid);
 }
 
 /**

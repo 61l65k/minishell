@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 20:00:30 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 10:47:30 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,27 +93,25 @@ void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
  */
 static int	handle_fork(t_shellstate *state, t_exechelper *h)
 {
-	pid_t	pid;
-	int		status;
-
-	status = 0;
 	if (h->i < state->cmd_count - 1)
 	{
 		if (pipe(h->pipefd) < 0)
 			ft_free_exit(state, ERR_PIPE, EXIT_FAILURE);
 	}
-	pid = fork();
-	if (pid < 0)
+	h->pid_current = fork();
+	if (h->pid_current < 0)
 		ft_free_exit(state, ERR_FORK, EXIT_FAILURE);
-	if (pid == 0)
+	if (h->pid_current == 0)
 		handle_child_process(state, h);
 	else
 	{
-		vec_push(&state->pid, &pid);
 		handle_parent_process(state, h);
 		if (h->i == state->cmd_count - 1 || ft_strcmp(state->operators[h->i],
 				"|") != 0)
-			return (waitpid(pid, &status, 0), WEXITSTATUS(status));
+			return (waitpid(h->pid_current, &h->status, 0),
+				WEXITSTATUS(h->status));
+		else
+			vec_push(&state->pid, &h->pid_current);
 	}
 	return (0);
 }
@@ -125,9 +123,7 @@ static int	handle_fork(t_shellstate *state, t_exechelper *h)
 int	ft_executecmd(t_shellstate *state)
 {
 	t_exechelper	h;
-	pid_t			pid;
 
-	vec_new(&state->pid, state->cmd_count, sizeof(pid_t));
 	ft_memset(&h, 0, sizeof(t_exechelper));
 	while (h.i < state->cmd_count)
 	{
@@ -146,6 +142,9 @@ int	ft_executecmd(t_shellstate *state)
 			break ;
 	}
 	while (state->pid.len > 0)
-		vec_pop(&pid, &state->pid);
-	return (vec_free(&state->pid), h.status);
+	{
+		vec_pop(&h.pid_current, &state->pid);
+		waitpid(h.pid_current, &h.status, 0);
+	}
+	return (WEXITSTATUS(h.status));
 }
