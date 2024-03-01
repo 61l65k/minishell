@@ -139,5 +139,5 @@ int	ft_executecmd(t_shellstate *state)
 		vec_pop(&h.pid_current, &state->pid);
 		waitpid(h.pid_current, &h.status, 0);
 	}
-	return (WEXITSTATUS(h.status));
+	return (h.status);
 }

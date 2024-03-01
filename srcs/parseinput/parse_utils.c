@@ -17,7 +17,7 @@
  * @brief Ensures that there is enough memory for the command.
  * If not, reallocates double the size of the current memory.
  */
-void	ensure_memory_for_cmd(t_parsehelper *h, t_shellstate *state,
+void	ensure_mem_for_cmd(t_parsehelper *h, t_shellstate *state,
 		size_t additional_length)
 {
 	size_t	required_size;

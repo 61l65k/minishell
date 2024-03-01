@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 /**
@@ -44,21 +45,32 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
 	t_envhelper	eh;
 
 	ft_memset(&eh, 0, sizeof(t_envhelper));
-	eh.var_name_len = ft_envlen(state->input_string + (h->i += 1));
-	eh.var_name = ft_strndup(state->input_string + h->i, eh.var_name_len);
-	if (!eh.var_name)
-		return (ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE));
-	h->i += eh.var_name_len - 1;
-	eh.var_value = ft_getenv(eh.var_name, state->envp);
+	if (state->input_string[++h->i] == '?')
+	{
+		eh.var_value = ft_itoa(state->last_exit_status);
+		if (!eh.var_value)
+			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+		eh.free_var_value = true;
+	}
+	else
+	{
+		eh.var_name_len = ft_envlen(state->input_string + ++h->i);
+		eh.var_name = ft_strndup(state->input_string + h->i, eh.var_name_len);
+		if (!eh.var_name)
+			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+		h->i += eh.var_name_len - 2;
+		eh.var_value = ft_getenv(eh.var_name, state->envp);
+		free(eh.var_name);
+	}
 	if (eh.var_value)
 	{
-		eh.value_len = ft_strlen(eh.var_value);
-		eh.req_size = ft_strlen(h->curr_cmd) + eh.value_len + 1;
-		ensure_memory_for_cmd(h, state, eh.req_size);
-		ft_strncat(h->curr_cmd, eh.var_value, eh.value_len);
+		eh.val_len = ft_strlen(eh.var_value);
+		ensure_mem_for_cmd(h, state, ft_strlen(h->curr_cmd) + eh.val_len + 1);
+		ft_strncat(h->curr_cmd, eh.var_value, eh.val_len);
 		h->j = ft_strlen(h->curr_cmd);
+		if (eh.free_var_value)
+			free(eh.var_value);
 	}
-	free(eh.var_name);
 }
 
 /**
@@ -82,7 +94,7 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
 		handle_env_variable(h, state);
 	else
 	{
-		ensure_memory_for_cmd(h, state, 1);
+		ensure_mem_for_cmd(h, state, 1);
 		h->curr_cmd[h->j++] = state->input_string[h->i];
 	}
 }

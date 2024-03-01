@@ -66,8 +66,8 @@ typedef struct s_envhelper
 	char					*var_name;
 	int						var_name_len;
 	char					*var_value;
-	int						value_len;
-	size_t					req_size;
+	bool					free_var_value;
+	int						val_len;
 }							t_envhelper;
 
 typedef struct s_charflags
@@ -91,7 +91,7 @@ char						*trim_spaces(const char *str);
 int							ft_isenv_var(int c);
 void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);
-void						ensure_memory_for_cmd(t_parsehelper *h,
+void						ensure_mem_for_cmd(t_parsehelper *h,
 								t_shellstate *state, size_t additional_length);
 int							init_char_flags(t_charflags *flags, char *c,
 								t_parsehelper *h);
