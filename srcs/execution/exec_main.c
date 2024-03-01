@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/01 13:01:45 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/01 21:43:18 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,9 @@ static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 }
 
 /**
- * @brief Handles foking & executing the child & parent processes.
- * & Returns the exit status of the last command.
+ * @brief Handles forking & executing the child & parent processes.
  */
-static int	handle_fork(t_shellstate *state, t_exechelper *h)
+static void	handle_fork(t_shellstate *state, t_exechelper *h)
 {
 	if (h->i < state->cmd_count - 1)
 	{
@@ -82,13 +81,11 @@ static int	handle_fork(t_shellstate *state, t_exechelper *h)
 	else
 	{
 		handle_parent_process(state, h);
-		if (h->i == state->cmd_count - 1 || state->operators[h->i] != OP_PIPE)
-			return (waitpid(h->pid_current, &h->status, 0),
-				WEXITSTATUS(h->status));
+		if (state->operators[h->i] == OP_OR || state->operators[h->i] == OP_AND)
+			waitpid(h->pid_current, &h->status, 0);
 		else
-			vec_push(&state->pid, &h->pid_current);
+			vec_insert(&state->pid, &h->pid_current, 0);
 	}
-	return (0);
 }
 
 /**
@@ -130,7 +127,7 @@ int	ft_executecmd(t_shellstate *state)
 		if (ft_builtin_cmdhandler(state, h.cmd_args) == FOUNDCMD)
 			free_str_array(h.cmd_args);
 		else
-			h.status = handle_fork(state, &h);
+			handle_fork(state, &h);
 		check_operators(&h, state);
 		h.i++;
 	}
@@ -139,5 +136,5 @@ int	ft_executecmd(t_shellstate *state)
 		vec_pop(&h.pid_current, &state->pid);
 		waitpid(h.pid_current, &h.status, 0);
 	}
-	return (h.status);
+	return (WEXITSTATUS(h.status));
 }
