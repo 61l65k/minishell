@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 12:47:45 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/02 20:31:23 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 00:33:59 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	builtin_export(char **args, t_shellstate *state)
 {
 	int		i;
 
+	state->last_exit_status = 0;
 	if (!args || !args[0])
 		return ;
 	if (!args[1])
@@ -40,6 +41,7 @@ void	builtin_export(char **args, t_shellstate *state)
 	{
 		if (ft_setenv_entry(args[i], state) == -1)
 		{
+			state->last_exit_status = 1;
 			ft_fprintf(2, "export: `%s': not a valid identifier\n", args[i]);
 		}
 	}
