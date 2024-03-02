@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/01 21:43:18 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/02 22:40:08 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,45 +66,48 @@ static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 /**
  * @brief Handles forking & executing the child & parent processes.
  */
-static void	handle_fork(t_shellstate *state, t_exechelper *h)
+static void	handle_fork(t_shellstate *s, t_exechelper *h)
 {
-	if (h->i < state->cmd_count - 1)
+	if (h->i < s->cmd_count - 1)
 	{
 		if (pipe(h->pipefd) < 0)
-			ft_free_exit(state, ERR_PIPE, EXIT_FAILURE);
+			ft_free_exit(s, ERR_PIPE, EXIT_FAILURE);
 	}
 	h->pid_current = fork();
 	if (h->pid_current < 0)
-		ft_free_exit(state, ERR_FORK, EXIT_FAILURE);
+		ft_free_exit(s, ERR_FORK, EXIT_FAILURE);
 	if (h->pid_current == 0)
-		handle_child_process(state, h);
+		handle_child_process(s, h);
 	else
 	{
-		handle_parent_process(state, h);
-		if (state->operators[h->i] == OP_OR || state->operators[h->i] == OP_AND)
+		handle_parent_process(s, h);
+		if (s->operators[h->i] == OP_OR || s->operators[h->i] == OP_AND)
+		{
 			waitpid(h->pid_current, &h->status, 0);
+			s->last_exit_status = WEXITSTATUS(h->status);
+		}
 		else
-			vec_insert(&state->pid, &h->pid_current, 0);
+			vec_insert(&s->pid, &h->pid_current, 0);
 	}
 }
 
 /**
  * @brief Checks the operators and skips the commands if needed.
  */
-static void	check_operators(t_exechelper *h, t_shellstate *state)
+static void	check_operators(t_exechelper *h, t_shellstate *s)
 {
-	if (h->i < state->operator_count)
+	if (h->i < s->operator_count)
 	{
-		if (state->operators[h->i] == OP_AND && h->status != 0)
+		if (s->operators[h->i] == OP_AND && s->last_exit_status != 0)
 		{
-			while (h->i < state->operator_count
-				&& state->operators[h->i] != OP_OR)
+			while (h->i < s->operator_count
+				&& s->operators[h->i] != OP_OR)
 				h->i++;
 		}
-		else if (state->operators[h->i] == OP_OR && h->status == 0)
+		else if (s->operators[h->i] == OP_OR && s->last_exit_status == 0)
 		{
-			while (h->i < state->operator_count
-				&& state->operators[h->i] != OP_AND)
+			while (h->i < s->operator_count
+				&& s->operators[h->i] != OP_AND)
 				h->i++;
 		}
 	}
@@ -135,6 +138,7 @@ int	ft_executecmd(t_shellstate *state)
 	{
 		vec_pop(&h.pid_current, &state->pid);
 		waitpid(h.pid_current, &h.status, 0);
+		state->last_exit_status = WEXITSTATUS(h.status);
 	}
-	return (WEXITSTATUS(h.status));
+	return (state->last_exit_status);
 }

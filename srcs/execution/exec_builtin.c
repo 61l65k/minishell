@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_builtin.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alex <apyykone@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/01 17:47:38 by alex             ###   ########.fr       */
+/*   Updated: 2024/03/02 22:36:50 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	ft_builtin_cmdhandler(t_shellstate *state, char **parsed)
 	if (ft_strcmp(parsed[0], "exit") == 0)
 		ft_free_exit(state, NULL, EXIT_SUCCESS);
 	else if (ft_strcmp(parsed[0], "cd") == 0)
-		return (change_dir(parsed[1], state->envp), FOUNDCMD);
+		return (builtin_cd(parsed[1], state), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "help") == 0)
 		return (printf(HELP_MSG), FOUNDCMD);
 	else if (ft_strcmp(parsed[0], "hello") == 0)
