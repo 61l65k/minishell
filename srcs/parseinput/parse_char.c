@@ -40,36 +40,32 @@ static void	handle_escape_sequence(t_parsehelper *h, const char *input_string)
  * @brief Turns The env variables to their values. Reallocates new memory
  * if needed for the command. h->i += 1 to skip the $ character.
  */
-static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
+static void	handle_env_variable(t_parsehelper *h, t_shellstate *state,
+		t_envhelper *eh)
 {
-	t_envhelper	eh;
-
-	ft_memset(&eh, 0, sizeof(t_envhelper));
-	if (state->input_string[++h->i] == '?')
+	h->i += 1;
+	if (state->input_string[h->i] == '?')
 	{
-		eh.var_value = ft_itoa(state->last_exit_status);
-		if (!eh.var_value)
+		eh->var_value = ft_itoa(state->last_exit_status);
+		if (!eh->var_value)
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		eh.free_var_value = true;
+		eh->free_var_value = true;
 	}
 	else
 	{
-		eh.var_name_len = ft_envlen(state->input_string + ++h->i);
-		eh.var_name = ft_strndup(state->input_string + h->i, eh.var_name_len);
-		if (!eh.var_name)
+		eh->var_name_len = ft_envlen(state->input_string + h->i);
+		eh->var_name = ft_strndup(state->input_string + h->i, eh->var_name_len);
+		if (!eh->var_name)
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		h->i += eh.var_name_len - 2;
-		eh.var_value = ft_getenv(eh.var_name, state->envp);
-		free(eh.var_name);
+		h->i += eh->var_name_len - 1;
+		eh->var_value = ft_getenv(eh->var_name, state->envp);
 	}
-	if (eh.var_value)
+	if (eh->var_value)
 	{
-		eh.val_len = ft_strlen(eh.var_value);
-		ensure_mem_for_cmd(h, state, ft_strlen(h->curr_cmd) + eh.val_len + 1);
-		ft_strncat(h->curr_cmd, eh.var_value, eh.val_len);
+		eh->val_len = ft_strlen(eh->var_value);
+		ensure_mem_for_cmd(h, state, ft_strlen(h->curr_cmd) + eh->val_len + 1);
+		ft_strncat(h->curr_cmd, eh->var_value, eh->val_len);
 		h->j = ft_strlen(h->curr_cmd);
-		if (eh.free_var_value)
-			free(eh.var_value);
 	}
 }
 
@@ -78,7 +74,7 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state)
  * in the commands array from the input string.
  */
 static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
-		t_charflags *flags)
+		t_charflags *flags, t_envhelper *eh)
 {
 	if (flags->is_pipe || flags->is_and || flags->is_or || flags->is_redirect
 		|| flags->is_append || flags->is_heredoc)
@@ -91,7 +87,12 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
 			h->i++;
 	}
 	else if (flags->is_env_var)
-		handle_env_variable(h, state);
+	{
+		handle_env_variable(h, state, eh);
+		free(eh->var_name);
+		if (eh->free_var_value)
+			free(eh->var_value);
+	}
 	else
 	{
 		ensure_mem_for_cmd(h, state, 1);
@@ -108,7 +109,9 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
 void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 {
 	t_charflags	flags;
+	t_envhelper	eh;
 
+	ft_memset(&eh, 0, sizeof(t_envhelper));
 	if (init_char_flags(&flags, &state->input_string[h->i], h) != IS_QUOTE)
 	{
 		if (h->in_single_quote || h->in_double_quote)
@@ -116,12 +119,17 @@ void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 			if (flags.is_escaped)
 				handle_escape_sequence(h, state->input_string);
 			else if (h->in_double_quote && flags.is_env_var)
-				handle_env_variable(h, state);
+			{
+				handle_env_variable(h, state, &eh);
+				free(eh.var_name);
+				if (eh.free_var_value)
+					free(eh.var_value);
+			}
 			else
 				h->curr_cmd[h->j++] = state->input_string[h->i];
 		}
 		else
-			check_for_new_cmd(h, state, &flags);
+			check_for_new_cmd(h, state, &flags, &eh);
 	}
 	h->curr_cmd[h->j] = '\0';
 }
