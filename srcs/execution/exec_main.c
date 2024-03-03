@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/03 01:48:12 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 14:40:13 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ int	ft_executecmd(t_shellstate *state)
 		h.cmd_args = ft_split(state->parsed_args[h.i], ' ');
 		if (!h.cmd_args)
 			ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
-		if (ft_builtin_cmdhandler(state, h.cmd_args) == FOUNDCMD)
+		if (ft_builtin_cmdhandler(state, h.cmd_args))
 			free_and_null_str_array(&h.cmd_args);
 		else
 			handle_fork(state, &h);

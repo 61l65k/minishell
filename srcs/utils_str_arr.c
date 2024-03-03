@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 10:27:06 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/03 01:56:52 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 12:57:45 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,12 +79,12 @@ char	**ft_strdup_array(const char **arr)
 
 size_t	str_arr_len(const char **arr)
 {
-	size_t	i;
+	size_t	len;
 
-	i = 0;
-	while (arr[i])
-		i++;
-	return (i);
+	len = 0;
+	while (arr && arr[len])
+		len++;
+	return (len);
 }
 
 /**
