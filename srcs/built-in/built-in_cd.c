@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 20:32:17 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/03 00:08:11 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 00:54:25 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void	builtin_cd(const char *path, t_shellstate *state)
 {
 	static char	cwd[PATH_MAX];
 
+	state->last_exit_status = 0;
 	if (getcwd(cwd, PATH_MAX) == NULL)
 		ft_free_exit(state, ERR_GETCWD, EXIT_FAILURE);
 	if (path == NULL)

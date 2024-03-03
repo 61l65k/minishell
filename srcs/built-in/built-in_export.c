@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 12:47:45 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/03 00:33:59 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 00:48:01 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	print_env_declare(const char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		ft_printf("declare -x %s\n", envp[i]);
+		printf("declare -x %s\n", envp[i]);
 		i++;
 	}
 }

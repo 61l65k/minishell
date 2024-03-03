@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 11:31:35 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/29 11:24:32 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 00:53:15 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	builtin_unset(char **args, t_shellstate *state)
 	char	*ptr_to_value;
 	int		i;
 
+	state->last_exit_status = 0;
 	if (!args || !args[0] || !args[1])
 		return ;
 	i = 0;
