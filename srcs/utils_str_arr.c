@@ -6,12 +6,17 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 10:27:06 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/29 14:39:24 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 01:56:52 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+/**
+ * @brief Frees and nulls each string in the given string array,
+ *	and then frees the array itself. In case NULL is passed, nothing happens.
+ * @param str_arr The null terminated string array to be freed.
+ */
 void	free_str_array(char **str_arr)
 {
 	char	**tmp;
@@ -24,6 +29,20 @@ void	free_str_array(char **str_arr)
 		tmp++;
 	}
 	free(str_arr);
+}
+
+/**
+ * @brief Frees and nulls each string and finally frees and nulls
+ *	the string array itself. In case NULL is passed, nothing happens.
+ * @param str_arr_ptr The pointer to the string array to be freed.
+ */
+void	free_and_null_str_array(char ***str_arr_ptr)
+{
+	if (str_arr_ptr && *str_arr_ptr)
+	{
+		free_str_array(*str_arr_ptr);
+		*str_arr_ptr = NULL;
+	}
 }
 
 /**

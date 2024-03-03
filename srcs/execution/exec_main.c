@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/02 22:40:08 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 01:48:12 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,6 @@ static void	handle_child_process(t_shellstate *state, t_exechelper *helper)
  */
 static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 {
-	int	j;
-
-	j = 0;
 	if (helper->fd_in != 0)
 		close(helper->fd_in);
 	if (helper->i < state->cmd_count - 1)
@@ -58,9 +55,7 @@ static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 		helper->fd_in = helper->pipefd[0];
 		close(helper->pipefd[1]);
 	}
-	while (helper->cmd_args[j])
-		free(helper->cmd_args[j++]);
-	free(helper->cmd_args);
+	free_and_null_str_array(&helper->cmd_args);
 }
 
 /**
@@ -128,7 +123,7 @@ int	ft_executecmd(t_shellstate *state)
 		if (!h.cmd_args)
 			ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
 		if (ft_builtin_cmdhandler(state, h.cmd_args) == FOUNDCMD)
-			free_str_array(h.cmd_args);
+			free_and_null_str_array(&h.cmd_args);
 		else
 			handle_fork(state, &h);
 		check_operators(&h, state);

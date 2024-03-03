@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:52:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/01 10:42:45 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 01:43:42 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ typedef struct s_charflags
 char						**strarrjoin(const char **arr, const char *str);
 char						**ft_strdup_array(const char **arr);
 void						free_str_array(char **str_arr);
+void						free_and_null_str_array(char ***str_arr_ptr);
 int							ft_parseinput(t_shellstate *state);
 char						*trim_spaces(const char *str);
 int							ft_isenv_var(int c);
