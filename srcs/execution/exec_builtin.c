@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/03 14:39:06 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/03 14:54:58 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	ft_builtin_cmdhandler(t_shellstate *state, char **parsed)
 
 t_builtin_type	get_builtin_type(char *arg)
 {
-	if (arg[0] == '\0')
+	if (!arg)
 		return (BI_EMPTY);
 	else if (ft_strcmp(arg, "echo") == 0)
 		return (BI_ECHO);
