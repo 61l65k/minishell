@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
@@ -131,25 +132,25 @@ static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
 int	ft_parseinput(t_shellstate *s)
 {
 	int				i;
-	char			*trimmed_command;
 	t_parsehelper	h;
 
 	ft_memset(&h, 0, sizeof(t_parsehelper));
-	i = -1;
+	i = 0;
 	s->parsed_args = split_cmds(s, &h);
 	if (!s->parsed_args)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), EXIT_FAILURE);
 	while (s->parsed_args[s->cmd_count])
 		s->cmd_count++;
 	s->operator_count = s->cmd_count - 1;
-	if (!s->parsed_args)
-		ft_free_exit(s, ERR_PROCESTRING, EXIT_FAILURE);
-	while (++i < s->cmd_count)
+	s->parsed_cmds = ft_calloc(s->cmd_count + 1, sizeof(t_list *));
+	if (!s->parsed_cmds)
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	while (i < s->cmd_count)
 	{
-		trimmed_command = trim_command(s->parsed_args[i]);
-		if (trimmed_command != s->parsed_args[i])
-			free(s->parsed_args[i]);
-		s->parsed_args[i] = trimmed_command;
+		s->parsed_cmds[i] = trim_command(s->parsed_args[i]);
+		free(s->parsed_args[i++]);
 	}
+	free(s->parsed_args);
+	s->parsed_args = NULL;
 	return (EXIT_SUCCESS);
 }

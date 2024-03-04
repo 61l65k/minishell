@@ -33,6 +33,16 @@ void	ft_free_exit(t_shellstate *state, const char *errorMsg, int exitCode)
  */
 void	ft_free_resets(t_shellstate *state)
 {
+	int	i;
+
+	i = -1;
+	if (state->parsed_cmds)
+	{
+		while (state->parsed_cmds[++i])
+			ft_lstclear(state->parsed_cmds, free);
+		free(state->parsed_cmds);
+	}
+	state->parsed_cmds = NULL;
 	free_str_array(state->parsed_args);
 	state->parsed_args = NULL;
 	state->cmd_count = 0;
@@ -40,4 +50,24 @@ void	ft_free_resets(t_shellstate *state)
 		free(state->operators);
 	state->operators = NULL;
 	state->operator_count = 0;
+}
+
+char	**list_to_array(t_list *list)
+{
+	int		size;
+	char	**array;
+	int		i;
+
+	size = ft_lstsize(list);
+	array = malloc((size + 1) * sizeof(char *));
+	if (!array)
+		return (NULL);
+	i = 0;
+	while (list)
+	{
+		array[i++] = list->content;
+		list = list->next;
+	}
+	array[i] = NULL;
+	return (array);
 }

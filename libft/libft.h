@@ -14,20 +14,20 @@
 # define LIBFT_H
 
 # ifdef __linux__
-#  include <stdint.h>
 #  include <linux/limits.h>
+#  include <stdint.h>
 # endif
 # include "./ft_printf/ft_printf.h"
 # include "./get_next_line/get_next_line_bonus.h"
 # include "./vec/vec.h"
+# include <limits.h>
 # include <stddef.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <limits.h>
 
 typedef struct s_list
 {
-	void			*content;
+	char			*content;
 	struct s_list	*next;
 }					t_list;
 

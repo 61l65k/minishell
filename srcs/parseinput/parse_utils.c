@@ -65,32 +65,43 @@ int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 	return (SUCCESS);
 }
 
-static char	*allocate_trimmed_string(t_trimhelper *t)
+t_list	*allocate_trimmed_string(t_trimhelper *t)
 {
-	while (t->i < t->length)
+	while (t->i <= t->length)
 	{
 		if ((t->start[t->i] == '\'' && !t->in_double_quote)
-			|| (t->start[t->i] == '"' && !t->in_single_quote))
+				|| (t->start[t->i] == '"' && !t->in_single_quote))
 		{
+			t->in_quote = !t->in_quote;
 			t->in_single_quote ^= (t->start[t->i] == '\'');
 			t->in_double_quote ^= (t->start[t->i] == '"');
-			t->i++;
 			continue ;
 		}
-		if (t->start[t->i] != ' ' || (t->in_single_quote || t->in_double_quote)
-			|| !t->space_found)
+		if ((t->start[t->i] == ' ' && !t->in_quote) || t->i == t->length)
 		{
-			t->trimmed[t->j++] = t->start[t->i];
-			t->space_found = (t->start[t->i] == ' ' && !(t->in_single_quote
-						|| t->in_double_quote));
+			if (t->i > t->arg_start)
+			{
+				t->arg = ft_strndup(t->start + t->arg_start, t->i
+						- t->arg_start);
+				if (!t->arg)
+					return (ft_lstclear(&t->head, free), NULL);
+				t->new_node = ft_lstnew(t->arg);
+				if (!t->new_node)
+					return (free(t->arg), ft_lstclear(&t->head, free), NULL);
+				if (!t->head)
+					t->head = t->new_node;
+				else
+					t->current->next = t->new_node;
+				t->current = t->new_node;
+			}
+			t->arg_start = t->i + 1;
 		}
 		t->i++;
 	}
-	t->trimmed[t->j] = '\0';
-	return (t->trimmed);
+	return (t->head);
 }
 
-char	*trim_command(const char *str)
+t_list	*trim_command(const char *str)
 {
 	t_trimhelper	t;
 
@@ -104,8 +115,5 @@ char	*trim_command(const char *str)
 	while (t.end > t.start && (*t.end == ' ' || *t.end == '\t'))
 		t.end--;
 	t.length = t.end - t.start + 1;
-	t.trimmed = malloc(t.length + 1);
-	if (!t.trimmed)
-		return (NULL);
 	return (allocate_trimmed_string(&t));
 }

@@ -12,10 +12,10 @@
 
 #ifndef MINIUTILS_H
 # define MINIUTILS_H
+# include "libft.h"
 # include <linux/limits.h>
 # include <stdbool.h>
 # include <unistd.h>
-
 typedef struct s_shellstate	t_shellstate;
 typedef enum e_operators	t_operators;
 
@@ -53,7 +53,7 @@ typedef struct s_operatorhelper
 
 typedef struct s_exechelper
 {
-	char					**cmd_args;
+	t_list					*cmd_args;
 	int						pipefd[2];
 	int						fd_in;
 	int						i;
@@ -90,21 +90,24 @@ typedef struct s_trimhelper
 	size_t					length;
 	char					*trimmed;
 	size_t					i;
-	size_t					j;
 	bool					in_single_quote;
 	bool					in_double_quote;
 	bool					in_quote;
-	bool					space_found;
-	bool					is_first_quote;
+	t_list					*head;
+	t_list					*current;
+	size_t					arg_start;
+	char					*arg;
+	t_list					*new_node;
 }							t_trimhelper;
 
 char						**strarrjoin(const char **arr, const char *str);
+char						**list_to_array(t_list *list);
 char						**ft_strdup_array(const char **arr);
 void						free_str_array(char **str_arr);
 void						free_and_null_str_array(char ***str_arr_ptr);
 int							ft_parseinput(t_shellstate *state);
 char						*trim_spaces(const char *str);
-char						*trim_command(const char *str);
+t_list						*trim_command(const char *str);
 int							ft_isenv_var(int c);
 void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);

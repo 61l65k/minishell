@@ -18,7 +18,7 @@
  * & Returns 0 if the command was not handled as built-in.
  * If child_process is true, and the command is a built-in, the function will
  * exit with the built-in's exit status.
- */
+ *
 int	ft_builtin_cmdhandler(
 	t_shellstate *state,
 	t_exechelper *h,
@@ -39,12 +39,12 @@ int	ft_builtin_cmdhandler(
 		exit(state->last_exit_status);
 	return (is_builtin);
 }
-
+*/
 /**
  * @brief Returns the built-in command type.
  * Or 0 if the command is not a built-in.
  */
-
+/**/
 t_builtin_type	get_builtin_type(char *arg)
 {
 	if (!arg)

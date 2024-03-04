@@ -10,7 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+#include "minimessages.h"
 #include "minishell.h"
+#include <stdlib.h>
 
 /**
  * @brief Handles execution for the child process. if pipe is used,
@@ -18,6 +21,8 @@
  */
 static void	handle_child_process(t_shellstate *state, t_exechelper *helper)
 {
+	char	**cmd_array;
+
 	if (helper->fd_in != 0)
 	{
 		dup2(helper->fd_in, STDIN_FILENO);
@@ -38,8 +43,12 @@ static void	handle_child_process(t_shellstate *state, t_exechelper *helper)
 			close(helper->pipefd[1]);
 		}
 	}
-	ft_builtin_cmdhandler(state, helper, true);
-	execute_cmd(helper->cmd_args[0], helper->cmd_args, state->envp);
+	cmd_array = list_to_array(helper->cmd_args);
+	if (!cmd_array)
+		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+	// ft_builtin_cmdhandler(state, helper, true);
+	execute_cmd(cmd_array[0], cmd_array, state->envp);
+	free_str_array(cmd_array);
 }
 
 /**
@@ -56,7 +65,7 @@ static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 		helper->fd_in = helper->pipefd[0];
 		close(helper->pipefd[1]);
 	}
-	free_and_null_str_array(&helper->cmd_args);
+	// ft_lstclear(&helper->cmd_args, free);
 }
 
 /**
@@ -115,11 +124,11 @@ int	ft_executecmd(t_shellstate *state)
 	ft_memset(&h, 0, sizeof(t_exechelper));
 	while (h.i < state->cmd_count)
 	{
-		h.cmd_args = ft_split(state->parsed_args[h.i], ' ');
+		h.cmd_args = state->parsed_cmds[h.i];
 		if (!h.cmd_args)
 			ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
-		if (ft_builtin_cmdhandler(state, &h, false))
-			free_and_null_str_array(&h.cmd_args);
+		// if (ft_builtin_cmdhandler(state, &h, false))
+		//		free_and_null_str_array(&h.cmd_args);
 		else
 			handle_fork(state, &h);
 		check_operators(&h, state);

@@ -48,6 +48,7 @@ typedef struct s_shellstate
 {
 	char		input_string[ARG_MAX];
 	char		**parsed_args;
+	t_list		**parsed_cmds;
 	t_operators	*operators;
 	int			cmd_count;
 	int			operator_count;
@@ -68,7 +69,6 @@ void			ft_displayhistory(void);
 int				init_signals(void);
 void			setup_terminal(void);
 void			execute_cmd(char *cmd, char **cmd_argv, char **envp);
-
 char			*ft_getenv(char *name, char **envp);
 
 #endif
