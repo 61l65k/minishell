@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 17:33:20 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/04 17:37:56 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/04 18:37:35 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 /**
  * Waits for any remaining child processes to complete.
- * & Updates last_exit_status.
+ * & Updates state.last_exit_status.
  */
-void	wait_for_child_processes(t_shellstate *state)
+void	wait_remaining_children(t_shellstate *state)
 {
 	pid_t	pid_current;
 	int		status;
@@ -29,4 +29,17 @@ void	wait_for_child_processes(t_shellstate *state)
 		waitpid(pid_current, &status, 0);
 		state->last_exit_status = WEXITSTATUS(status);
 	}
+}
+
+/**
+ * Waits for a single child process to complete.
+ * & Updates state.last_exit_status.
+ */
+void	wait_child(t_shellstate *state, pid_t pid)
+{
+	int		status;
+
+	status = 0;
+	waitpid(pid, &status, 0);
+	state->last_exit_status = WEXITSTATUS(status);
 }

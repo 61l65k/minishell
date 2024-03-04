@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/04 17:35:37 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/04 18:38:46 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,8 @@ void			ft_free_exit(t_shellstate *state, const char *errormsg,
 int				ft_builtin_cmdhandler(t_shellstate *state, t_exechelper *h,
 					bool child_process);
 int				ft_executecmd(t_shellstate *state);
-void			wait_for_child_processes(t_shellstate *state);
+void			wait_remaining_children(t_shellstate *state);
+void			wait_child(t_shellstate *state, pid_t pid);
 void			ft_free_resets(t_shellstate *state);
 void			ft_displayhistory(void);
 int				init_signals(void);

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/04 17:38:19 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/04 18:39:53 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,7 @@ static void	handle_fork(t_shellstate *s, t_exechelper *h)
 	{
 		handle_parent_process(s, h);
 		if (s->operators[h->i] == OP_OR || s->operators[h->i] == OP_AND)
-		{
-			waitpid(h->pid_current, &h->status, 0);
-			s->last_exit_status = WEXITSTATUS(h->status);
-		}
+			wait_child(s, h->pid_current);
 		else
 			vec_insert(&s->pid, &h->pid_current, 0);
 	}
@@ -128,6 +125,6 @@ int	ft_executecmd(t_shellstate *state)
 		check_operators(&h, state);
 		h.i++;
 	}
-	wait_for_child_processes(state);
+	wait_remaining_children(state);
 	return (state->last_exit_status);
 }
