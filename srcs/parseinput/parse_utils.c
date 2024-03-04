@@ -64,3 +64,48 @@ int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 	}
 	return (SUCCESS);
 }
+
+static char	*allocate_trimmed_string(t_trimhelper *t)
+{
+	while (t->i < t->length)
+	{
+		if ((t->start[t->i] == '\'' && !t->in_double_quote)
+			|| (t->start[t->i] == '"' && !t->in_single_quote))
+		{
+			t->in_single_quote ^= (t->start[t->i] == '\'');
+			t->in_double_quote ^= (t->start[t->i] == '"');
+			t->i++;
+			continue ;
+		}
+		if (t->start[t->i] != ' ' || (t->in_single_quote || t->in_double_quote)
+			|| !t->space_found)
+		{
+			t->trimmed[t->j++] = t->start[t->i];
+			t->space_found = (t->start[t->i] == ' ' && !(t->in_single_quote
+						|| t->in_double_quote));
+		}
+		t->i++;
+	}
+	t->trimmed[t->j] = '\0';
+	return (t->trimmed);
+}
+
+char	*trim_command(const char *str)
+{
+	t_trimhelper	t;
+
+	if (str == NULL)
+		return (NULL);
+	ft_memset(&t, 0, sizeof(t_trimhelper));
+	t.start = str;
+	t.end = str + ft_strlen(str) - 1;
+	while (*t.start && (*t.start == ' ' || *t.start == '\t'))
+		t.start++;
+	while (t.end > t.start && (*t.end == ' ' || *t.end == '\t'))
+		t.end--;
+	t.length = t.end - t.start + 1;
+	t.trimmed = malloc(t.length + 1);
+	if (!t.trimmed)
+		return (NULL);
+	return (allocate_trimmed_string(&t));
+}
