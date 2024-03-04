@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minimessages.h"
 #include "minishell.h"
+#include "miniutils.h"
 
 /**
  * @brief Check if the the current character is operator.
@@ -66,7 +68,7 @@ static void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
  * @brief Counts the amount of commands in the input string.
  * & Returns the amount of commands.
  */
-static int	count_op_cmds(t_shellstate *state)
+static int	count_op_cmds(t_shellstate *state, int *cmd_count)
 {
 	t_operatorhelper	op;
 
@@ -90,65 +92,64 @@ static int	count_op_cmds(t_shellstate *state)
 			* sizeof(t_operators), op.cmd_count * sizeof(t_operators));
 	ft_memcpy(state->operators, op.ops, op.cmd_count * sizeof(t_operators));
 	state->operator_count = op.cmd_count - 1;
-	return (free(op.ops), op.cmd_count);
+	*cmd_count = op.cmd_count;
+	return (free(op.ops), op.in_single_quote || op.in_double_quote);
 }
 
 /**
  * @brief Splits the input string into commands delimeted by operators.
  * & Returns a NULL-terminated array of strings.
  */
-static char	**split_cmds(t_shellstate *state)
+static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
 {
-	t_parsehelper	h;
-
-	ft_memset(&h, 0, sizeof(t_parsehelper));
-	h.i = -1;
-	h.alloc_size = ft_strlen(state->input_string) + 1;
-	h.command_count = count_op_cmds(state);
-	h.commands = ft_calloc(h.command_count + 1, sizeof(char *));
-	h.curr_cmd = ft_calloc(h.alloc_size, 1);
-	if (!h.commands || !h.curr_cmd)
+	h->i = -1;
+	h->alloc_size = ft_strlen(state->input_string) + 1;
+	if (count_op_cmds(state, &h->command_count) == QUOTE_ERROR)
+		return (NULL);
+	h->commands = ft_calloc(h->command_count + 1, sizeof(char *));
+	h->curr_cmd = ft_calloc(h->alloc_size, 1);
+	if (!h->commands || !h->curr_cmd)
 		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-	while (state->input_string[++h.i] != '\0')
-		parse_cmd_char(&h, state);
-	if (h.in_double_quote || h.in_single_quote)
-		return (free(h.curr_cmd), free(h.commands), NULL);
-	h.curr_cmd[h.j] = '\0';
-	if (h.j > 0 && h.command_index < h.command_count)
+	while (state->input_string[++h->i] != '\0')
+		parse_cmd_char(h, state);
+	h->curr_cmd[h->j] = '\0';
+	if (h->j > 0 && h->command_index < h->command_count)
 	{
-		h.commands[h.command_index++] = ft_strdup(h.curr_cmd);
-		if (!h.commands[h.command_index - 1])
+		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
+		if (!h->commands[h->command_index - 1])
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	}
-	if (h.command_index < h.command_count)
-		h.commands[h.command_index] = NULL;
-	return (free(h.curr_cmd), h.commands);
+	if (h->command_index < h->command_count)
+		h->commands[h->command_index] = NULL;
+	return (free(h->curr_cmd), h->commands);
 }
 
 /**
  * @brief Top function for starting parsing the input string.
  * & Returns 0 if successful, otherwise 1.
  */
-int	ft_parseinput(t_shellstate *state)
+int	ft_parseinput(t_shellstate *s)
 {
-	int		i;
-	char	*trimmed_command;
+	int				i;
+	char			*trimmed_command;
+	t_parsehelper	h;
 
+	ft_memset(&h, 0, sizeof(t_parsehelper));
 	i = -1;
-	state->parsed_args = split_cmds(state);
-	if (!state->parsed_args)
+	s->parsed_args = split_cmds(s, &h);
+	if (!s->parsed_args)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), EXIT_FAILURE);
-	while (state->parsed_args[state->cmd_count])
-		state->cmd_count++;
-	state->operator_count = state->cmd_count - 1;
-	if (!state->parsed_args)
-		ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
-	while (++i < state->cmd_count)
+	while (s->parsed_args[s->cmd_count])
+		s->cmd_count++;
+	s->operator_count = s->cmd_count - 1;
+	if (!s->parsed_args)
+		ft_free_exit(s, ERR_PROCESTRING, EXIT_FAILURE);
+	while (++i < s->cmd_count)
 	{
-		trimmed_command = trim_spaces(state->parsed_args[i]);
-		if (trimmed_command != state->parsed_args[i])
-			free(state->parsed_args[i]);
-		state->parsed_args[i] = trimmed_command;
+		trimmed_command = trim_command(s->parsed_args[i]);
+		if (trimmed_command != s->parsed_args[i])
+			free(s->parsed_args[i]);
+		s->parsed_args[i] = trimmed_command;
 	}
 	return (EXIT_SUCCESS);
 }

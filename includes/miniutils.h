@@ -83,12 +83,28 @@ typedef struct s_charflags
 	bool					is_heredoc;
 }							t_charflags;
 
+typedef struct s_trimhelper
+{
+	const char				*start;
+	const char				*end;
+	size_t					length;
+	char					*trimmed;
+	size_t					i;
+	size_t					j;
+	bool					in_single_quote;
+	bool					in_double_quote;
+	bool					in_quote;
+	bool					space_found;
+	bool					is_first_quote;
+}							t_trimhelper;
+
 char						**strarrjoin(const char **arr, const char *str);
 char						**ft_strdup_array(const char **arr);
 void						free_str_array(char **str_arr);
 void						free_and_null_str_array(char ***str_arr_ptr);
 int							ft_parseinput(t_shellstate *state);
 char						*trim_spaces(const char *str);
+char						*trim_command(const char *str);
 int							ft_isenv_var(int c);
 void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);

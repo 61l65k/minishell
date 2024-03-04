@@ -112,24 +112,23 @@ void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 	t_envhelper	eh;
 
 	ft_memset(&eh, 0, sizeof(t_envhelper));
-	if (init_char_flags(&flags, &state->input_string[h->i], h) != IS_QUOTE)
+	if (init_char_flags(&flags, &state->input_string[h->i], h) == IS_QUOTE)
+		check_for_new_cmd(h, state, &flags, &eh);
+	else if (h->in_single_quote || h->in_double_quote)
 	{
-		if (h->in_single_quote || h->in_double_quote)
+		if (flags.is_escaped)
+			handle_escape_sequence(h, state->input_string);
+		else if (h->in_double_quote && flags.is_env_var)
 		{
-			if (flags.is_escaped)
-				handle_escape_sequence(h, state->input_string);
-			else if (h->in_double_quote && flags.is_env_var)
-			{
-				handle_env_variable(h, state, &eh);
-				free(eh.var_name);
-				if (eh.free_var_value)
-					free(eh.var_value);
-			}
-			else
-				h->curr_cmd[h->j++] = state->input_string[h->i];
+			handle_env_variable(h, state, &eh);
+			free(eh.var_name);
+			if (eh.free_var_value)
+				free(eh.var_value);
 		}
 		else
-			check_for_new_cmd(h, state, &flags, &eh);
+			h->curr_cmd[h->j++] = state->input_string[h->i];
 	}
+	else
+		check_for_new_cmd(h, state, &flags, &eh);
 	h->curr_cmd[h->j] = '\0';
 }

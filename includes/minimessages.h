@@ -44,6 +44,7 @@ enum	e_errors
 {
 	NO_ERROR,
 	FALSE_INPUT,
+	QUOTE_ERROR = 1,
 };
 
 #endif

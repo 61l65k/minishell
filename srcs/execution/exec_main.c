@@ -95,14 +95,12 @@ static void	check_operators(t_exechelper *h, t_shellstate *s)
 	{
 		if (s->operators[h->i] == OP_AND && s->last_exit_status != 0)
 		{
-			while (h->i < s->operator_count
-				&& s->operators[h->i] != OP_OR)
+			while (h->i < s->operator_count && s->operators[h->i] != OP_OR)
 				h->i++;
 		}
 		else if (s->operators[h->i] == OP_OR && s->last_exit_status == 0)
 		{
-			while (h->i < s->operator_count
-				&& s->operators[h->i] != OP_AND)
+			while (h->i < s->operator_count && s->operators[h->i] != OP_AND)
 				h->i++;
 		}
 	}

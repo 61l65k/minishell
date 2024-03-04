@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
+#include "miniutils.h"
 
 /**
  * @brief Frees all & Exit the shell with an error message or with success.
@@ -40,24 +42,47 @@ void	ft_free_resets(t_shellstate *state)
 	state->operator_count = 0;
 }
 
-/**
- * @brief Trims the leading and trailing spaces from a string.
- * & returns a new string.
- */
-char	*trim_spaces(const char *str)
+static char	*allocate_trimmed_string(t_trimhelper *t)
 {
-	const char	*start = str;
-	const char	*end = str + ft_strlen(str) - 1;
-	size_t		length;
+	while (t->i < t->length)
+	{
+		if ((t->start[t->i] == '\'' && !t->in_double_quote)
+			|| (t->start[t->i] == '"' && !t->in_single_quote))
+		{
+			t->in_single_quote ^= (t->start[t->i] == '\'');
+			t->in_double_quote ^= (t->start[t->i] == '"');
+			t->i++;
+			continue ;
+		}
+		if (t->start[t->i] != ' ' || (t->in_single_quote || t->in_double_quote)
+			|| !t->space_found)
+		{
+			t->trimmed[t->j++] = t->start[t->i];
+			t->space_found = (t->start[t->i] == ' ' && !(t->in_single_quote
+						|| t->in_double_quote));
+		}
+		t->i++;
+	}
+	t->trimmed[t->j] = '\0';
+	return (t->trimmed);
+}
+
+char	*trim_command(const char *str)
+{
+	t_trimhelper	t;
 
 	if (str == NULL)
 		return (NULL);
-	while (*start && *start == ' ')
-		start++;
-	if (*start == '\0')
-		return (ft_strdup(""));
-	while (end > start && *end == ' ')
-		end--;
-	length = end - start + 1;
-	return (ft_strndup(start, length));
+	ft_memset(&t, 0, sizeof(t_trimhelper));
+	t.start = str;
+	t.end = str + ft_strlen(str) - 1;
+	while (*t.start && (*t.start == ' ' || *t.start == '\t'))
+		t.start++;
+	while (t.end > t.start && (*t.end == ' ' || *t.end == '\t'))
+		t.end--;
+	t.length = t.end - t.start + 1;
+	t.trimmed = malloc(t.length + 1);
+	if (!t.trimmed)
+		return (NULL);
+	return (allocate_trimmed_string(&t));
 }
