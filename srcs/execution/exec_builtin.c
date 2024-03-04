@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/03 14:54:58 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/04 16:56:07 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,27 @@
 /**
  * @brief Handles the built-in commands.
  * & Returns 0 if the command was not handled as built-in.
+ * If child_process is true, and the command is a built-in, the function will
+ * exit with the built-in's exit status.
  */
-int	ft_builtin_cmdhandler(t_shellstate *state, char **parsed)
+int	ft_builtin_cmdhandler(
+	t_shellstate *state,
+	t_exechelper *h,
+	bool child_process)
 {
-	const t_builtin_type	is_builtin = get_builtin_type(parsed[0]);
+	const t_builtin_type	is_builtin = get_builtin_type(h->cmd_args[0]);
 	const t_builtin_func	func = get_builtin_func(is_builtin);
+	const bool				should_fork = builtin_should_fork(state, h);
 
 	if (is_builtin == BI_NOT_BUILTIN)
 		return (BI_NOT_BUILTIN);
+	if (should_fork && !child_process)
+		return (BI_NOT_BUILTIN);
 	state->last_exit_status = SUCCESS;
 	if (func)
-		func(parsed, state);
+		func(h->cmd_args, state);
+	if (child_process)
+		exit(state->last_exit_status);
 	return (is_builtin);
 }
 
@@ -74,4 +84,25 @@ t_builtin_func	get_builtin_func(t_builtin_type type)
 	[BI_EXIT] = &builtin_exit};
 
 	return (funcs[type]);
+}
+
+/**
+ * @brief Returns whether built-in should be forked or not.
+ */
+
+bool	builtin_should_fork(t_shellstate *state, t_exechelper *helper)
+{
+	int	i;
+
+	i = 0;
+	if (state->operators)
+	{
+		while (state->operators[i] && i <= helper->i)
+		{
+			if (state->operators[i] == OP_PIPE)
+				return (true);
+			i++;
+		}
+	}
+	return (false);
 }

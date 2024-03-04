@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/03 13:16:27 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/04 16:53:03 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ typedef struct s_shellstate
 
 void			ft_free_exit(t_shellstate *state, const char *errormsg,
 					int exitcode);
-int				ft_builtin_cmdhandler(t_shellstate *state, char **parsed);
+int				ft_builtin_cmdhandler(t_shellstate *state, t_exechelper *h,
+					bool child_process);
 int				ft_executecmd(t_shellstate *state);
 void			ft_free_resets(t_shellstate *state);
 void			ft_displayhistory(void);
