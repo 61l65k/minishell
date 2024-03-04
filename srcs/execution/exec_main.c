@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/04 16:34:26 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/04 17:38:19 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,11 +128,6 @@ int	ft_executecmd(t_shellstate *state)
 		check_operators(&h, state);
 		h.i++;
 	}
-	while (state->pid.len > 0)
-	{
-		vec_pop(&h.pid_current, &state->pid);
-		waitpid(h.pid_current, &h.status, 0);
-		state->last_exit_status = WEXITSTATUS(h.status);
-	}
+	wait_for_child_processes(state);
 	return (state->last_exit_status);
 }
