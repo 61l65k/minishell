@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 16:06:37 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 17:13:45 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,12 @@
  */
 static int	ft_takeinput(t_shellstate *state)
 {
-	char	cwd[PATH_MAX];
-	char	prompt[PATH_MAX + PROMPT_LEN];
-	char	*buf;
+	static char	prompt[PATH_MAX + 4];
+	char		*buf;
 
-	ft_strlcpy(prompt, GREEN "➜ " RESET CYAN, PROMPT_LEN);
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	if (getcwd(prompt, PATH_MAX) == NULL)
 		ft_free_exit(state, ERR_GETCWD, EXIT_FAILURE);
-	ft_strlcat(prompt, cwd, PATH_MAX);
-	ft_strlcat(prompt, " " RESET, PATH_MAX);
+	ft_strlcat(prompt, "\% ", sizeof(prompt));
 	buf = readline(prompt);
 	if (buf == NULL)
 		ft_free_exit(state, NULL, EXIT_FAILURE);
