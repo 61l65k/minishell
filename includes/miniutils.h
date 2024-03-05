@@ -56,6 +56,7 @@ typedef struct s_operatorhelper
 typedef struct s_exechelper
 {
 	t_list					*cmd_args;
+	char					**cmd_arr;
 	int						pipefd[2];
 	int						fd_in;
 	int						i;
@@ -105,7 +106,7 @@ typedef struct s_trimhelper
 }							t_trimhelper;
 
 char						**strarrjoin(const char **arr, const char *str);
-char						**list_to_array(t_list *list);
+char						**lst_to_2darray(t_list *list);
 char						**ft_strdup_array(const char **arr);
 void						free_str_array(char **str_arr);
 void						free_and_null_str_array(char ***str_arr_ptr);

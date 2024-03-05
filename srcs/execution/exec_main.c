@@ -14,41 +14,37 @@
 #include "minimessages.h"
 #include "minishell.h"
 #include <stdlib.h>
+#include "builtin.h"
 
 /**
  * @brief Handles execution for the child process. if pipe is used,
 	it will be used.
  */
-static void	handle_child_process(t_shellstate *state, t_exechelper *helper)
+static void	handle_child_process(t_shellstate *state, t_exechelper *h)
 {
-	char	**cmd_array;
-
-	if (helper->fd_in != 0)
+	if (h->fd_in != 0)
 	{
-		dup2(helper->fd_in, STDIN_FILENO);
-		close(helper->fd_in);
+		dup2(h->fd_in, STDIN_FILENO);
+		close(h->fd_in);
 	}
-	if (helper->i < state->cmd_count - 1
-		&& state->operators[helper->i] == OP_PIPE)
+	if (h->i < state->cmd_count - 1
+		&& state->operators[h->i] == OP_PIPE)
 	{
-		close(helper->pipefd[0]);
-		dup2(helper->pipefd[1], STDOUT_FILENO);
-		close(helper->pipefd[1]);
+		close(h->pipefd[0]);
+		dup2(h->pipefd[1], STDOUT_FILENO);
+		close(h->pipefd[1]);
 	}
-	else
+	else if (h->i < state->cmd_count - 1)
 	{
-		if (helper->i < state->cmd_count - 1)
-		{
-			close(helper->pipefd[0]);
-			close(helper->pipefd[1]);
-		}
+		close(h->pipefd[0]);
+		close(h->pipefd[1]);
 	}
-	cmd_array = list_to_array(helper->cmd_args);
-	if (!cmd_array)
+	h->cmd_arr = lst_to_2darray(h->cmd_args);
+	if (!h->cmd_arr)
 		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-	// ft_builtin_cmdhandler(state, helper, true);
-	execute_cmd(cmd_array[0], cmd_array, state->envp);
-	free_str_array(cmd_array);
+	ft_builtin_cmdhandler(state, h, true);
+	execute_cmd(h->cmd_arr[0], h->cmd_arr, state->envp);
+	free(h->cmd_arr);
 }
 
 /**
@@ -65,7 +61,6 @@ static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 		helper->fd_in = helper->pipefd[0];
 		close(helper->pipefd[1]);
 	}
-	// ft_lstclear(&helper->cmd_args, free);
 }
 
 /**
@@ -127,9 +122,7 @@ int	ft_executecmd(t_shellstate *state)
 		h.cmd_args = state->parsed_cmds[h.i];
 		if (!h.cmd_args)
 			ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
-		// if (ft_builtin_cmdhandler(state, &h, false))
-		//		free_and_null_str_array(&h.cmd_args);
-		else
+		if (ft_builtin_cmdhandler(state, &h, false) == BI_NOT_BUILTIN)
 			handle_fork(state, &h);
 		check_operators(&h, state);
 		h.i++;

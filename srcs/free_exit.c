@@ -52,7 +52,7 @@ void	ft_free_resets(t_shellstate *state)
 	state->operator_count = 0;
 }
 
-char	**list_to_array(t_list *list)
+char	**lst_to_2darray(t_list *list)
 {
 	int		size;
 	char	**array;

@@ -41,7 +41,7 @@ void			builtin_exit(char **args, t_shellstate *state);
 
 typedef void				(*t_builtin_func)(char **args, t_shellstate *state);
 t_builtin_func	get_builtin_func(t_builtin_type type);
-t_builtin_type	get_builtin_type(char *arg);
+t_builtin_type	get_builtin_type(const char *arg);
 bool			builtin_should_fork(t_shellstate *state, t_exechelper *helper);
 
 #endif

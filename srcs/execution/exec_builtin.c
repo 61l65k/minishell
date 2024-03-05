@@ -18,13 +18,14 @@
  * & Returns 0 if the command was not handled as built-in.
  * If child_process is true, and the command is a built-in, the function will
  * exit with the built-in's exit status.
- *
+ */
 int	ft_builtin_cmdhandler(
 	t_shellstate *state,
 	t_exechelper *h,
 	bool child_process)
 {
-	const t_builtin_type	is_builtin = get_builtin_type(h->cmd_args[0]);
+	const char				*cmd = h->cmd_args[0].content;
+	const t_builtin_type	is_builtin = get_builtin_type((char *)cmd);
 	const t_builtin_func	func = get_builtin_func(is_builtin);
 	const bool				should_fork = builtin_should_fork(state, h);
 
@@ -34,18 +35,24 @@ int	ft_builtin_cmdhandler(
 		return (BI_NOT_BUILTIN);
 	state->last_exit_status = SUCCESS;
 	if (func)
-		func(h->cmd_args, state);
+	{
+		h->cmd_arr = lst_to_2darray(h->cmd_args);
+		if (!h->cmd_arr)
+			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+		func(h->cmd_arr, state);
+		free(h->cmd_arr);
+	}
 	if (child_process)
 		exit(state->last_exit_status);
 	return (is_builtin);
 }
-*/
+
 /**
  * @brief Returns the built-in command type.
  * Or 0 if the command is not a built-in.
  */
 /**/
-t_builtin_type	get_builtin_type(char *arg)
+t_builtin_type	get_builtin_type(const char *arg)
 {
 	if (!arg)
 		return (BI_EMPTY);
