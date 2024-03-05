@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 10:27:31 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 16:06:37 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,6 @@ static int	ft_takeinput(t_shellstate *state)
 	return (free(buf), SUCCESS);
 }
 
-void	reset_state(t_shellstate *state)
-{
-	ft_memset(state->input_string, 0, sizeof(state->input_string));
-	state->parsed_args = NULL;
-	state->operators = NULL;
-	state->cmd_count = 0;
-}
-
 int	main(int argc, char **argv, const char **envp)
 {
 	t_shellstate	state;
@@ -61,7 +53,6 @@ int	main(int argc, char **argv, const char **envp)
 	while (1)
 	{
 		ft_free_resets(&state);
-		reset_state(&state);
 		if (ft_takeinput(&state) == SUCCESS)
 		{
 			if (ft_parseinput(&state) != SUCCESS)
