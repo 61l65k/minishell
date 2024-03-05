@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 09:34:40 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 13:25:20 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
-# include <readline/history.h>
-# include <readline/readline.h>
+# include <unistd.h>
 # include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -28,7 +27,8 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <termios.h>
-# include <unistd.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 
 # define PROMPT_LEN 100
 

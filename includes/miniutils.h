@@ -6,14 +6,13 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:52:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 09:45:33 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 13:23:49 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIUTILS_H
 # define MINIUTILS_H
 # include "libft.h"
-# include <linux/limits.h>
 # include <stdbool.h>
 # include <unistd.h>
 
