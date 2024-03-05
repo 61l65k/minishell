@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/04 18:38:46 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 09:34:40 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ typedef enum e_operators
 	OP_PIPE,
 	OP_REDIRECT_OUT,
 	OP_REDIRECT_IN,
+	OP_OPERATOR_COUNT
 }				t_operators;
 
 typedef struct s_shellstate
@@ -57,6 +58,7 @@ typedef struct s_shellstate
 	t_vec		pid;
 }				t_shellstate;
 
+const char		*op_to_str(t_operators op);
 void			ft_free_exit(t_shellstate *state, const char *errormsg,
 					int exitcode);
 int				ft_builtin_cmdhandler(t_shellstate *state, t_exechelper *h,
