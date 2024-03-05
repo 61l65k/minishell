@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 13:25:20 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 20:55:34 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct s_shellstate
 	int			cmd_count;
 	int			operator_count;
 	int			last_exit_status;
+	bool		is_child_process;
 	char		**envp;
 	t_vec		pid;
 }				t_shellstate;

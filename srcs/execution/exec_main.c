@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 11:04:38 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 20:56:40 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
  */
 static void	handle_child_process(t_shellstate *state, t_exechelper *h)
 {
+	state->is_child_process = true;
 	if (h->fd_in != 0)
 	{
 		dup2(h->fd_in, STDIN_FILENO);
