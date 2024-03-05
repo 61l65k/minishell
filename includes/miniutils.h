@@ -13,7 +13,9 @@
 #ifndef MINIUTILS_H
 # define MINIUTILS_H
 # include "libft.h"
+# include <dirent.h>
 # include <stdbool.h>
+# include <sys/dirent.h>
 # include <unistd.h>
 
 typedef struct s_shellstate	t_shellstate;
@@ -84,8 +86,16 @@ typedef struct s_charflags
 	bool					is_heredoc;
 }							t_charflags;
 
+typedef struct s_wildcardhelper
+{
+	DIR						*dir;
+	struct dirent			*entry;
+	char					*matched_arg;
+}							t_wildcardhelper;
+
 typedef struct s_trimhelper
 {
+	t_wildcardhelper		wcard;
 	const char				*start;
 	const char				*end;
 	size_t					length;
@@ -118,5 +128,7 @@ void						ensure_mem_for_cmd(t_parsehelper *h,
 								t_shellstate *state, size_t additional_length);
 int							init_char_flags(t_charflags *flags, char *c,
 								t_parsehelper *h);
+bool						wildcard_match(const char *pattern,
+								const char *str);
 
 #endif

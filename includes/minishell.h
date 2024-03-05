@@ -29,6 +29,7 @@
 # include <termios.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <sys/ioctl.h>
 
 # define PROMPT_LEN 100
 
@@ -72,5 +73,6 @@ int				init_signals(void);
 void			setup_terminal(void);
 void			execute_cmd(char *cmd, char **cmd_argv, char **envp);
 char			*ft_getenv(char *name, char **envp);
+int				get_terminal_dimension(bool get_width);
 
 #endif

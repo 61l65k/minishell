@@ -13,6 +13,17 @@
 #include "minishell.h"
 #include <signal.h>
 
+int	get_terminal_dimension(bool get_width)
+{
+	struct winsize	w;
+
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+	if (get_width)
+		return (w.ws_col);
+	else
+		return (w.ws_row);
+}
+
 /**
  * @brief Sets the terminal to no echo mode.
  * & Executes the .minishellrc file.

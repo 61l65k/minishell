@@ -42,25 +42,65 @@ static int	handle_quoted(t_trimhelper *t)
 	return (SUCCESS);
 }
 
+static int	handle_wildcard(t_trimhelper *t)
+{
+	char	*matched_arg;
+	t_list	*new_node;
+
+	t->wcard.dir = opendir(".");
+	if (!t->wcard.dir)
+		return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
+	while ((t->wcard.entry = readdir(t->wcard.dir)))
+	{
+		if (!wildcard_match(t->arg, t->wcard.entry->d_name))
+			continue ;
+		matched_arg = ft_strdup(t->wcard.entry->d_name);
+		if (!matched_arg)
+			break ;
+		new_node = ft_lstnew(matched_arg);
+		if (!new_node)
+		{
+			free(matched_arg);
+			continue ;
+		}
+		if (!t->head)
+			t->head = new_node;
+		else
+			t->current->next = new_node;
+		t->current = new_node;
+	}
+	closedir(t->wcard.dir);
+	free(t->arg);
+	return (SUCCESS);
+}
+
 static int	handle_non_quoted(t_trimhelper *t)
 {
 	if (!t->in_quote)
 		t->arg_len = t->i - t->arg_start;
 	else
 		t->arg_len = t->i - t->arg_start + 1;
-	if (t->arg_len > 0)
+	if (!t->in_quote && t->arg_len > 0)
 	{
 		t->arg = ft_strndup(t->start + t->arg_start, t->arg_len);
 		if (!t->arg)
 			return (ft_lstclear(&t->head, free), FAILURE);
-		t->new_node = ft_lstnew(t->arg);
-		if (!t->new_node)
-			return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
-		if (!t->head)
-			t->head = t->new_node;
+		if (ft_strchr(t->arg, '*'))
+		{
+			if (handle_wildcard(t) == FAILURE)
+				return (FAILURE);
+		}
 		else
-			t->current->next = t->new_node;
-		t->current = t->new_node;
+		{
+			t->new_node = ft_lstnew(t->arg);
+			if (!t->new_node)
+				return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
+			if (!t->head)
+				t->head = t->new_node;
+			else
+				t->current->next = t->new_node;
+			t->current = t->new_node;
+		}
 	}
 	t->arg_start = t->i + 1;
 	return (SUCCESS);

@@ -64,3 +64,27 @@ int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 	}
 	return (SUCCESS);
 }
+
+bool	wildcard_match(const char *pattern, const char *str)
+{
+	while (*str)
+	{
+		if (*pattern == '*')
+		{
+			if (!*++pattern)
+				return (true);
+			while (*str && *pattern != *str)
+				str++;
+		}
+		else
+		{
+			if (*pattern != *str)
+				return (false);
+			str++;
+			pattern++;
+		}
+	}
+	while (*pattern == '*')
+		pattern++;
+	return (!*pattern && !*str);
+}

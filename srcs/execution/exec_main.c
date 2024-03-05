@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin.h"
 #include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
 #include <stdlib.h>
-#include "builtin.h"
 
 /**
  * @brief Handles execution for the child process. if pipe is used,
@@ -27,8 +27,7 @@ static void	handle_child_process(t_shellstate *state, t_exechelper *h)
 		dup2(h->fd_in, STDIN_FILENO);
 		close(h->fd_in);
 	}
-	if (h->i < state->cmd_count - 1
-		&& state->operators[h->i] == OP_PIPE)
+	if (h->i < state->cmd_count - 1 && state->operators[h->i] == OP_PIPE)
 	{
 		close(h->pipefd[0]);
 		dup2(h->pipefd[1], STDOUT_FILENO);
