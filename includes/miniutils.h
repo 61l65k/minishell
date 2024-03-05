@@ -16,12 +16,14 @@
 # include <linux/limits.h>
 # include <stdbool.h>
 # include <unistd.h>
+
 typedef struct s_shellstate	t_shellstate;
 typedef enum e_operators	t_operators;
 
 enum						e_returnvalues
 {
 	SUCCESS = 0,
+	FAILURE = 1,
 	IS_QUOTE = 1,
 	FOUNDCMD = 2,
 	FOUNDOP = 3,
@@ -98,6 +100,8 @@ typedef struct s_trimhelper
 	size_t					arg_start;
 	char					*arg;
 	t_list					*new_node;
+	size_t					arg_len;
+	char					current_quote;
 }							t_trimhelper;
 
 char						**strarrjoin(const char **arr, const char *str);
@@ -107,7 +111,7 @@ void						free_str_array(char **str_arr);
 void						free_and_null_str_array(char ***str_arr_ptr);
 int							ft_parseinput(t_shellstate *state);
 char						*trim_spaces(const char *str);
-t_list						*trim_command(const char *str);
+t_list						*str_to_lst(const char *str);
 int							ft_isenv_var(int c);
 void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);

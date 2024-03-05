@@ -147,7 +147,7 @@ int	ft_parseinput(t_shellstate *s)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	while (i < s->cmd_count)
 	{
-		s->parsed_cmds[i] = trim_command(s->parsed_args[i]);
+		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i]);
 		free(s->parsed_args[i++]);
 	}
 	free(s->parsed_args);
