@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:52:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 13:23:49 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 19:51:02 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 # include "libft.h"
 # include <dirent.h>
 # include <stdbool.h>
-# include <sys/dirent.h>
+# ifdef __darwin__
+#  include <sys/dirent.h>
+# endif
 # include <unistd.h>
 
 typedef struct s_shellstate	t_shellstate;
