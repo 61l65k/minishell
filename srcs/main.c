@@ -6,17 +6,17 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 17:13:45 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 17:37:15 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /**
- * @brief Takes the input from the user.
- * & Returns 1 if the input is empty, otherwise 0.
+ * @brief Takes input from the user and stores it in state->input_string.
+ * & Exits if calls to getcwd or readline fail.
  */
-static int	ft_takeinput(t_shellstate *state)
+static void	ft_takeinput(t_shellstate *state)
 {
 	static char	prompt[PATH_MAX + 4];
 	char		*buf;
@@ -30,7 +30,7 @@ static int	ft_takeinput(t_shellstate *state)
 	if (ft_strlen(buf))
 		add_history(buf);
 	ft_strlcpy(state->input_string, buf, sizeof(state->input_string));
-	return (free(buf), SUCCESS);
+	free(buf);
 }
 
 int	main(int argc, char **argv, const char **envp)
@@ -50,12 +50,9 @@ int	main(int argc, char **argv, const char **envp)
 	while (1)
 	{
 		ft_free_resets(&state);
-		if (ft_takeinput(&state) == SUCCESS)
-		{
-			if (ft_parseinput(&state) != SUCCESS)
-				continue ;
+		ft_takeinput(&state);
+		if (ft_parseinput(&state) == SUCCESS)
 			state.last_exit_status = ft_executecmd(&state);
-		}
 	}
 	ft_free_exit(&state, NULL, EXIT_SUCCESS);
 	return (0);
