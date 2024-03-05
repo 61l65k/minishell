@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   free_exit.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 23:48:56 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/01 13:56:43 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 08:38:50 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,28 @@ void	ft_free_exit(t_shellstate *state, const char *errorMsg, int exitCode)
 	exit(exitCode);
 }
 
+void	free_parsed_cmds_list(t_list **array_of_lists)
+{
+	int	i;
+
+	i = 0;
+	while (array_of_lists[i])
+	{
+		ft_lstclear(&array_of_lists[i], free);
+		i++;
+	}
+	free(array_of_lists);
+	array_of_lists = NULL;
+}
+
 /**
  * @brief Frees the shellState and resets the terminal.
  */
 void	ft_free_resets(t_shellstate *state)
 {
-	int	i;
-
-	i = -1;
 	if (state->parsed_cmds)
 	{
-		while (state->parsed_cmds[++i])
-			ft_lstclear(state->parsed_cmds, free);
-		free(state->parsed_cmds);
+		free_parsed_cmds_list(state->parsed_cmds);
 	}
 	state->parsed_cmds = NULL;
 	free_str_array(state->parsed_args);

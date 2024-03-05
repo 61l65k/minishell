@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/03 14:00:27 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/03 14:37:45 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 08:48:30 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	builtin_pwd(char **args, t_shellstate *state)
 
 void	builtin_exit(char **args, t_shellstate *state)
 {
-	(void)args;
+	free(args);
 	ft_free_exit(state, NULL, EXIT_SUCCESS);
 }
 

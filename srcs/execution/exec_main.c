@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/04 18:39:53 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 08:43:30 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,8 @@ static void	handle_child_process(t_shellstate *state, t_exechelper *h)
 		close(h->pipefd[0]);
 		close(h->pipefd[1]);
 	}
-	h->cmd_arr = lst_to_2darray(h->cmd_args);
-	if (!h->cmd_arr)
-		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	ft_builtin_cmdhandler(state, h, true);
 	execute_cmd(h->cmd_arr[0], h->cmd_arr, state->envp);
-	free(h->cmd_arr);
 }
 
 /**
@@ -120,10 +116,19 @@ int	ft_executecmd(t_shellstate *state)
 	while (h.i < state->cmd_count)
 	{
 		h.cmd_args = state->parsed_cmds[h.i];
+		h.cmd_arr = lst_to_2darray(h.cmd_args);
+		if (!h.cmd_arr)
+			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 		if (!h.cmd_args)
-			ft_free_exit(state, ERR_PROCESTRING, EXIT_FAILURE);
+		{
+			ft_fprintf(2, "Unexpected syntax error\n");
+			ft_free_resets(state);
+			return (EXIT_FAILURE);
+		}
 		if (ft_builtin_cmdhandler(state, &h, false) == BI_NOT_BUILTIN)
 			handle_fork(state, &h);
+		free(h.cmd_arr);
+		h.cmd_arr = NULL;
 		check_operators(&h, state);
 		h.i++;
 	}

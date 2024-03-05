@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/04 16:56:07 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 08:19:21 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,26 +25,22 @@ int	ft_builtin_cmdhandler(
 	bool child_process)
 {
 	const char				*cmd = h->cmd_args[0].content;
-	const t_builtin_type	is_builtin = get_builtin_type((char *)cmd);
-	const t_builtin_func	func = get_builtin_func(is_builtin);
+	const t_builtin_type	builtin_type = get_builtin_type(cmd);
+	const t_builtin_func	func = get_builtin_func(builtin_type);
 	const bool				should_fork = builtin_should_fork(state, h);
 
-	if (is_builtin == BI_NOT_BUILTIN)
+	if (builtin_type == BI_NOT_BUILTIN)
 		return (BI_NOT_BUILTIN);
 	if (should_fork && !child_process)
 		return (BI_NOT_BUILTIN);
 	state->last_exit_status = SUCCESS;
 	if (func)
 	{
-		h->cmd_arr = lst_to_2darray(h->cmd_args);
-		if (!h->cmd_arr)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 		func(h->cmd_arr, state);
-		free(h->cmd_arr);
 	}
 	if (child_process)
 		exit(state->last_exit_status);
-	return (is_builtin);
+	return (builtin_type);
 }
 
 /**
