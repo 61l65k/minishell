@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/05 08:19:21 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 09:39:03 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ft_builtin_cmdhandler(
 	t_exechelper *h,
 	bool child_process)
 {
-	const char				*cmd = h->cmd_args[0].content;
+	const char				*cmd = h->cmd_arr[0];
 	const t_builtin_type	builtin_type = get_builtin_type(cmd);
 	const t_builtin_func	func = get_builtin_func(builtin_type);
 	const bool				should_fork = builtin_should_fork(state, h);

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 08:43:30 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 10:30:44 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,16 +115,15 @@ int	ft_executecmd(t_shellstate *state)
 	ft_memset(&h, 0, sizeof(t_exechelper));
 	while (h.i < state->cmd_count)
 	{
-		h.cmd_args = state->parsed_cmds[h.i];
-		h.cmd_arr = lst_to_2darray(h.cmd_args);
-		if (!h.cmd_arr)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		if (!h.cmd_args)
+		if (!state->parsed_cmds[h.i] && state->operators[h.i] != OP_NONE)
 		{
-			ft_fprintf(2, "Unexpected syntax error\n");
-			ft_free_resets(state);
+			ft_fprintf(2, "syntax error near unexpected token '%s'\n",
+				op_to_str(state->operators[h.i]));
 			return (EXIT_FAILURE);
 		}
+		h.cmd_arr = lst_to_2darray(state->parsed_cmds[h.i]);
+		if (!h.cmd_arr)
+			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 		if (ft_builtin_cmdhandler(state, &h, false) == BI_NOT_BUILTIN)
 			handle_fork(state, &h);
 		free(h.cmd_arr);

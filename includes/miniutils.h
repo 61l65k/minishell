@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:52:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/04 17:35:16 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 09:45:33 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ typedef struct s_operatorhelper
 
 typedef struct s_exechelper
 {
-	t_list					*cmd_args;
 	char					**cmd_arr;
 	int						pipefd[2];
 	int						fd_in;
