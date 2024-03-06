@@ -44,9 +44,6 @@ static int	handle_quoted(t_trimhelper *t)
 
 static int	handle_wildcard(t_trimhelper *t)
 {
-	t->wcard.dir = opendir(".");
-	if (!t->wcard.dir)
-		return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
 	while (true)
 	{
 		t->wcard.entry = readdir(t->wcard.dir);
@@ -82,8 +79,9 @@ static int	handle_non_quoted(t_trimhelper *t)
 			return (ft_lstclear(&t->head, free), FAILURE);
 		if (ft_strchr(t->arg, '*'))
 		{
-			if (handle_wildcard(t) == FAILURE)
-				return (FAILURE);
+			t->wcard.dir = opendir(".");
+			if (!t->wcard.dir || handle_wildcard(t) == FAILURE)
+				return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
 		}
 		else
 		{
