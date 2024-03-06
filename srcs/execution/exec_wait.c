@@ -6,14 +6,14 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 17:33:20 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/04 18:37:35 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/05 21:16:48 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /**
- * Waits for any remaining child processes to complete.
+ * @brief Waits for any remaining child processes to complete.
  * & Updates state.last_exit_status.
  */
 void	wait_remaining_children(t_shellstate *state)
@@ -32,7 +32,7 @@ void	wait_remaining_children(t_shellstate *state)
 }
 
 /**
- * Waits for a single child process to complete.
+ * @brief Waits for a single child process to complete.
  * & Updates state.last_exit_status.
  */
 void	wait_child(t_shellstate *state, pid_t pid)

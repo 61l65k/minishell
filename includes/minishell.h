@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 20:55:34 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/06 11:11:50 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,9 @@ void			ft_free_resets(t_shellstate *state);
 void			ft_displayhistory(void);
 int				init_signals(void);
 void			setup_terminal(void);
-void			execute_cmd(char *cmd, char **cmd_argv, char **envp);
-char			*ft_getenv(char *name, char **envp);
+void			ft_execvp(const char *file, char *const argv[],
+					char *const envp[]);
+char			*ft_getenv(const char *name, char *const envp[]);
 int				get_terminal_dimension(bool get_width);
 
 #endif

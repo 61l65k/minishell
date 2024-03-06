@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 20:56:40 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/06 11:38:51 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@
 #include <stdlib.h>
 
 /**
- * @brief Handles execution for the child process. if pipe is used,
-	it will be used.
+ * @brief Sets up fd's for the child before executing the command.
  */
 static void	handle_child_process(t_shellstate *state, t_exechelper *h)
 {
@@ -40,13 +39,11 @@ static void	handle_child_process(t_shellstate *state, t_exechelper *h)
 		close(h->pipefd[1]);
 	}
 	ft_builtin_cmdhandler(state, h, true);
-	execute_cmd(h->cmd_arr[0], h->cmd_arr, state->envp);
+	ft_execvp(h->cmd_arr[0], h->cmd_arr, state->envp);
 }
 
 /**
-
-	* @brief Handles execution for the parent process,
-	if piped, closes the pipe and frees the memory.
+ * @brief Handles fd's for the parent process after a fork.
  */
 static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 {
@@ -60,7 +57,9 @@ static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 }
 
 /**
- * @brief Handles forking & executing the child & parent processes.
+ * @brief Forks and waits for child, if appropriate.
+ * Waits for the child if we need to know its exit status before continuing.
+ * Otherwise saves the pid to pid vector.
  */
 static void	handle_fork(t_shellstate *s, t_exechelper *h)
 {
