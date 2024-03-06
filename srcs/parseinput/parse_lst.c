@@ -13,7 +13,7 @@
 #include "minishell.h"
 #include "miniutils.h"
 
-static int	handle_quoted(t_trimhelper *t)
+static int	handle_quoted(t_lsthelper *t)
 {
 	if (!t->in_quote)
 	{
@@ -42,7 +42,7 @@ static int	handle_quoted(t_trimhelper *t)
 	return (SUCCESS);
 }
 
-static int	handle_wildcard(t_trimhelper *t)
+static int	handle_wildcard(t_lsthelper *t)
 {
 	while (true)
 	{
@@ -70,7 +70,7 @@ static int	handle_wildcard(t_trimhelper *t)
 	return (closedir(t->wcard.dir), free(t->arg), SUCCESS);
 }
 
-static int	handle_non_quoted(t_trimhelper *t)
+static int	handle_non_quoted(t_lsthelper *t)
 {
 	if (!t->in_quote && t->arg_len > 0)
 	{
@@ -99,7 +99,7 @@ static int	handle_non_quoted(t_trimhelper *t)
 	return (SUCCESS);
 }
 
-static t_list	*allocate_lst(t_trimhelper *t)
+static t_list	*allocate_lst(t_lsthelper *t)
 {
 	while (t->i <= t->length)
 	{
@@ -126,11 +126,11 @@ static t_list	*allocate_lst(t_trimhelper *t)
 
 t_list	*str_to_lst(const char *str)
 {
-	t_trimhelper	t;
+	t_lsthelper	t;
 
 	if (str == NULL)
 		return (NULL);
-	ft_memset(&t, 0, sizeof(t_trimhelper));
+	ft_memset(&t, 0, sizeof(t_lsthelper));
 	t.start = str;
 	t.end = str + ft_strlen(str) - 1;
 	while (*t.start && (*t.start == ' ' || *t.start == '\t'))

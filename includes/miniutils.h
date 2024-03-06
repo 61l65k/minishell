@@ -113,7 +113,7 @@ typedef struct s_trimhelper
 	t_list					*new_node;
 	size_t					arg_len;
 	char					current_quote;
-}							t_trimhelper;
+}							t_lsthelper;
 
 char						**strarrjoin(const char **arr, const char *str);
 char						**lst_to_2darray(t_list *list);
