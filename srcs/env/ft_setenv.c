@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/02 18:55:46 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/02 21:58:42 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/06 17:57:10 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,15 @@ static bool	existing_entry_handled(const char *entry, t_shellstate *s)
 
 int	ft_setenv_entry(const char *entry, t_shellstate *state)
 {
-	char	**new_envp;
+	const size_t	key_len = env_key_len(entry);
+	char			**new_envp;
 
 	if (!entry || !state)
 		return (0);
-	if (!env_entry_is_valid(entry))
+	if (key_len == 0 || (entry[key_len] != '=' && entry[key_len] != '\0'))
 		return (-1);
+	if (!env_entry_is_valid(entry))
+		return (0);
 	if (existing_entry_handled(entry, state))
 		return (0);
 	new_envp = strarrjoin((const char **)state->envp, entry);

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/06 11:19:13 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/06 20:15:54 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ static char	*get_path_to_file(const char *file, const char *env_path)
 	char	**str_arr_paths;
 	char	*full_path;
 
-	if (!file || !*file)
-		return (NULL);
+	if (!file || !file[0])
+		return (ft_strdup(""));
 	if (!env_path || file[0] == '/' || file[0] == '.')
 		return (ft_strdup(file));
 	str_arr_paths = ft_split(env_path, ':');
