@@ -19,17 +19,17 @@
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
-# include <unistd.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/ioctl.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <termios.h>
-# include <readline/history.h>
-# include <readline/readline.h>
-# include <sys/ioctl.h>
+# include <unistd.h>
 
 # define PROMPT_LEN 100
 
