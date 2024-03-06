@@ -27,7 +27,6 @@ enum						e_returnvalues
 {
 	SUCCESS = 0,
 	FAILURE = 1,
-	IS_QUOTE = 1,
 	FOUNDCMD = 2,
 	FOUNDOP = 3,
 };
@@ -82,10 +81,7 @@ typedef struct s_charflags
 	bool					is_pipe;
 	bool					is_and;
 	bool					is_or;
-	bool					is_redirect;
-	bool					is_input;
-	bool					is_append;
-	bool					is_heredoc;
+	bool					is_quote;
 }							t_charflags;
 
 typedef struct s_redirecthelper
@@ -138,9 +134,10 @@ void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);
 void						ensure_mem_for_cmd(t_parsehelper *h,
 								t_shellstate *state, size_t additional_length);
-int							init_char_flags(t_charflags *flags, char *c,
+void						init_char_flags(t_charflags *flags, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);
 int							apply_command_redirections(char **cmd_arr);
+int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 #endif

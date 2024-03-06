@@ -12,6 +12,7 @@
 
 #include "libft.h"
 #include "minishell.h"
+#include "miniutils.h"
 
 /**
  * @brief Handles the escape sequence in quoted strings.
@@ -110,9 +111,10 @@ void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 	t_envhelper	eh;
 
 	ft_memset(&eh, 0, sizeof(t_envhelper));
-	if (init_char_flags(&flags, &state->input_string[h->i], h) == IS_QUOTE)
-		check_for_new_cmd(h, state, &flags, &eh);
-	else if (h->in_single_quote || h->in_double_quote)
+	init_char_flags(&flags, &state->input_string[h->i], h);
+	if (flags.is_env_var && ft_checkdollar(state, h))
+		flags.is_env_var = false;
+	else if (!flags.is_quote && (h->in_single_quote || h->in_double_quote))
 	{
 		if (flags.is_escaped)
 			handle_escape_sequence(h, state->input_string);

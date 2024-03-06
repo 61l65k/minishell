@@ -12,6 +12,7 @@
 
 #include "libft.h"
 #include "minishell.h"
+#include "miniutils.h"
 
 /**
  * @brief Ensures that there is enough memory for the command.
@@ -40,7 +41,7 @@ void	ensure_mem_for_cmd(t_parsehelper *h, t_shellstate *state,
  * @brief Initializes the flags for the current character.
  * The flags are used to determine the state of the current character.
  */
-int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
+void	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 {
 	ft_memset(flags, 0, sizeof(t_charflags));
 	if ((*c == '\'' && !h->in_double_quote) || (*c == '"'
@@ -48,21 +49,16 @@ int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 	{
 		h->in_single_quote ^= (*c == '\'');
 		h->in_double_quote ^= (*c == '"');
-		return (IS_QUOTE);
+		flags->is_quote = true;
 	}
 	flags->is_escaped = (*c == '\\');
 	flags->is_env_var = (*c == '$');
 	if (!h->in_single_quote && !h->in_double_quote)
 	{
 		flags->is_pipe = (*c == '|' && *(c + 1) != '|');
-		flags->is_input = (*c == '<' && *(c + 1) != '<');
-		flags->is_redirect = (*c == '>' && *(c + 1) != '>');
 		flags->is_and = (*c == '&' && *(c + 1) == '&');
 		flags->is_or = (*c == '|' && *(c + 1) == '|');
-		flags->is_append = (*c == '>' && *(c + 1) == '>');
-		flags->is_heredoc = (*c == '<' && *(c + 1) == '<');
 	}
-	return (SUCCESS);
 }
 
 /**
@@ -92,4 +88,25 @@ bool	wildcard_match(const char *pattern, const char *str)
 	while (*pattern == '*')
 		pattern++;
 	return (!*pattern && !*str);
+}
+
+int	ft_checkdollar(t_shellstate *s, t_parsehelper *h)
+{
+	if (!h->in_single_quote && !h->in_double_quote && (s->input_string[h->i
+			+ 1] == ' ' || s->input_string[h->i + 1] == '\0'))
+	{
+		ensure_mem_for_cmd(h, s, 1);
+		h->curr_cmd[h->j++] = s->input_string[h->i];
+		return (1);
+	}
+	else if ((h->in_single_quote || h->in_double_quote) && (s->input_string[h->i
+			+ 1] == '\'' || s->input_string[h->i + 1] == '"'
+			|| s->input_string[h->i + 1] == ' ' || s->input_string[h->i
+			+ 1] == '$'))
+	{
+		ensure_mem_for_cmd(h, s, 1);
+		h->curr_cmd[h->j++] = s->input_string[h->i];
+		return (1);
+	}
+	return (0);
 }
