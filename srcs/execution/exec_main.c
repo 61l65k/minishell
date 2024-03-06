@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/06 11:38:51 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/06 21:29:03 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	handle_child_process(t_shellstate *state, t_exechelper *h)
 		close(h->pipefd[1]);
 	}
 	if (apply_command_redirections(h->cmd_arr) == FAILURE)
-		return ;
+		exit(EXIT_FAILURE);
 	ft_builtin_cmdhandler(state, h, true);
 	ft_execvp(h->cmd_arr[0], h->cmd_arr, state->envp);
 }

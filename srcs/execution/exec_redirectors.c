@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_redirectors.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 18:27:40 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/06 18:27:42 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/03/06 21:27:45 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,21 @@ static int	redirect_fd(char *filename, t_redirecthelper *rh)
 	if (rh->last_out_fd != -1)
 		close(rh->last_out_fd);
 	rh->last_out_fd = rh->fd;
+	return (SUCCESS);
+}
+
+static int	redirect_fd_in(char *filename, t_redirecthelper *rh)
+{
+	if (rh->fd == -1)
+	{
+		perror(filename);
+		if (rh->last_in_fd != -1)
+			close(rh->last_in_fd);
+		return (FAILURE);
+	}
+	if (rh->last_in_fd != -1)
+		close(rh->last_in_fd);
+	rh->last_in_fd = rh->fd;
 	return (SUCCESS);
 }
 
@@ -49,7 +64,7 @@ static int	check_operator(t_redirecthelper *rh, char **c_arr)
 	else if (ft_strcmp(c_arr[rh->i], "<") == 0)
 	{
 		rh->fd = open(c_arr[rh->i + 1], O_RDONLY);
-		if (redirect_fd(c_arr[rh->i++ + 1], rh) == FAILURE)
+		if (redirect_fd_in(c_arr[rh->i++ + 1], rh) == FAILURE)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<<") == 0)
