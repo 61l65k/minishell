@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 23:48:56 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 08:38:50 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/06 11:54:02 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ void	ft_free_resets(t_shellstate *state)
 	state->operator_count = 0;
 }
 
+/**
+ * @brief Returns NULL-terminated array of pointers to the strings in list.
+ * NOTE: Caller should only free the array, not the strings, as they are
+ * not copied but point to the same memory as the list.
+ */
 char	**lst_to_2darray(t_list *list)
 {
 	int		size;

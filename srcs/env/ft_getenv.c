@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/29 10:16:57 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/29 12:06:29 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/06 11:06:49 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * Returns a pointer to the value of an environment variable
  * in envp, or NULL if the variable is not found.
  */
-char	*ft_getenv(char *name, char **envp)
+char	*ft_getenv(const char *name, char *const envp[])
 {
 	int	i;
 	int	len;
