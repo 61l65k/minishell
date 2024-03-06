@@ -14,6 +14,7 @@
 #include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
+#include <stdlib.h>
 
 /**
  * @brief Check if the the current character is operator.

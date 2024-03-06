@@ -65,8 +65,13 @@ int	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 	return (SUCCESS);
 }
 
+/**
+ * @brief Matches the pattern with the string.
+ */
 bool	wildcard_match(const char *pattern, const char *str)
 {
+	if (ft_strcmp(pattern, "*") == 0 && *str == '.')
+		return (false);
 	while (*str)
 	{
 		if (*pattern == '*')
