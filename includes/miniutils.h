@@ -88,6 +88,16 @@ typedef struct s_charflags
 	bool					is_heredoc;
 }							t_charflags;
 
+typedef struct s_redirecthelper
+{
+	int						fd;
+	int						last_out_fd;
+	int						last_in_fd;
+	int						i;
+	int						j;
+	int						flags;
+}							t_redirecthelper;
+
 typedef struct s_wildcardhelper
 {
 	DIR						*dir;
@@ -132,5 +142,5 @@ int							init_char_flags(t_charflags *flags, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);
-
+int							apply_command_redirections(char **cmd_arr);
 #endif

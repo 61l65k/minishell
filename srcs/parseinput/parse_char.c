@@ -76,14 +76,12 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state,
 static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
 		t_charflags *flags, t_envhelper *eh)
 {
-	if (flags->is_pipe || flags->is_and || flags->is_or || flags->is_redirect
-		|| flags->is_append || flags->is_heredoc || flags->is_input)
+	if (flags->is_pipe || flags->is_and || flags->is_or)
 	{
 		h->curr_cmd[h->j] = '\0';
 		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
 		h->j = 0;
-		if (flags->is_and || flags->is_or || flags->is_append
-			|| flags->is_heredoc)
+		if (flags->is_and || flags->is_or)
 			h->i++;
 	}
 	else if (flags->is_env_var)

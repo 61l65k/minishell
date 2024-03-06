@@ -14,6 +14,7 @@
 #include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 /**
@@ -38,6 +39,8 @@ static void	handle_child_process(t_shellstate *state, t_exechelper *h)
 		close(h->pipefd[0]);
 		close(h->pipefd[1]);
 	}
+	if (apply_command_redirections(h->cmd_arr) == FAILURE)
+		return ;
 	ft_builtin_cmdhandler(state, h, true);
 	ft_execvp(h->cmd_arr[0], h->cmd_arr, state->envp);
 }

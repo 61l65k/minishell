@@ -25,16 +25,8 @@ static t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state)
 		return (OP_AND);
 	if (ft_strncmp(state->input_string + op->i, "||", 2) == 0)
 		return (OP_OR);
-	if (ft_strncmp(state->input_string + op->i, "<<", 2) == 0)
-		return (OP_HEREDOC);
-	if (ft_strncmp(state->input_string + op->i, ">>", 2) == 0)
-		return (OP_APPEND);
 	if (state->input_string[op->i] == '|')
 		return (OP_PIPE);
-	if (state->input_string[op->i] == '>')
-		return (OP_REDIRECT_OUT);
-	if (state->input_string[op->i] == '<')
-		return (OP_REDIRECT_IN);
 	return (OP_NONE);
 }
 
