@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:03:52 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/29 10:54:13 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/06 13:12:22 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
 		t_charflags *flags, t_envhelper *eh)
 {
 	if (flags->is_pipe || flags->is_and || flags->is_or || flags->is_redirect
-		|| flags->is_append || flags->is_heredoc)
+		|| flags->is_append || flags->is_heredoc || flags->is_input)
 	{
 		h->curr_cmd[h->j] = '\0';
 		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
