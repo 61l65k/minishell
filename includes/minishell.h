@@ -78,6 +78,8 @@ void					setup_terminal(void);
 void					ft_execvp(const char *file, char *const argv[],
 							char *const envp[]);
 char					*ft_getenv(const char *name, char *const envp[]);
-void					heredoc_signal_handler(int signo);
-
+int						handle_heredoc(t_redirecthelper *rh, char *delimiter,
+							t_shellstate *s);
+int						redirect_fd(char *filename, t_redirecthelper *rh,
+							bool fd_out);
 #endif

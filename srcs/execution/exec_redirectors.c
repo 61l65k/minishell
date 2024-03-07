@@ -16,7 +16,7 @@
 #include <signal.h>
 #include <stdlib.h>
 
-static int	redirect_fd(char *filename, t_redirecthelper *rh, bool fd_out)
+int	redirect_fd(char *filename, t_redirecthelper *rh, bool fd_out)
 {
 	if (rh->fd == -1 && filename)
 	{
@@ -36,49 +36,6 @@ static int	redirect_fd(char *filename, t_redirecthelper *rh, bool fd_out)
 		if (rh->last_in_fd != -1)
 			close(rh->last_in_fd);
 		rh->last_in_fd = rh->fd;
-	}
-	return (SUCCESS);
-}
-
-static int	handle_heredoc(t_redirecthelper *rh, char *delimiter,
-		t_shellstate *s)
-{
-	int		pipe_fds[2];
-	char	*line;
-	pid_t	pid;
-
-	if (pipe(pipe_fds) == -1)
-		return (perror("pipe"), FAILURE);
-	pid = fork();
-	if (pid == -1)
-		return (perror("fork() heredoc"), close(pipe_fds[0]),
-			close(pipe_fds[1]), FAILURE);
-	if (pid == 0)
-	{
-		signal(SIGINT, heredoc_signal_handler);
-		close(pipe_fds[0]);
-		while (true)
-		{
-			line = readline("heredoc> ");
-			if (line == NULL || ft_strcmp(line, delimiter) == 0)
-				break ;
-			write(pipe_fds[1], line, ft_strlen(line));
-			write(pipe_fds[1], "\n", 1);
-			free(line);
-		}
-		close(pipe_fds[1]);
-		exit(EXIT_SUCCESS);
-	}
-	else
-	{
-		sigaction(SIGINT, &s->ignoreaction, &s->sigaction);
-		s->in_heredoc = true;
-		close(pipe_fds[1]);
-		waitpid(pid, NULL, 0);
-		sigaction(SIGINT, &s->sigaction, NULL);
-		s->in_heredoc = false;
-		rh->fd = pipe_fds[0];
-		redirect_fd(NULL, rh, false);
 	}
 	return (SUCCESS);
 }

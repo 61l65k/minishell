@@ -14,15 +14,6 @@
 #include "miniutils.h"
 #include <signal.h>
 
-void	heredoc_signal_handler(int signo)
-{
-	if (signo == SIGINT)
-	{
-		write(1, "\n", 1);
-		_exit(EXIT_SUCCESS);
-	}
-}
-
 /**
  * @brief Sets the terminal to no echo mode.
  * & Executes the .minishellrc file.
