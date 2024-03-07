@@ -63,6 +63,7 @@ typedef struct s_exechelper
 	int						i;
 	int						status;
 	pid_t					pid_current;
+	const t_list			*tmp;
 }							t_exechelper;
 
 typedef struct s_envhelper
@@ -138,7 +139,7 @@ void						init_char_flags(t_charflags *flags, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);
-int							apply_cmd_redirections(char **cmd_arr,
+int							apply_cmd_redirections(t_exechelper *h,
 								t_shellstate *s);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 #endif

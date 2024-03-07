@@ -19,7 +19,6 @@ static int	handle_quoted(t_lsthelper *t)
 	{
 		t->in_quote = 1;
 		t->current_quote = t->start[t->i];
-		t->arg_start = t->i + 1;
 	}
 	else
 	{
@@ -31,13 +30,14 @@ static int	handle_quoted(t_lsthelper *t)
 		t->new_node = ft_lstnew(t->arg);
 		if (!t->new_node)
 			return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
+		t->new_node->is_quoted = true;
 		if (!t->head)
 			t->head = t->new_node;
 		else
 			t->current->next = t->new_node;
 		t->current = t->new_node;
-		t->arg_start = t->i + 1;
 	}
+	t->arg_start = t->i + 1;
 	t->i++;
 	return (SUCCESS);
 }

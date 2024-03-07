@@ -20,6 +20,7 @@ t_list	*ft_lstnew(void *content)
 	if (!node)
 		return (NULL);
 	node->content = content;
+	node->is_quoted = false;
 	node->next = NULL;
 	return (node);
 }

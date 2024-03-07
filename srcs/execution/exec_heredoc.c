@@ -10,9 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 #include <linux/limits.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 static void	heredoc_signal_handler(int signo)
 {
@@ -57,6 +59,8 @@ int	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s)
 	int		pipe_fds[2];
 	pid_t	pid;
 
+	if (!delimiter)
+		return (ft_putstr_fd(ERR_HEREDOC_DELIMITER, STDERR_FILENO), 1);
 	if (pipe(pipe_fds) == -1)
 		return (perror("pipe"), FAILURE);
 	pid = fork();

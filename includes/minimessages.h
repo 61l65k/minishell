@@ -25,6 +25,9 @@
 # define ERR_SIGACTION "\033[0;31mError: sigaction() failed\n\033[0m"
 # define ERR_QUOTES "\033[0;31mError: quotes not closed\n\033[0m"
 # define ERR_MALLOC "\033[0;31mError: malloc() failed\n\033[0m"
+# define ERR_HEREDOC_DELIMITER \
+	"minishell: syntax error near unexpected \
+token `newline'\n"
 # define HELLO_MSG \
 	"\nHello %s.\nMind that this is \
 not a place to play around.\

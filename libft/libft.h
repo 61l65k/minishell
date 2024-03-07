@@ -28,6 +28,7 @@
 typedef struct s_list
 {
 	char			*content;
+	bool			is_quoted;
 	struct s_list	*next;
 }					t_list;
 

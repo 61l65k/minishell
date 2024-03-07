@@ -23,7 +23,7 @@
 static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 {
 	s->is_child_process = true;
-	if (apply_cmd_redirections(h->cmd_arr, s) == FAILURE)
+	if (apply_cmd_redirections(h, s) == FAILURE)
 		exit(EXIT_FAILURE);
 	if (h->fd_in != 0)
 	{
@@ -118,6 +118,7 @@ int	ft_executecmd(t_shellstate *state)
 	while (h.i < state->cmd_count)
 	{
 		h.cmd_arr = lst_to_2darray(state->parsed_cmds[h.i]);
+		h.tmp = state->parsed_cmds[h.i];
 		if (!h.cmd_arr)
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 		if (ft_builtin_cmdhandler(state, &h, false) == BI_NOT_BUILTIN)

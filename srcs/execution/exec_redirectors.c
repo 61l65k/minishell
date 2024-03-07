@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 #include "miniutils.h"
 #include <readline/readline.h>
@@ -67,20 +68,20 @@ static int	check_operator(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
 	return (SUCCESS);
 }
 
-int	apply_cmd_redirections(char **cmd_arr, t_shellstate *s)
+int	apply_cmd_redirections(t_exechelper *h, t_shellstate *s)
 {
 	t_redirecthelper	rh;
 
 	ft_memset(&rh, -1, sizeof(rh));
-	rh.i = 0;
 	rh.j = 0;
-	while (cmd_arr[rh.i])
+	while (h->tmp && h->cmd_arr[++rh.i])
 	{
-		if (check_operator(&rh, cmd_arr, s) == FAILURE)
+		if (h->tmp->is_quoted == false && check_operator(&rh, h->cmd_arr,
+				s) == FAILURE)
 			return (FAILURE);
-		rh.i++;
+		h->tmp = h->tmp->next;
 	}
-	cmd_arr[rh.j] = NULL;
+	h->cmd_arr[rh.j] = NULL;
 	if (rh.last_out_fd != -1)
 	{
 		if (dup2(rh.last_out_fd, STDOUT_FILENO) == -1)
