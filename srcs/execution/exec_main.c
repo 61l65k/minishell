@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/06 21:29:03 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/07 12:46:09 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,12 +117,6 @@ int	ft_executecmd(t_shellstate *state)
 	ft_memset(&h, 0, sizeof(t_exechelper));
 	while (h.i < state->cmd_count)
 	{
-		if (!state->parsed_cmds[h.i] && state->operators[h.i] != OP_NONE)
-		{
-			ft_fprintf(2, "syntax error near unexpected token `%s'\n",
-				op_to_str(state->operators[h.i]));
-			return (2);
-		}
 		h.cmd_arr = lst_to_2darray(state->parsed_cmds[h.i]);
 		if (!h.cmd_arr)
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);

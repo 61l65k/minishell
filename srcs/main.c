@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/05 21:00:48 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/07 12:17:27 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,10 @@ int	main(int argc, char **argv, const char **envp)
 	{
 		ft_free_resets(&state);
 		ft_takeinput(&state);
-		if (ft_parseinput(&state) == SUCCESS)
+		if (ft_parseinput(&state) == SUCCESS && validate_syntax(&state))
 			state.last_exit_status = ft_executecmd(&state);
+		else
+			state.last_exit_status = 2;
 	}
 	ft_free_exit(&state, NULL, EXIT_SUCCESS);
 	return (0);
