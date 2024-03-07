@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 10:01:24 by ttakala           #+#    #+#             */
-/*   Updated: 2024/01/05 15:03:37 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/07 18:33:46 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,20 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-static void	ft_printf_conversion_handler(va_list args, char spec, t_ret *ret);
+static void	ft_printf_conversion_handler(va_list args, char spec, t_state *ret);
+static int	print_remaining_buffer(t_state *ret);
 
 int	ft_fprintf(int output_fd, const char *format, ...)
 {
 	int		i;
 	va_list	args;
-	t_ret	ret;
+	t_state	ret;
 
-	ret.print_len = 0;
-	ret.fail_state = 0;
+	ft_memset(&ret, 0, sizeof(t_state));
 	ret.fd = output_fd;
 	i = 0;
 	va_start(args, format);
-	while (format[i] && ret.fail_state == 0)
+	while (format[i] && ret.bytes_written >= 0)
 	{
 		if (format[i] == '%' && format[i + 1])
 		{
@@ -39,23 +39,20 @@ int	ft_fprintf(int output_fd, const char *format, ...)
 		i++;
 	}
 	va_end(args);
-	if (ret.fail_state < 0)
-		return (-1);
-	return (ret.print_len);
+	return (print_remaining_buffer(&ret));
 }
 
 int	ft_printf(const char *format, ...)
 {
 	int		i;
 	va_list	args;
-	t_ret	ret;
+	t_state	ret;
 
-	ret.print_len = 0;
-	ret.fail_state = 0;
+	ft_memset(&ret, 0, sizeof(t_state));
 	ret.fd = 1;
 	i = 0;
 	va_start(args, format);
-	while (format[i] && ret.fail_state == 0)
+	while (format[i] && ret.bytes_written >= 0)
 	{
 		if (format[i] == '%' && format[i + 1])
 		{
@@ -67,12 +64,10 @@ int	ft_printf(const char *format, ...)
 		i++;
 	}
 	va_end(args);
-	if (ret.fail_state < 0)
-		return (-1);
-	return (ret.print_len);
+	return (print_remaining_buffer(&ret));
 }
 
-static void	ft_printf_conversion_handler(va_list args, char spec, t_ret *ret)
+static void	ft_printf_conversion_handler(va_list args, char spec, t_state *ret)
 {
 	if (spec == 'c')
 		ft_printf_char(va_arg(args, int), ret);
@@ -92,26 +87,34 @@ static void	ft_printf_conversion_handler(va_list args, char spec, t_ret *ret)
 		ft_printf_char('%', ret);
 }
 
-void	ft_printf_char(int c, t_ret *ret)
+void	ft_printf_char(int c, t_state *ret)
 {
-	if (ret->fail_state < 0)
+	if (ret->bytes_written < 0)
 		return ;
-	if (write(ret->fd, &c, 1) < 0)
-		ret->fail_state = -1;
-	else
-		ret->print_len++;
-}
-
-void	ft_printf_str(char *str, t_ret *ret)
-{
-	if (str == NULL)
-		ft_printf_str("(null)", ret);
+	if (ret->buffer.len < sizeof(ret->buffer.arr))
+	{
+		ret->buffer.arr[ret->buffer.len] = c;
+		ret->buffer.len++;
+	}
 	else
 	{
-		while (*str)
-		{
-			ft_printf_char(*str, ret);
-			str++;
-		}
+		ret->bytes_written = write(ret->fd, ret->buffer.arr, ret->buffer.len);
+		if (ret->bytes_written < 0)
+			return ;
+		ret->print_len += ret->bytes_written;
+		ft_memset(ret->buffer.arr, 0, sizeof(ret->buffer.arr));
+		ret->buffer.len = 0;
+		ft_printf_char(c, ret);
 	}
+}
+
+static int	print_remaining_buffer(t_state *ret)
+{
+	if (ret->bytes_written < 0)
+		return (-1);
+	ret->bytes_written = write(ret->fd, ret->buffer.arr, ret->buffer.len);
+	if (ret->bytes_written < 0)
+		return (-1);
+	ret->print_len += ret->bytes_written;
+	return (ret->print_len);
 }

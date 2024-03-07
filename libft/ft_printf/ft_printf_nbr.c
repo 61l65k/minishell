@@ -6,13 +6,13 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/14 13:17:30 by ttakala           #+#    #+#             */
-/*   Updated: 2023/12/26 11:45:11 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/07 16:53:39 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf_internal.h"
 
-void	ft_printf_nbr(long long nbr, t_ret *ret)
+void	ft_printf_nbr(long long nbr, t_state *ret)
 {
 	if (nbr < 0)
 	{
@@ -28,7 +28,7 @@ void	ft_printf_nbr(long long nbr, t_ret *ret)
 		ft_printf_char(nbr + '0', ret);
 }
 
-void	ft_printf_nbr_unsigned(unsigned int nbr, t_ret *ret)
+void	ft_printf_nbr_unsigned(unsigned int nbr, t_state *ret)
 {
 	if (nbr > 9)
 	{
