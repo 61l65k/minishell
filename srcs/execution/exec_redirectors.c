@@ -75,10 +75,10 @@ static int	handle_heredoc(t_redirecthelper *rh, char *delimiter,
 		s->in_heredoc = true;
 		close(pipe_fds[1]);
 		waitpid(pid, NULL, 0);
+		sigaction(SIGINT, &s->sigaction, NULL);
 		s->in_heredoc = false;
 		rh->fd = pipe_fds[0];
 		redirect_fd(NULL, rh, false);
-		sigaction(SIGINT, &s->sigaction, NULL);
 	}
 	return (SUCCESS);
 }

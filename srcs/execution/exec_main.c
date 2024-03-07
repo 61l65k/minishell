@@ -23,6 +23,8 @@
 static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 {
 	s->is_child_process = true;
+	if (apply_cmd_redirections(h->cmd_arr, s) == FAILURE)
+		exit(EXIT_FAILURE);
 	if (h->fd_in != 0)
 	{
 		dup2(h->fd_in, STDIN_FILENO);
@@ -39,8 +41,6 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 		close(h->pipefd[0]);
 		close(h->pipefd[1]);
 	}
-	if (apply_cmd_redirections(h->cmd_arr, s) == FAILURE)
-		exit(EXIT_FAILURE);
 	ft_builtin_cmdhandler(s, h, true);
 	ft_execvp(h->cmd_arr[0], h->cmd_arr, s->envp);
 }
