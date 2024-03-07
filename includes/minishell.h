@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/07 13:43:29 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/07 22:22:13 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,6 @@ t_operators				str_to_op(const char *str);
 const char				*op_to_str(t_operators op);
 void					ft_free_exit(t_shellstate *state, const char *errormsg,
 							int exitcode);
-int						ft_builtin_cmdhandler(t_shellstate *state,
-							t_exechelper *h, bool child_process);
 int						ft_executecmd(t_shellstate *state);
 void					wait_remaining_children(t_shellstate *state);
 void					wait_child(t_shellstate *state, pid_t pid);

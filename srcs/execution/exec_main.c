@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/07 12:46:09 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/07 22:34:07 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@
 static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 {
 	s->is_child_process = true;
+	h->cmd_arr = lst_to_2darray(s->parsed_cmds[h->i]);
+	if (!h->cmd_arr)
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	h->tmp = s->parsed_cmds[h->i];
 	if (apply_cmd_redirections(h, s) == FAILURE)
 		exit(EXIT_FAILURE);
 	if (h->fd_in != 0)
@@ -41,7 +45,7 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 		close(h->pipefd[0]);
 		close(h->pipefd[1]);
 	}
-	ft_builtin_cmdhandler(s, h, true);
+	builtin_child(s, h);
 	ft_execvp(h->cmd_arr[0], h->cmd_arr, s->envp);
 }
 
@@ -117,14 +121,10 @@ int	ft_executecmd(t_shellstate *state)
 	ft_memset(&h, 0, sizeof(t_exechelper));
 	while (h.i < state->cmd_count)
 	{
-		h.cmd_arr = lst_to_2darray(state->parsed_cmds[h.i]);
-		h.tmp = state->parsed_cmds[h.i];
-		if (!h.cmd_arr)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		if (ft_builtin_cmdhandler(state, &h, false) == BI_NOT_BUILTIN)
+		if (is_pipeline(state, &h) == true)
 			handle_fork(state, &h);
-		free(h.cmd_arr);
-		h.cmd_arr = NULL;
+		else if (builtin_main(state, state->parsed_cmds[h.i]) == BI_NOT_BUILTIN)
+			handle_fork(state, &h);
 		check_operators(&h, state);
 		h.i++;
 	}

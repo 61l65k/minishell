@@ -6,40 +6,58 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/05 09:39:03 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/07 22:48:32 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "io_type.h"
 #include "builtin.h"
 #include "minishell.h"
 
+int		get_command(t_list *cmd, t_command *command);
+void	free_command(t_command *command);
+
 /**
- * @brief Handles the built-in commands.
- * & Returns 0 if the command was not handled as built-in.
- * If child_process is true, and the command is a built-in, the function will
- * exit with the built-in's exit status.
+ * @brief Handles the built-in commands in the main process.
  */
-int	ft_builtin_cmdhandler(
-	t_shellstate *state,
-	t_exechelper *h,
-	bool child_process)
+int	builtin_main(t_shellstate *state, t_list *arg_list)
 {
-	const char				*cmd = h->cmd_arr[0];
+	t_command		command;
+	t_builtin_type	builtin_type;
+	t_builtin_func	func;
+
+	ft_memset(&command, 0, sizeof(t_command));
+	if (get_command(arg_list, &command) == FAILURE)
+		ft_free_exit(state, ERR_MALLOC, 1);
+	builtin_type = get_builtin_type(command.args[0]);
+	if (builtin_type == BI_NOT_BUILTIN)
+		return (free_command(&command), BI_NOT_BUILTIN);
+	func = get_builtin_func(builtin_type);
+	state->last_exit_status = SUCCESS;
+	if (func)
+	{
+		func(command.args, state);
+	}
+	return (free_command(&command), builtin_type);
+}
+
+/**
+ * @brief Handles inbuilt commands when forked.
+ */
+int	builtin_child(t_shellstate *state, t_exechelper *exechelper)
+{
+	const char				*cmd = exechelper->cmd_arr[0];
 	const t_builtin_type	builtin_type = get_builtin_type(cmd);
 	const t_builtin_func	func = get_builtin_func(builtin_type);
-	const bool				should_fork = builtin_should_fork(state, h);
 
 	if (builtin_type == BI_NOT_BUILTIN)
-		return (BI_NOT_BUILTIN);
-	if (should_fork && !child_process)
 		return (BI_NOT_BUILTIN);
 	state->last_exit_status = SUCCESS;
 	if (func)
 	{
-		func(h->cmd_arr, state);
+		func(exechelper->cmd_arr, state);
 	}
-	if (child_process)
-		exit(state->last_exit_status);
+	exit(state->last_exit_status);
 	return (builtin_type);
 }
 
@@ -90,10 +108,11 @@ t_builtin_func	get_builtin_func(t_builtin_type type)
 }
 
 /**
- * @brief Returns whether built-in should be forked or not.
+ * @brief Returns whether we are in a pipeline, 
+ * and therefore should not run built-ins in main process
  */
 
-bool	builtin_should_fork(t_shellstate *state, t_exechelper *helper)
+bool	is_pipeline(t_shellstate *state, t_exechelper *helper)
 {
 	int	i;
 
