@@ -44,38 +44,40 @@ typedef enum e_operators
 	OP_REDIRECT_OUT,
 	OP_REDIRECT_IN,
 	OP_OPERATOR_COUNT
-}				t_operators;
+}						t_operators;
 
 typedef struct s_shellstate
 {
-	char		input_string[ARG_MAX];
-	char		**parsed_args;
-	t_list		**parsed_cmds;
-	t_operators	*operators;
-	int			cmd_count;
-	int			operator_count;
-	int			last_exit_status;
-	bool		is_child_process;
-	char		**envp;
-	t_vec		pid;
-	bool		in_heredoc;
-}				t_shellstate;
+	char				input_string[ARG_MAX];
+	char				**parsed_args;
+	t_list				**parsed_cmds;
+	t_operators			*operators;
+	int					cmd_count;
+	int					operator_count;
+	int					last_exit_status;
+	bool				is_child_process;
+	char				**envp;
+	t_vec				pid;
+	bool				in_heredoc;
+	struct sigaction	sigaction;
+	struct sigaction	ignoreaction;
+}						t_shellstate;
 
-const char		*op_to_str(t_operators op);
-void			ft_free_exit(t_shellstate *state, const char *errormsg,
-					int exitcode);
-int				ft_builtin_cmdhandler(t_shellstate *state, t_exechelper *h,
-					bool child_process);
-int				ft_executecmd(t_shellstate *state);
-void			wait_remaining_children(t_shellstate *state);
-void			wait_child(t_shellstate *state, pid_t pid);
-void			ft_free_resets(t_shellstate *state);
-void			ft_displayhistory(void);
-int				init_signals(void);
-void			setup_terminal(void);
-void			ft_execvp(const char *file, char *const argv[],
-					char *const envp[]);
-char			*ft_getenv(const char *name, char *const envp[]);
-int				get_terminal_dimension(bool get_width);
+const char				*op_to_str(t_operators op);
+void					ft_free_exit(t_shellstate *state, const char *errormsg,
+							int exitcode);
+int						ft_builtin_cmdhandler(t_shellstate *state,
+							t_exechelper *h, bool child_process);
+int						ft_executecmd(t_shellstate *state);
+void					wait_remaining_children(t_shellstate *state);
+void					wait_child(t_shellstate *state, pid_t pid);
+void					ft_free_resets(t_shellstate *state);
+void					ft_displayhistory(void);
+int						init_signals(t_shellstate *s);
+void					setup_terminal(void);
+void					ft_execvp(const char *file, char *const argv[],
+							char *const envp[]);
+char					*ft_getenv(const char *name, char *const envp[]);
+void					heredoc_signal_handler(int signo);
 
 #endif

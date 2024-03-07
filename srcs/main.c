@@ -43,7 +43,7 @@ int	main(int argc, char **argv, const char **envp)
 	(void)argc;
 	(void)argv;
 	setup_terminal();
-	init_signals();
+	init_signals(&state);
 	ft_memset(&state, 0, sizeof(state));
 	state.envp = ft_strdup_array(envp);
 	vec_new(&state.pid, 10, sizeof(pid_t));

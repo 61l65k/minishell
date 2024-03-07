@@ -11,17 +11,13 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "miniutils.h"
 #include <signal.h>
 
-int	get_terminal_dimension(bool get_width)
+void	heredoc_signal_handler(int signo)
 {
-	struct winsize	w;
-
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-	if (get_width)
-		return (w.ws_col);
-	else
-		return (w.ws_row);
+	if (signo == SIGINT)
+		_exit(EXIT_SUCCESS);
 }
 
 /**
@@ -56,7 +52,7 @@ void	setup_terminal(void)
 /**
  * @brief Callback handler for signals received
  */
-static void	ft_signal_handler(int signo, siginfo_t *info, void *context)
+void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 {
 	(void)context;
 	(void)info;
@@ -76,19 +72,17 @@ static void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 /**
  * @brief Initializes all signal handlers & their callbacks.
  */
-int	init_signals(void)
+int	init_signals(t_shellstate *s)
 {
-	struct sigaction	action;
-	struct sigaction	ignoreaction;
-
-	sigemptyset(&action.sa_mask);
-	sigemptyset(&ignoreaction.sa_mask);
-	action.sa_flags = SA_SIGINFO;
-	action.sa_sigaction = ft_signal_handler;
-	ignoreaction.sa_handler = SIG_IGN;
-	ignoreaction.sa_flags = 0;
-	if (sigaction(SIGUSR1, &action, NULL) == -1 || sigaction(SIGINT, &action,
-			NULL) == -1 || sigaction(SIGQUIT, &ignoreaction, NULL) == -1)
+	sigemptyset(&s->sigaction.sa_mask);
+	sigemptyset(&s->ignoreaction.sa_mask);
+	s->sigaction.sa_flags = SA_SIGINFO;
+	s->sigaction.sa_sigaction = ft_signal_handler;
+	s->ignoreaction.sa_handler = SIG_IGN;
+	s->ignoreaction.sa_flags = 0;
+	if (sigaction(SIGUSR1, &s->sigaction, NULL) == -1 || sigaction(SIGINT,
+			&s->sigaction, NULL) == -1 || sigaction(SIGQUIT, &s->ignoreaction,
+			NULL) == -1)
 	{
 		perror("Error: sigaction() failed");
 		exit(EXIT_FAILURE);

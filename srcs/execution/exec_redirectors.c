@@ -13,6 +13,8 @@
 #include "minishell.h"
 #include "miniutils.h"
 #include <readline/readline.h>
+#include <signal.h>
+#include <stdlib.h>
 
 static int	redirect_fd(char *filename, t_redirecthelper *rh, bool fd_out)
 {
@@ -38,7 +40,7 @@ static int	redirect_fd(char *filename, t_redirecthelper *rh, bool fd_out)
 	return (SUCCESS);
 }
 
-static int	check_heredoc(t_redirecthelper *rh, char *delimiter,
+static int	handle_heredoc(t_redirecthelper *rh, char *delimiter,
 		t_shellstate *s)
 {
 	int		pipe_fds[2];
@@ -53,6 +55,7 @@ static int	check_heredoc(t_redirecthelper *rh, char *delimiter,
 			close(pipe_fds[1]), FAILURE);
 	if (pid == 0)
 	{
+		signal(SIGINT, heredoc_signal_handler);
 		close(pipe_fds[0]);
 		while (true)
 		{
@@ -68,12 +71,14 @@ static int	check_heredoc(t_redirecthelper *rh, char *delimiter,
 	}
 	else
 	{
+		sigaction(SIGINT, &s->ignoreaction, &s->sigaction);
 		s->in_heredoc = true;
 		close(pipe_fds[1]);
 		waitpid(pid, NULL, 0);
 		s->in_heredoc = false;
 		rh->fd = pipe_fds[0];
 		redirect_fd(NULL, rh, false);
+		sigaction(SIGINT, &s->sigaction, NULL);
 	}
 	return (SUCCESS);
 }
@@ -97,7 +102,7 @@ static int	check_operator(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<<") == 0)
 	{
-		if (check_heredoc(rh, c_arr[rh->i++ + 1], s) == FAILURE)
+		if (handle_heredoc(rh, c_arr[rh->i++ + 1], s) == FAILURE)
 			return (FAILURE);
 	}
 	else
