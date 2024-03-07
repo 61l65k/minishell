@@ -5,7 +5,8 @@ LIBFT = libft/libft.a
 OBJS = $(SRCS:.c=.o)
 
 # Default flags for macOS (Darwin)
-READ_LINE_PATH := $(shell [ -d "${HOME}/homebrew/Cellar/readline/8.2.7" ] && echo "${HOME}/homebrew/Cellar/readline/8.2.7" || echo "${HOME}/.brew/Cellar/readline/8.2.7")
+READ_LINE_PATH := $(shell [ -d "${HOME}/homebrew/Cellar/readline/8.2.7" ] && echo "${HOME}/homebrew/Cellar/readline/8.2.7" || echo "${HOME}/brew/Cellar/readline/8.2.10" \
+|| echo "${HOME}/.brew/Cellar/readline/8.2.7")
 CFLAGS_DARWIN = -Werror -Wall -Wextra 
 LDFLAGS_DARWIN = -g -lreadline -L${READ_LINE_PATH}/lib
 HEADER_DARWIN = -I${READ_LINE_PATH}/include -Iincludes -Ilibft
