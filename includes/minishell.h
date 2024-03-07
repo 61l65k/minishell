@@ -58,6 +58,7 @@ typedef struct s_shellstate
 	bool		is_child_process;
 	char		**envp;
 	t_vec		pid;
+	bool		in_heredoc;
 }				t_shellstate;
 
 const char		*op_to_str(t_operators op);

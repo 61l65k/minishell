@@ -20,29 +20,29 @@
 /**
  * @brief Sets up fd's for the child before executing the command.
  */
-static void	handle_child_process(t_shellstate *state, t_exechelper *h)
+static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 {
-	state->is_child_process = true;
+	s->is_child_process = true;
 	if (h->fd_in != 0)
 	{
 		dup2(h->fd_in, STDIN_FILENO);
 		close(h->fd_in);
 	}
-	if (h->i < state->cmd_count - 1 && state->operators[h->i] == OP_PIPE)
+	if (h->i < s->cmd_count - 1 && s->operators[h->i] == OP_PIPE)
 	{
 		close(h->pipefd[0]);
 		dup2(h->pipefd[1], STDOUT_FILENO);
 		close(h->pipefd[1]);
 	}
-	else if (h->i < state->cmd_count - 1)
+	else if (h->i < s->cmd_count - 1)
 	{
 		close(h->pipefd[0]);
 		close(h->pipefd[1]);
 	}
-	if (apply_command_redirections(h->cmd_arr) == FAILURE)
+	if (apply_cmd_redirections(h->cmd_arr, s) == FAILURE)
 		exit(EXIT_FAILURE);
-	ft_builtin_cmdhandler(state, h, true);
-	ft_execvp(h->cmd_arr[0], h->cmd_arr, state->envp);
+	ft_builtin_cmdhandler(s, h, true);
+	ft_execvp(h->cmd_arr[0], h->cmd_arr, s->envp);
 }
 
 /**

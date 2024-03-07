@@ -138,6 +138,7 @@ void						init_char_flags(t_charflags *flags, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);
-int							apply_command_redirections(char **cmd_arr);
+int							apply_cmd_redirections(char **cmd_arr,
+								t_shellstate *s);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 #endif

@@ -12,45 +12,73 @@
 
 #include "minishell.h"
 #include "miniutils.h"
+#include <readline/readline.h>
 
-static int	redirect_fd(char *filename, t_redirecthelper *rh)
+static int	redirect_fd(char *filename, t_redirecthelper *rh, bool fd_out)
 {
-	if (rh->fd == -1)
+	if (rh->fd == -1 && filename)
 	{
 		perror(filename);
 		if (rh->last_out_fd != -1)
 			close(rh->last_out_fd);
 		return (FAILURE);
 	}
-	if (rh->last_out_fd != -1)
-		close(rh->last_out_fd);
-	rh->last_out_fd = rh->fd;
-	return (SUCCESS);
-}
-
-static int	redirect_fd_in(char *filename, t_redirecthelper *rh)
-{
-	if (rh->fd == -1)
+	if (fd_out)
 	{
-		perror(filename);
+		if (rh->last_out_fd != -1)
+			close(rh->last_out_fd);
+		rh->last_out_fd = rh->fd;
+	}
+	else
+	{
 		if (rh->last_in_fd != -1)
 			close(rh->last_in_fd);
-		return (FAILURE);
+		rh->last_in_fd = rh->fd;
 	}
-	if (rh->last_in_fd != -1)
-		close(rh->last_in_fd);
-	rh->last_in_fd = rh->fd;
 	return (SUCCESS);
 }
 
-static int	check_heredoc(t_redirecthelper *rh, char *delimiter)
+static int	check_heredoc(t_redirecthelper *rh, char *delimiter,
+		t_shellstate *s)
 {
-	(void)rh;
-	(void)delimiter;
+	int		pipe_fds[2];
+	char	*line;
+	pid_t	pid;
+
+	if (pipe(pipe_fds) == -1)
+		return (perror("pipe"), FAILURE);
+	pid = fork();
+	if (pid == -1)
+		return (perror("fork() heredoc"), close(pipe_fds[0]),
+			close(pipe_fds[1]), FAILURE);
+	if (pid == 0)
+	{
+		close(pipe_fds[0]);
+		while (true)
+		{
+			line = readline("heredoc> ");
+			if (line == NULL || ft_strcmp(line, delimiter) == 0)
+				break ;
+			write(pipe_fds[1], line, ft_strlen(line));
+			write(pipe_fds[1], "\n", 1);
+			free(line);
+		}
+		close(pipe_fds[1]);
+		exit(EXIT_SUCCESS);
+	}
+	else
+	{
+		s->in_heredoc = true;
+		close(pipe_fds[1]);
+		waitpid(pid, NULL, 0);
+		s->in_heredoc = false;
+		rh->fd = pipe_fds[0];
+		redirect_fd(NULL, rh, false);
+	}
 	return (SUCCESS);
 }
 
-static int	check_operator(t_redirecthelper *rh, char **c_arr)
+static int	check_operator(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
 {
 	if (ft_strcmp(c_arr[rh->i], ">") == 0 || ft_strcmp(c_arr[rh->i], ">>") == 0)
 	{
@@ -58,18 +86,18 @@ static int	check_operator(t_redirecthelper *rh, char **c_arr)
 		if (ft_strcmp(c_arr[rh->i], ">>") == 0)
 			rh->flags = (O_WRONLY | O_CREAT | O_APPEND);
 		rh->fd = open(c_arr[rh->i + 1], rh->flags, 0644);
-		if (redirect_fd(c_arr[rh->i++ + 1], rh) == FAILURE)
+		if (redirect_fd(c_arr[rh->i++ + 1], rh, true) == FAILURE)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<") == 0)
 	{
 		rh->fd = open(c_arr[rh->i + 1], O_RDONLY);
-		if (redirect_fd_in(c_arr[rh->i++ + 1], rh) == FAILURE)
+		if (redirect_fd(c_arr[rh->i++ + 1], rh, false) == FAILURE)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<<") == 0)
 	{
-		if (check_heredoc(rh, c_arr[rh->i++ + 1]) == FAILURE)
+		if (check_heredoc(rh, c_arr[rh->i++ + 1], s) == FAILURE)
 			return (FAILURE);
 	}
 	else
@@ -77,7 +105,7 @@ static int	check_operator(t_redirecthelper *rh, char **c_arr)
 	return (SUCCESS);
 }
 
-int	apply_command_redirections(char **cmd_arr)
+int	apply_cmd_redirections(char **cmd_arr, t_shellstate *s)
 {
 	t_redirecthelper	rh;
 
@@ -86,7 +114,7 @@ int	apply_command_redirections(char **cmd_arr)
 	rh.j = 0;
 	while (cmd_arr[rh.i])
 	{
-		if (check_operator(&rh, cmd_arr) == FAILURE)
+		if (check_operator(&rh, cmd_arr, s) == FAILURE)
 			return (FAILURE);
 		rh.i++;
 	}
