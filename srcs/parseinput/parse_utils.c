@@ -92,20 +92,20 @@ bool	wildcard_match(const char *pattern, const char *str)
 
 int	ft_checkdollar(t_shellstate *s, t_parsehelper *h)
 {
-	if (!h->in_single_quote && !h->in_double_quote && (s->input_string[h->i
-			+ 1] == ' ' || s->input_string[h->i + 1] == '\0'))
+	const char	*c = &s->input_string[h->i];
+
+	if (!h->in_single_quote && !h->in_double_quote && (*(c + 1) == ' ' || *(c
+				+ 1) == '\0'))
 	{
 		ensure_mem_for_cmd(h, s, 1);
-		h->curr_cmd[h->j++] = s->input_string[h->i];
+		h->curr_cmd[h->j++] = *c;
 		return (1);
 	}
-	else if ((h->in_single_quote || h->in_double_quote) && (s->input_string[h->i
-			+ 1] == '\'' || s->input_string[h->i + 1] == '"'
-			|| s->input_string[h->i + 1] == ' ' || s->input_string[h->i
-			+ 1] == '$'))
+	else if ((h->in_single_quote || h->in_double_quote) && (*(c + 1) == '\''
+			|| *(c + 1) == '"' || *(c + 1) == ' ' || *(c + 1) == '$'))
 	{
 		ensure_mem_for_cmd(h, s, 1);
-		h->curr_cmd[h->j++] = s->input_string[h->i];
+		h->curr_cmd[h->j++] = *c;
 		return (1);
 	}
 	return (0);

@@ -31,6 +31,7 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
+int					ft_isupper(int c);
 size_t				ft_envlen(char *env);
 char				*ft_strndup(const char *s1, size_t n);
 char				*ft_strncat(char *dest, const char *src, size_t n);
