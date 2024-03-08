@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 18:27:40 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/08 18:05:30 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 20:29:55 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	store_redirections_in_vec(t_vec *io_vec, t_list *arg_list)
 	while (current_node)
 	{
 		ft_memset(&io_node, 0, sizeof(t_io));
-		if (!current_node->is_quoted)
+		if (!current_node->is_quoted_redirector)
 		{
 			io_node.type = get_io_type(current_node->content);
 			if (io_node.type != IO_NONE)
@@ -80,7 +80,8 @@ void	remove_redirections_from_args(char **args, t_list *arg_list)
 	current_node = arg_list;
 	while (args[i] && current_node)
 	{
-		if (get_io_type(args[i]) != IO_NONE && !current_node->is_quoted)
+		if (get_io_type(args[i]) != IO_NONE
+			&& !current_node->is_quoted_redirector)
 		{
 			current_node = current_node->next;
 			i++;
