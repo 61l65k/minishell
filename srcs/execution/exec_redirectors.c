@@ -114,6 +114,7 @@ int	apply_cmd_redirections(t_exechelper *h, t_shellstate *s,
 		curr_cmd = curr_cmd->next;
 		rh.i++;
 	}
-	h->cmd_arr[rh.j] = NULL;
+	if (rh.j != 0)
+		h->cmd_arr[rh.j] = NULL;
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }

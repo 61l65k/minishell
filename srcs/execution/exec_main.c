@@ -54,8 +54,11 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 {
 	if (helper->fd_in != 0)
+	{
 		close(helper->fd_in);
-	if (helper->i < state->cmd_count - 1)
+		helper->fd_in = 0;
+	}
+	if (helper->i < state->cmd_count - 1 && state->operators[helper->i] == OP_PIPE)
 	{
 		helper->fd_in = helper->pipefd[0];
 		close(helper->pipefd[1]);
@@ -69,7 +72,7 @@ static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
  */
 static void	handle_fork(t_shellstate *s, t_exechelper *h)
 {
-	if (h->i < s->cmd_count - 1)
+	if (h->i < s->cmd_count - 1 && s->operators[h->i] == OP_PIPE)
 	{
 		if (pipe(h->pipefd) < 0)
 			ft_free_exit(s, ERR_PIPE, EXIT_FAILURE);
@@ -120,6 +123,7 @@ int	ft_executecmd(t_shellstate *state)
 	ft_memset(&h, 0, sizeof(t_exechelper));
 	while (h.i < state->cmd_count)
 	{
+
 		if (is_pipeline(state, &h) == true)
 			handle_fork(state, &h);
 		else if (builtin_main(state, state->parsed_cmds[h.i]) == BI_NOT_BUILTIN)
