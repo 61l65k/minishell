@@ -30,8 +30,13 @@ static void	heredoc_child_process(int pipe_fds[2], char *delimiter)
 	while (true)
 	{
 		line = readline("heredoc> ");
-		if (line == NULL || ft_strcmp(line, delimiter) == 0)
+		if (line == NULL)
 			break ;
+		if (ft_strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
 		write(pipe_fds[1], line, ft_strlen(line));
 		write(pipe_fds[1], "\n", 1);
 		free(line);
