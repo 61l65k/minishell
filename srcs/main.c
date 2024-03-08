@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/07 13:44:00 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 16:34:27 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ int	main(int argc, char **argv, const char **envp)
 	(void)argc;
 	(void)argv;
 	setup_terminal();
-	init_signals(&state);
 	ft_memset(&state, 0, sizeof(state));
+	init_signals(&state);
 	state.envp = ft_strdup_array(envp);
 	vec_new(&state.pid, 10, sizeof(pid_t));
 	if (!state.envp || state.pid.memory == NULL)
