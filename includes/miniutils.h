@@ -82,6 +82,7 @@ typedef struct s_charflags
 	bool					is_and;
 	bool					is_or;
 	bool					is_quote;
+	bool					is_redir;
 }							t_charflags;
 
 typedef struct s_redirecthelper

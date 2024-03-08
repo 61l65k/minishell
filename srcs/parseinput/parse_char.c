@@ -70,6 +70,28 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state,
 	}
 }
 
+static void	separate_redir(t_parsehelper *h, t_shellstate *state)
+{
+	const char	*c = &state->input_string[h->i];
+	const bool	space_before = (h->i > 0) && (*(c - 1) != ' ' && *(c
+				- 1) != '\t');
+	const bool	space_after = (*(c + 1) != ' ' && *(c + 1) != '\t' && *(c
+				+ 1) != '\0');
+	const bool	is_double_redir = (*(c + 1) == *c);
+
+	ensure_mem_for_cmd(h, state, 5);
+	if (space_before)
+		h->curr_cmd[h->j++] = ' ';
+	h->curr_cmd[h->j++] = *c;
+	if (is_double_redir)
+	{
+		h->curr_cmd[h->j++] = *c;
+		h->i++;
+	}
+	if (space_after)
+		h->curr_cmd[h->j++] = ' ';
+}
+
 /**
  * @brief Checks if the current character is operator & puts the new command
  * in the commands array from the input string.
@@ -77,13 +99,14 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state,
 static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
 		t_charflags *flags, t_envhelper *eh)
 {
-	if (flags->is_pipe || flags->is_and || flags->is_or)
+	if (flags->is_redir)
+		separate_redir(h, state);
+	else if (flags->is_pipe || flags->is_and || flags->is_or)
 	{
 		h->curr_cmd[h->j] = '\0';
 		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
 		h->j = 0;
-		if (flags->is_and || flags->is_or)
-			h->i++;
+		h->i = (flags->is_and || flags->is_or);
 	}
 	else if (flags->is_env_var)
 	{

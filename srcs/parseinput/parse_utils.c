@@ -58,6 +58,8 @@ void	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 		flags->is_pipe = (*c == '|' && *(c + 1) != '|');
 		flags->is_and = (*c == '&' && *(c + 1) == '&');
 		flags->is_or = (*c == '|' && *(c + 1) == '|');
+		flags->is_redir = (*c == '>' || *c == '<' || (*c == '>' && *(c
+						+ 1) == '>') || (*c == '<' && *(c + 1) == '<'));
 	}
 }
 
