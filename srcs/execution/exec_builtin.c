@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/07 22:48:32 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 11:51:35 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,15 @@
 #include "builtin.h"
 #include "minishell.h"
 
-int		get_command(t_list *cmd, t_command *command);
-void	free_command(t_command *command);
-
 /**
- * @brief Handles the built-in commands in the main process.
+ * @brief Handles built-in commands in the main process.
+ * Parses the redirection and command args information from arg_list
+ * and stores them to a local t_command struct.
+ * If a built-in command is not found after parsing, returns 0.
+ * Otherwise sets up possible redirections and runs the built-in command,
+ * and cleans up after.
+ * TODO: implement heredoc fully
+ * Returns 0 if the cmd found in arg_list is not a built-in.
  */
 int	builtin_main(t_shellstate *state, t_list *arg_list)
 {
@@ -34,15 +38,25 @@ int	builtin_main(t_shellstate *state, t_list *arg_list)
 		return (free_command(&command), BI_NOT_BUILTIN);
 	func = get_builtin_func(builtin_type);
 	state->last_exit_status = SUCCESS;
+	if (command.io_vec.len > 0)
+	{
+		apply_main_process_redirections(&command);
+	}
 	if (func)
 	{
 		func(command.args, state);
+	}
+	if (command.io_vec.len > 0)
+	{
+		restore_main_process_fds(&command);
 	}
 	return (free_command(&command), builtin_type);
 }
 
 /**
- * @brief Handles inbuilt commands when forked.
+ * @brief Handles inbuilt commands in child process.
+ * Returns 0 if the cmd is not a built-in,
+ * otherwise runs the built-in command and exits the child process.
  */
 int	builtin_child(t_shellstate *state, t_exechelper *exechelper)
 {
@@ -108,8 +122,8 @@ t_builtin_func	get_builtin_func(t_builtin_type type)
 }
 
 /**
- * @brief Returns whether we are in a pipeline, 
- * and therefore should not run built-ins in main process
+ * @brief Returns true if current command is part of a pipeline.
+ * If in pipeline, we need to fork even if the command is a built-in.
  */
 
 bool	is_pipeline(t_shellstate *state, t_exechelper *helper)

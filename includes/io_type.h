@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 19:29:23 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/07 22:47:45 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/07 23:54:20 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,15 @@ typedef struct s_io
 {
 	t_io_type	type;
 	char		*filename;
+	int			fd;
 }		t_io;
 
 typedef struct s_command
 {
 	char		**args;
 	t_vec		io_vec;
+	int			fd_stdin_backup;
+	int			fd_stdout_backup;
 }		t_command;
 
 #endif

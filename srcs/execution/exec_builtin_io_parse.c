@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_builtin_io.c                                  :+:      :+:    :+:   */
+/*   exec_builtin_io_parse.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 18:27:40 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/07 22:49:25 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 11:49:05 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ t_io_type	get_io_type(const char *str)
 	return (IO_NONE);
 }
 
-int	get_cmd_redirections(t_list *cmd, t_vec *io_vec)
+int	store_redirections_in_vec(t_vec *io_vec, t_list *arg_list)
 {
 	t_list	*current_node;
 	t_io	io_node;
 
-	current_node = cmd;
+	current_node = arg_list;
 	while (current_node)
 	{
 		ft_memset(&io_node, 0, sizeof(t_io));
@@ -56,44 +56,50 @@ int	get_cmd_redirections(t_list *cmd, t_vec *io_vec)
 	return (SUCCESS);
 }
 
-void	remove_io_from_args(char **args)
+void	remove_io_from_args(char **args, t_list *arg_list)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
+	t_list	*current_node;
 
 	i = 0;
 	j = 0;
-	while (args[i])
+	current_node = arg_list;
+	while (args[i] && current_node)
 	{
-		if (get_io_type(args[i]) != IO_NONE)
+		if (get_io_type(args[i]) != IO_NONE && !current_node->is_quoted)
 		{
+			current_node = current_node->next;
 			i++;
-			if (args[i])
+			if (args[i] && current_node)
+			{
+				current_node = current_node->next;
 				i++;
+			}
 			continue ;
 		}
+		current_node = current_node->next;
 		args[j] = args[i];
 		i++;
 		j++;
 	}
 }
 
-int	get_command(t_list *cmd, t_command *command)
+int	get_command(t_list *arg_list, t_command *command)
 {
-	command->args = lst_to_2darray(cmd);
-	if (command->args == NULL)
-		return (FAILURE);
 	if (vec_new(&command->io_vec, 8, sizeof(t_io)) == -1)
 	{
-		free(command->args);
 		return (FAILURE);
 	}
-	if (get_cmd_redirections(cmd, &command->io_vec) == FAILURE)
+	if (store_redirections_in_vec(&command->io_vec, arg_list) == FAILURE)
 	{
-		free(command->args);
+		vec_free(&command->io_vec);
 		return (FAILURE);
 	}
-	remove_io_from_args(command->args);
+	command->args = lst_to_2darray(arg_list);
+	if (command->args == NULL)
+		return (FAILURE);
+	remove_io_from_args(command->args, arg_list);
 	return (SUCCESS);
 }
 
