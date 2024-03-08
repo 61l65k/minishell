@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 19:29:23 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/07 23:54:20 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 17:55:29 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,13 @@ typedef struct s_command
 	int			fd_stdin_backup;
 	int			fd_stdout_backup;
 }		t_command;
+
+t_io_type	get_io_type(const char *str);
+int			store_redirections_in_vec(t_vec *io_vec, t_list *arg_list);
+void		remove_redirections_from_args(char **args, t_list *arg_list);
+
+int			dup_fd(t_io *io);
+int			open_file(t_io *io);
+int			open_heredoc(const char *delimiter, int fd_out);
 
 #endif

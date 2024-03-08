@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 23:26:52 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/08 11:52:08 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 17:49:56 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,11 @@ int	restore_main_process_fds(t_command *command)
 		close(command->fd_stdout_backup);
 	}
 	return (0);
+}
+
+void	free_command(t_command *command)
+{
+	free(command->args);
+	command->args = NULL;
+	vec_free(&command->io_vec);
 }

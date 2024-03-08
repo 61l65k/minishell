@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/08 14:24:13 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 17:26:51 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,9 @@
  * @brief Handles built-in commands in the main process.
  * Parses the redirection and command args information from arg_list
  * and stores them to a local t_command struct.
- * If a built-in command is not found after parsing, returns 0.
  * Otherwise sets up possible redirections and runs the built-in command,
  * and cleans up after.
- * Returns 0 if the cmd found in arg_list is not a built-in.
+ * @return Returns 0 if the cmd found in arg_list is not a built-in.
  */
 int	builtin_main(t_shellstate *state, t_list *arg_list)
 {
