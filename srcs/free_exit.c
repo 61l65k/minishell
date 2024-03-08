@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 23:48:56 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/06 11:54:02 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 17:42:49 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,15 @@
 /**
  * @brief Frees all & Exit the shell with an error message or with success.
  */
-void	ft_free_exit(t_shellstate *state, const char *errorMsg, int exitCode)
+void	ft_free_exit(t_shellstate *state, const char *error_msg, int exit_code)
 {
-	if (errorMsg)
-		perror(errorMsg);
+	if (error_msg)
+		perror(error_msg);
 	ft_free_resets(state);
 	free_str_array(state->envp);
 	state->envp = NULL;
 	vec_free(&state->pid);
-	exit(exitCode);
+	exit(exit_code);
 }
 
 void	free_parsed_cmds_list(t_list **array_of_lists)
@@ -43,7 +43,8 @@ void	free_parsed_cmds_list(t_list **array_of_lists)
 }
 
 /**
- * @brief Frees the shellState and resets the terminal.
+ * @brief Frees/nulls/resets all members of the shellstate struct
+ * that do not need to be preserved and/or should be reset after each prompt.
  */
 void	ft_free_resets(t_shellstate *state)
 {
