@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 18:27:40 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/08 20:29:55 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 00:37:41 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,13 @@ int	get_command(t_list *arg_list, t_command *command)
 	return (SUCCESS);
 }
 
+static void	init_io_node(t_io *io_node)
+{
+	io_node->type = IO_NONE;
+	io_node->filename = NULL;
+	io_node->fd = -1;
+}
+
 int	store_redirections_in_vec(t_vec *io_vec, t_list *arg_list)
 {
 	t_list	*current_node;
@@ -48,7 +55,7 @@ int	store_redirections_in_vec(t_vec *io_vec, t_list *arg_list)
 	current_node = arg_list;
 	while (current_node)
 	{
-		ft_memset(&io_node, 0, sizeof(t_io));
+		init_io_node(&io_node);
 		if (!current_node->is_quoted_redirector)
 		{
 			io_node.type = get_io_type(current_node->content);
