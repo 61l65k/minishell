@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/07 22:34:07 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 19:21:37 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,6 @@
 static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 {
 	s->is_child_process = true;
-	h->cmd_arr = lst_to_2darray(s->parsed_cmds[h->i]);
-	if (!h->cmd_arr)
-		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	if (apply_cmd_redirections(h, s, s->parsed_cmds[h->i]) == FAILURE)
-		exit(EXIT_FAILURE);
 	if (h->fd_in != 0)
 	{
 		dup2(h->fd_in, STDIN_FILENO);
@@ -44,6 +39,11 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 		close(h->pipefd[0]);
 		close(h->pipefd[1]);
 	}
+	h->cmd_arr = lst_to_2darray(s->parsed_cmds[h->i]);
+	if (!h->cmd_arr)
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	if (apply_cmd_redirections(h, s, s->parsed_cmds[h->i]) == FAILURE)
+		exit(EXIT_FAILURE);
 	builtin_child(s, h);
 	ft_execvp(h->cmd_arr[0], h->cmd_arr, s->envp);
 }
@@ -58,7 +58,8 @@ static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
 		close(helper->fd_in);
 		helper->fd_in = 0;
 	}
-	if (helper->i < state->cmd_count - 1 && state->operators[helper->i] == OP_PIPE)
+	if (helper->i < state->cmd_count - 1
+		&& state->operators[helper->i] == OP_PIPE)
 	{
 		helper->fd_in = helper->pipefd[0];
 		close(helper->pipefd[1]);
@@ -123,7 +124,6 @@ int	ft_executecmd(t_shellstate *state)
 	ft_memset(&h, 0, sizeof(t_exechelper));
 	while (h.i < state->cmd_count)
 	{
-
 		if (is_pipeline(state, &h) == true)
 			handle_fork(state, &h);
 		else if (builtin_main(state, state->parsed_cmds[h.i]) == BI_NOT_BUILTIN)
