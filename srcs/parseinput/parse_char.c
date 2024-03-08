@@ -106,7 +106,8 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
 		h->curr_cmd[h->j] = '\0';
 		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
 		h->j = 0;
-		h->i = (flags->is_and || flags->is_or);
+		if (flags->is_and || flags->is_or)
+			h->i++;
 	}
 	else if (flags->is_env_var)
 	{
