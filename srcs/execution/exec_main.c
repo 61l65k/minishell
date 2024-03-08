@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:18:06 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/07 22:34:07 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 12:02:50 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 	if (!h->cmd_arr)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	h->tmp = s->parsed_cmds[h->i];
-	if (apply_cmd_redirections(h, s) == FAILURE)
-		exit(EXIT_FAILURE);
+	apply_cmd_redirections(h, s);
 	if (h->fd_in != 0)
 	{
 		dup2(h->fd_in, STDIN_FILENO);
