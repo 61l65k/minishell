@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 23:26:52 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/08 11:53:05 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 14:16:17 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <readline/readline.h>
 #include "io_type.h"
 #include "builtin.h"
 #include "vec/vec.h"
@@ -40,19 +41,45 @@ static int	dup_fd(t_io *io)
 
 static int	open_file(t_io *io)
 {
-	io->fd = -1;
 	if (io->type == IO_OUT_TRUNC)
 		io->fd = open(io->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (io->type == IO_OUT_APPEND)
 		io->fd = open(io->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else if (io->type == IO_IN_TRUNC)
 		io->fd = open(io->filename, O_RDONLY);
-	else if (io->type == IO_IN_HEREDOC)
-		io->fd = (open(io->filename, O_RDONLY));
+	else
+		return (0);
 	if (io->fd == -1)
 	{
 		ft_fprintf(2, "minishell: %s: %s: %s\n", io->filename, strerror(errno));
 		return (-1);
+	}
+	return (0);
+}
+
+static int	open_heredoc(const char *delimiter, int fd_out)
+{
+	char	*line;
+
+	while (1)
+	{
+		line = readline("heredoc> ");
+		if (line == NULL)
+		{
+			ft_fprintf(STDERR_FILENO,
+				"minishell: warning: here-document ");
+			ft_fprintf(STDERR_FILENO,
+				"delimited by end-of-file (wanted `%s')\n", delimiter);
+			break ;
+		}
+		if (ft_strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
+		if (fd_out != -1)
+			ft_fprintf(fd_out, "%s\n", line);
+		free(line);
 	}
 	return (0);
 }
@@ -73,8 +100,11 @@ int	apply_main_process_redirections(t_command *command)
 	while (i < command->io_vec.len)
 	{
 		io_current = (t_io *)vec_get(&command->io_vec, i);
+		io_current->fd = -1;
 		open_file(io_current);
 		dup_fd(io_current);
+		if (io_current->type == IO_IN_HEREDOC)
+			open_heredoc(io_current->filename, -1);
 		i++;
 	}
 	return (0);
