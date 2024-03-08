@@ -28,7 +28,7 @@
 typedef struct s_list
 {
 	char			*content;
-	bool			is_quoted;
+	bool			is_quoted_redirector;
 	struct s_list	*next;
 }					t_list;
 

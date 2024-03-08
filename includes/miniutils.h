@@ -142,4 +142,5 @@ bool						wildcard_match(const char *pattern,
 int							apply_cmd_redirections(t_exechelper *h,
 								t_shellstate *s, const t_list *lst);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
+void						ft_isquotedredirector(t_list *node);
 #endif

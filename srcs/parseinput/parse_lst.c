@@ -30,7 +30,7 @@ static int	handle_quoted(t_lsthelper *t)
 		t->new_node = ft_lstnew(t->arg);
 		if (!t->new_node)
 			return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
-		t->new_node->is_quoted = true;
+		ft_isquotedredirector(t->new_node);
 		if (!t->head)
 			t->head = t->new_node;
 		else
