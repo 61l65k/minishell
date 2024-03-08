@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 18:27:40 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/08 11:49:05 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 13:53:27 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,9 @@ void	remove_io_from_args(char **args, t_list *arg_list)
 			continue ;
 		}
 		current_node = current_node->next;
-		args[j] = args[i];
-		i++;
-		j++;
+		args[j++] = args[i++];
 	}
+	args[j] = NULL;
 }
 
 int	get_command(t_list *arg_list, t_command *command)
