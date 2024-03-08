@@ -41,7 +41,12 @@ int	redirect_fd(char *filename, t_redirecthelper *rh, bool fd_out)
 	return (SUCCESS);
 }
 
-static int	check_operator(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
+static void	shift_array_elements(char **c_arr, t_redirecthelper *rh)
+{
+	c_arr[rh->j++] = c_arr[rh->i];
+}
+
+static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
 {
 	if (ft_strcmp(c_arr[rh->i], ">") == 0 || ft_strcmp(c_arr[rh->i], ">>") == 0)
 	{
@@ -64,35 +69,51 @@ static int	check_operator(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
 			return (FAILURE);
 	}
 	else
-		c_arr[rh->j++] = c_arr[rh->i];
+		shift_array_elements(c_arr, rh);
 	return (SUCCESS);
 }
 
-int	apply_cmd_redirections(t_exechelper *h, t_shellstate *s)
+static int	apply_fd_redirections(int last_out_fd, int last_in_fd)
+{
+	if (last_out_fd != -1)
+	{
+		if (dup2(last_out_fd, STDOUT_FILENO) == -1)
+		{
+			perror("dup2 - STDOUT");
+			close(last_out_fd);
+			return (FAILURE);
+		}
+		close(last_out_fd);
+	}
+	if (last_in_fd != -1)
+	{
+		if (dup2(last_in_fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2 - STDIN");
+			close(last_in_fd);
+			return (FAILURE);
+		}
+		close(last_in_fd);
+	}
+	return (SUCCESS);
+}
+
+int	apply_cmd_redirections(t_exechelper *h, t_shellstate *s,
+		const t_list *curr_cmd)
 {
 	t_redirecthelper	rh;
 
 	ft_memset(&rh, -1, sizeof(rh));
 	rh.j = 0;
-	while (h->tmp && h->cmd_arr[++rh.i])
+	rh.i = 0;
+	while (curr_cmd && h->cmd_arr[rh.i])
 	{
-		if (h->tmp->is_quoted == false && check_operator(&rh, h->cmd_arr,
+		if (curr_cmd->is_quoted == false && handle_redir(&rh, h->cmd_arr,
 				s) == FAILURE)
 			return (FAILURE);
-		h->tmp = h->tmp->next;
+		curr_cmd = curr_cmd->next;
+		rh.i++;
 	}
 	h->cmd_arr[rh.j] = NULL;
-	if (rh.last_out_fd != -1)
-	{
-		if (dup2(rh.last_out_fd, STDOUT_FILENO) == -1)
-			return (perror("dup2"), close(rh.last_out_fd), FAILURE);
-		close(rh.last_out_fd);
-	}
-	if (rh.last_in_fd != -1)
-	{
-		if (dup2(rh.last_in_fd, STDIN_FILENO) == -1)
-			return (perror("dup2"), close(rh.last_in_fd), FAILURE);
-		close(rh.last_in_fd);
-	}
-	return (SUCCESS);
+	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }

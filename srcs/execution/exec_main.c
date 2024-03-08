@@ -26,8 +26,7 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 	h->cmd_arr = lst_to_2darray(s->parsed_cmds[h->i]);
 	if (!h->cmd_arr)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	h->tmp = s->parsed_cmds[h->i];
-	if (apply_cmd_redirections(h, s) == FAILURE)
+	if (apply_cmd_redirections(h, s, s->parsed_cmds[h->i]) == FAILURE)
 		exit(EXIT_FAILURE);
 	if (h->fd_in != 0)
 	{
