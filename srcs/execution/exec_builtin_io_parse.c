@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 18:27:40 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/08 13:53:27 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 18:05:30 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,30 @@
 #include "miniutils.h"
 #include "io_type.h"
 
-t_io_type	get_io_type(const char *str)
+/**
+ * @brief Parses the commands and redirections from arg_list
+ * and stores them to the t_command struct passed as a parameter.
+ * @return Returns 0 on success, non zero on failure (malloc error)
+ */
+int	get_command(t_list *arg_list, t_command *command)
 {
-	if (ft_strcmp(str, ">") == 0)
-		return (IO_OUT_TRUNC);
-	else if (ft_strcmp(str, ">>") == 0)
-		return (IO_OUT_APPEND);
-	else if (ft_strcmp(str, "<") == 0)
-		return (IO_IN_TRUNC);
-	else if (ft_strcmp(str, "<<") == 0)
-		return (IO_IN_HEREDOC);
-	return (IO_NONE);
+	if (vec_new(&command->io_vec, 8, sizeof(t_io)) == -1)
+	{
+		return (FAILURE);
+	}
+	if (store_redirections_in_vec(&command->io_vec, arg_list) == FAILURE)
+	{
+		vec_free(&command->io_vec);
+		return (FAILURE);
+	}
+	command->args = lst_to_2darray(arg_list);
+	if (command->args == NULL)
+	{
+		vec_free(&command->io_vec);
+		return (FAILURE);
+	}
+	remove_redirections_from_args(command->args, arg_list);
+	return (SUCCESS);
 }
 
 int	store_redirections_in_vec(t_vec *io_vec, t_list *arg_list)
@@ -56,7 +69,7 @@ int	store_redirections_in_vec(t_vec *io_vec, t_list *arg_list)
 	return (SUCCESS);
 }
 
-void	remove_io_from_args(char **args, t_list *arg_list)
+void	remove_redirections_from_args(char **args, t_list *arg_list)
 {
 	int		i;
 	int		j;
@@ -84,27 +97,15 @@ void	remove_io_from_args(char **args, t_list *arg_list)
 	args[j] = NULL;
 }
 
-int	get_command(t_list *arg_list, t_command *command)
+t_io_type	get_io_type(const char *str)
 {
-	if (vec_new(&command->io_vec, 8, sizeof(t_io)) == -1)
-	{
-		return (FAILURE);
-	}
-	if (store_redirections_in_vec(&command->io_vec, arg_list) == FAILURE)
-	{
-		vec_free(&command->io_vec);
-		return (FAILURE);
-	}
-	command->args = lst_to_2darray(arg_list);
-	if (command->args == NULL)
-		return (FAILURE);
-	remove_io_from_args(command->args, arg_list);
-	return (SUCCESS);
-}
-
-void	free_command(t_command *command)
-{
-	free(command->args);
-	command->args = NULL;
-	vec_free(&command->io_vec);
+	if (ft_strcmp(str, ">") == 0)
+		return (IO_OUT_TRUNC);
+	else if (ft_strcmp(str, ">>") == 0)
+		return (IO_OUT_APPEND);
+	else if (ft_strcmp(str, "<") == 0)
+		return (IO_IN_TRUNC);
+	else if (ft_strcmp(str, "<<") == 0)
+		return (IO_IN_HEREDOC);
+	return (IO_NONE);
 }
