@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 23:26:52 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/08 17:55:11 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 23:55:05 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	apply_main_process_redirections(t_command *command)
 	command->fd_stdout_backup = dup(STDOUT_FILENO);
 	if (command->fd_stdin_backup == -1 || command->fd_stdout_backup == -1)
 	{
-		ft_fprintf(2, "minishell: %s\n", strerror(errno));
+		ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
 		return (-1);
 	}
 	i = 0;
@@ -37,8 +37,10 @@ int	apply_main_process_redirections(t_command *command)
 	{
 		io_current = (t_io *)vec_get(&command->io_vec, i);
 		io_current->fd = -1;
-		open_file(io_current);
-		dup_fd(io_current);
+		if (open_file(io_current) == -1)
+			return (-1);
+		if (dup_fd(io_current) == -1)
+			return (-1);
 		if (io_current->type == IO_IN_HEREDOC)
 			open_heredoc(io_current->filename, -1);
 		i++;
@@ -59,7 +61,7 @@ int	dup_fd(t_io *io)
 		return (-1);
 	if (dup2(io->fd, fd_to_dup) == -1)
 	{
-		ft_fprintf(2, "minishell: %s\n", strerror(errno));
+		ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
 		return (-1);
 	}
 	return (0);
@@ -77,7 +79,8 @@ int	open_file(t_io *io)
 		return (0);
 	if (io->fd == -1)
 	{
-		ft_fprintf(2, "minishell: %s: %s: %s\n", io->filename, strerror(errno));
+		ft_fprintf(STDERR_FILENO,
+			"minishell: %s: %s\n", io->filename, strerror(errno));
 		return (-1);
 	}
 	return (0);

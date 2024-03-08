@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 17:47:36 by alex              #+#    #+#             */
-/*   Updated: 2024/03/08 17:26:51 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 00:09:02 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,15 @@ int	builtin_main(t_shellstate *state, t_list *arg_list)
 	state->last_exit_status = SUCCESS;
 	if (command.io_vec.len > 0)
 	{
-		apply_main_process_redirections(&command);
+		if (apply_main_process_redirections(&command) == -1)
+		{
+			state->last_exit_status = 1;
+		}
 	}
-	if (func)
-	{
+	if (func && state->last_exit_status == SUCCESS)
 		func(command.args, state);
-	}
 	if (command.io_vec.len > 0)
-	{
 		restore_main_process_fds(&command);
-	}
 	return (free_command(&command), builtin_type);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 10:55:29 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/06 20:15:54 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/08 23:56:55 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ static char	*get_path_to_file(const char *file, const char *env_path)
 static void	exec_error_exit(char *cmd_path, char *error_msg, int exit_code)
 {
 	if (cmd_path)
-		ft_fprintf(2, "%s: %s\n", cmd_path, error_msg);
+		ft_fprintf(STDERR_FILENO, "minishell: %s: %s\n", cmd_path, error_msg);
 	else
-		ft_fprintf(2, "%s\n", error_msg);
+		ft_fprintf(STDERR_FILENO, "minishell: %s\n", error_msg);
 	free(cmd_path);
 	exit(exit_code);
 }

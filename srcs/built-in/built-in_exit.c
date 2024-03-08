@@ -6,11 +6,12 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 12:33:49 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/06 12:47:44 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 00:02:48 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <unistd.h>
 
 static int	is_numeric(const char *str)
 {
@@ -38,13 +39,14 @@ void	builtin_exit(char **args, t_shellstate *state)
 	{
 		if (!is_numeric(args[1]))
 		{
-			ft_fprintf(2, "exit: %s: numeric argument required\n", args[1]);
+			ft_fprintf(STDERR_FILENO,
+				"minishell: exit: %s: numeric argument required\n", args[1]);
 			free(args);
 			ft_free_exit(state, NULL, 2);
 		}
 		if (args[2])
 		{
-			ft_putendl_fd("exit: too many arguments", 2);
+			ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
 			state->last_exit_status = 1;
 			return ;
 		}

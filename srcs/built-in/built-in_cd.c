@@ -6,12 +6,13 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 20:32:17 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/03 13:59:57 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 00:00:58 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "env_utils.h"
 #include "minishell.h"
+#include <unistd.h>
 
 static void	handle_home(t_shellstate *state, char *cwd)
 {
@@ -20,13 +21,14 @@ static void	handle_home(t_shellstate *state, char *cwd)
 	if (home_path == NULL)
 	{
 		state->last_exit_status = 1;
-		ft_putstr_fd("cd: HOME not set\n", 2);
+		ft_putstr_fd("minishell: cd: HOME not set\n", STDERR_FILENO);
 		return ;
 	}
 	else if (chdir(home_path) == -1)
 	{
 		state->last_exit_status = errno;
-		ft_fprintf(2, "cd: %s: %s\n", home_path, strerror(errno));
+		ft_fprintf(STDERR_FILENO,
+			"minishell: cd: %s: %s\n", home_path, strerror(errno));
 		return ;
 	}
 	else
@@ -46,13 +48,14 @@ static void	handle_previous(t_shellstate *state, char *cwd)
 	if (oldpwd == NULL)
 	{
 		state->last_exit_status = 1;
-		ft_putstr_fd("cd: OLDPWD not set\n", 2);
+		ft_putstr_fd("minishell: cd: OLDPWD not set\n", STDERR_FILENO);
 		return ;
 	}
 	else if (chdir(oldpwd) == -1)
 	{
 		state->last_exit_status = errno;
-		ft_fprintf(2, "cd: %s: %s\n", oldpwd, strerror(errno));
+		ft_fprintf(STDERR_FILENO,
+			"minishell: cd: %s: %s\n", oldpwd, strerror(errno));
 		return ;
 	}
 	else
@@ -71,7 +74,8 @@ static void	handle_normal_path(const char *path, t_shellstate *state, char *cwd)
 	if (chdir(path) == -1)
 	{
 		state->last_exit_status = errno;
-		ft_fprintf(2, "cd: %s: %s\n", path, strerror(errno));
+		ft_fprintf(STDERR_FILENO,
+			"minishell: cd: %s: %s\n", path, strerror(errno));
 		return ;
 	}
 	else
@@ -113,7 +117,7 @@ void	builtin_cd(char **argv, t_shellstate *state)
 	if (argv[1] && argv[2])
 	{
 		state->last_exit_status = 1;
-		ft_putstr_fd("cd: too many arguments\n", 2);
+		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
 		return ;
 	}
 	else if (argv[1] == NULL)
