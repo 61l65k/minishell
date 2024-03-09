@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 23:26:52 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/08 23:55:05 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 11:26:28 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,12 @@ int	dup_fd(t_io *io)
 {
 	int	fd_to_dup;
 
-	fd_to_dup = -1;
 	if (io->type == IO_OUT_TRUNC || io->type == IO_OUT_APPEND)
 		fd_to_dup = STDOUT_FILENO;
-	else if (io->type == IO_IN_TRUNC || io->type == IO_IN_HEREDOC)
+	else if (io->type == IO_IN_TRUNC)
 		fd_to_dup = STDIN_FILENO;
-	if (fd_to_dup == -1 || io->fd == -1)
-		return (-1);
+	else
+		return (0);
 	if (dup2(io->fd, fd_to_dup) == -1)
 	{
 		ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
