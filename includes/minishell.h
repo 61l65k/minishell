@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/07 22:22:13 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 12:25:11 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-
-# define PROMPT_LEN 100
 
 typedef enum e_operators
 {
