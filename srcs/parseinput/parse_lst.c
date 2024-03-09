@@ -22,7 +22,7 @@ static int	handle_quoted(t_lsthelper *t)
 	}
 	else
 	{
-		t->in_quote = 0;
+		t->in_quote = false;
 		t->arg_len = t->i - t->arg_start;
 		t->arg = ft_strndup(t->start + t->arg_start, t->arg_len);
 		if (!t->arg)
@@ -37,8 +37,7 @@ static int	handle_quoted(t_lsthelper *t)
 			t->current->next = t->new_node;
 		t->current = t->new_node;
 	}
-	t->arg_start = t->i + 1;
-	t->i++;
+	t->arg_start = ++t->i;
 	return (SUCCESS);
 }
 
@@ -103,20 +102,24 @@ static t_list	*allocate_lst(t_lsthelper *t)
 {
 	while (t->i <= t->length)
 	{
-		if ((t->start[t->i] == '\'' || t->start[t->i] == '"') && (!t->in_quote
-				|| t->start[t->i] == t->current_quote))
+		if (need_handling(t, true))
 		{
 			if (handle_quoted(t))
 				return (NULL);
 			continue ;
 		}
-		if ((!t->in_quote && t->start[t->i] == ' ') || t->i == t->length)
+		if (need_handling(t, false))
 		{
 			if (!t->in_quote)
 				t->arg_len = t->i - t->arg_start;
 			else
 				t->arg_len = t->i - t->arg_start + 1;
-			if (handle_non_quoted(t))
+			if (t->is_adjacted)
+			{
+				if (handle_adjacted(t) == FAILURE)
+					return (NULL);
+			}
+			else if (handle_non_quoted(t))
 				return (NULL);
 		}
 		t->i++;
