@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/09 12:25:11 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 14:36:33 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_shellstate
 	struct sigaction	ignoreaction;
 }						t_shellstate;
 
+void					print_syntax_err(const char *token, const char *backup);
 bool					is_valid_cmd_count(t_shellstate *state);
 t_operators				str_to_op(const char *str);
 const char				*op_to_str(t_operators op);

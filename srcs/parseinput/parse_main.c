@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parseinput.c                                       :+:      :+:    :+:   */
+/*   parse_main.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 17:03:45 by apyykone          #+#    #+#             */
-/*   Updated: 2024/02/26 17:03:46 by apyykone         ###   ########.fr       */
+/*   Updated: 2024/03/09 14:43:27 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
 
 /**
  * @brief Top function for starting parsing the input string.
- * & Returns 0 if successful, otherwise 1.
+ * & Returns 0 if successful, returns non zero on errors.
  */
 int	ft_parseinput(t_shellstate *s)
 {
@@ -128,7 +128,6 @@ int	ft_parseinput(t_shellstate *s)
 	t_parsehelper	h;
 
 	ft_memset(&h, 0, sizeof(t_parsehelper));
-	i = 0;
 	s->parsed_args = split_cmds(s, &h);
 	if (!s->parsed_args)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), EXIT_FAILURE);
@@ -138,12 +137,16 @@ int	ft_parseinput(t_shellstate *s)
 	s->parsed_cmds = ft_calloc(s->cmd_count + 1, sizeof(t_list *));
 	if (!s->parsed_cmds)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	while (i < s->cmd_count)
+	i = -1;
+	while (++i < s->cmd_count)
 	{
 		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i]);
-		free(s->parsed_args[i++]);
+		if (s->parsed_cmds[i] == NULL)
+		{
+			print_syntax_err(s->parsed_args[i], op_to_str(s->operators[i]));
+			return (free_and_null_str_array(&s->parsed_args), 2);
+		}
 	}
-	free(s->parsed_args);
-	s->parsed_args = NULL;
+	free_and_null_str_array(&s->parsed_args);
 	return (EXIT_SUCCESS);
 }
