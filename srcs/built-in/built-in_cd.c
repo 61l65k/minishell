@@ -53,7 +53,7 @@ static void	handle_previous(t_shellstate *state, char *cwd)
 	}
 	else if (chdir(oldpwd) == -1)
 	{
-		state->last_exit_status = errno;
+		state->last_exit_status = 1;
 		ft_fprintf(STDERR_FILENO,
 			"minishell: cd: %s: %s\n", oldpwd, strerror(errno));
 		return ;
@@ -73,7 +73,7 @@ static void	handle_normal_path(const char *path, t_shellstate *state, char *cwd)
 {
 	if (chdir(path) == -1)
 	{
-		state->last_exit_status = errno;
+		state->last_exit_status = 1;
 		ft_fprintf(STDERR_FILENO,
 			"minishell: cd: %s: %s\n", path, strerror(errno));
 		return ;
