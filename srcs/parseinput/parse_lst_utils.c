@@ -20,7 +20,8 @@ bool	need_handling(t_lsthelper *t, bool check_quoted)
 		if ((t->start[t->i] == '\'' || t->start[t->i] == '"') && (!t->in_quote
 				|| t->start[t->i] == t->current_quote))
 		{
-			if (!t->in_quote && t->start[t->i - 1] != ' ')
+			if (!t->in_quote || (t->start[t->i] == t->current_quote
+					&& t->start[t->i + 1] && t->start[t->i + 1] != ' '))
 			{
 				t->is_adjacted = true;
 				return (0);
