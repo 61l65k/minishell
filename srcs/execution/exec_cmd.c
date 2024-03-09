@@ -34,7 +34,7 @@ static char	*get_full_path(char **env_paths_arr, const char *file)
 	while (*env_paths_arr)
 	{
 		result = ft_strjoin(*env_paths_arr, file_with_slash);
-		if (access(result, X_OK) == 0)
+		if (access(result, X_OK) == 0 && !is_directory(result))
 		{
 			free(file_with_slash);
 			return (result);
