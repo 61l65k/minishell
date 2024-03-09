@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 14:11:23 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/28 12:58:22 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 12:20:03 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define VEC_H
 
 # include <stdlib.h>
-# include <stdint.h>
 # include <stdbool.h>
 
 typedef struct s_vec

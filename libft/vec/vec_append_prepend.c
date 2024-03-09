@@ -6,11 +6,12 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 14:15:55 by ttakala           #+#    #+#             */
-/*   Updated: 2024/02/12 18:05:07 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/09 12:20:48 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vec.h"
+#include <stdint.h>
 
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 
