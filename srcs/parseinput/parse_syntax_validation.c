@@ -50,7 +50,7 @@ static bool	is_valid_cmd_count(t_shellstate *state)
 	return (true);
 }
 
-bool	redictor_syntax_is_valid(t_list *arg_list)
+static bool	is_valid_redirect_syntax(t_list *arg_list)
 {
 	t_list		*curr;
 
@@ -86,7 +86,7 @@ bool	is_valid_syntax(t_shellstate *state)
 	i = 0;
 	while (state->parsed_cmds[i])
 	{
-		if (!redictor_syntax_is_valid(state->parsed_cmds[i]))
+		if (is_valid_redirect_syntax(state->parsed_cmds[i]) == false)
 			return (false);
 		i++;
 	}
