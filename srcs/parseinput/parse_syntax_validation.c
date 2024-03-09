@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 #include "miniutils.h"
+#include "io_type.h"
 
 void	print_syntax_err(const char *token, const char *backup)
 {
@@ -25,7 +26,7 @@ void	print_syntax_err(const char *token, const char *backup)
 		ft_fprintf(STDERR_FILENO, "minishell: syntax error\n");
 }
 
-bool	is_valid_cmd_count(t_shellstate *state)
+static bool	is_valid_cmd_count(t_shellstate *state)
 {
 	int	i;
 
@@ -45,6 +46,49 @@ bool	is_valid_cmd_count(t_shellstate *state)
 	{
 		print_syntax_err(op_to_str(state->operators[i]), NULL);
 		return (false);
+	}
+	return (true);
+}
+
+bool	redictor_syntax_is_valid(t_list *arg_list)
+{
+	t_list		*curr;
+
+	curr = arg_list;
+	while (curr)
+	{
+		if (curr->is_quoted_redirector == false
+			&& get_io_type(curr->content) != IO_NONE)
+		{
+			if (curr->next == NULL || curr->next->content == NULL)
+			{
+				print_syntax_err("newline", NULL);
+				return (false);
+			}
+			curr = curr->next;
+			if (get_io_type(curr->content) != IO_NONE)
+			{
+				print_syntax_err(curr->content, "newline");
+				return (false);
+			}
+		}
+		curr = curr->next;
+	}
+	return (true);
+}
+
+bool	is_valid_syntax(t_shellstate *state)
+{
+	int	i;
+
+	if (is_valid_cmd_count(state) == false)
+		return (false);
+	i = 0;
+	while (state->parsed_cmds[i])
+	{
+		if (!redictor_syntax_is_valid(state->parsed_cmds[i]))
+			return (false);
+		i++;
 	}
 	return (true);
 }

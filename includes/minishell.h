@@ -61,8 +61,8 @@ typedef struct s_shellstate
 	struct sigaction	ignoreaction;
 }						t_shellstate;
 
+bool					is_valid_syntax(t_shellstate *state);
 void					print_syntax_err(const char *token, const char *backup);
-bool					is_valid_cmd_count(t_shellstate *state);
 t_operators				str_to_op(const char *str);
 const char				*op_to_str(t_operators op);
 void					ft_free_exit(t_shellstate *state, const char *errormsg,

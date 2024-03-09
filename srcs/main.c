@@ -53,7 +53,7 @@ int	main(int argc, char **argv, const char **envp)
 	{
 		ft_free_resets(&state);
 		ft_takeinput(&state);
-		if (ft_parseinput(&state) == SUCCESS && is_valid_cmd_count(&state))
+		if (ft_parseinput(&state) == SUCCESS && is_valid_syntax(&state))
 			state.last_exit_status = ft_executecmd(&state);
 		else
 			state.last_exit_status = 2;
