@@ -102,6 +102,15 @@ typedef struct s_wildcardhelper
 	char					*matched_arg;
 }							t_wildcardhelper;
 
+typedef struct s_adjactedhelper
+{
+	char					*buff;
+	size_t					buffer_index;
+	size_t					buff_size;
+	char					current_quote;
+	char					*new_buff;
+}							t_adjactedhelper;
+
 typedef struct s_lsthelper
 {
 	t_wildcardhelper		wcard;

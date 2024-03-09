@@ -133,7 +133,7 @@ t_list	*str_to_lst(const char *str)
 
 	if (str == NULL)
 		return (NULL);
-	ft_memset(&t, 0, sizeof(t_lsthelper));
+	t = (t_lsthelper){0};
 	t.start = str;
 	t.end = str + ft_strlen(str) - 1;
 	while (*t.start && (*t.start == ' ' || *t.start == '\t'))

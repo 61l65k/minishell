@@ -121,7 +121,7 @@ int	ft_executecmd(t_shellstate *state)
 {
 	t_exechelper	h;
 
-	ft_memset(&h, 0, sizeof(t_exechelper));
+	h = (t_exechelper){0};
 	while (h.i < state->cmd_count)
 	{
 		if (is_pipeline(state, &h) == true)

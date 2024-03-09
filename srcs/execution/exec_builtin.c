@@ -28,7 +28,7 @@ int	builtin_main(t_shellstate *state, t_list *arg_list)
 	t_builtin_type	builtin_type;
 	t_builtin_func	func;
 
-	ft_memset(&command, 0, sizeof(t_command));
+	command = (t_command){0};
 	if (get_command(arg_list, &command) == FAILURE)
 		ft_free_exit(state, ERR_MALLOC, 1);
 	builtin_type = get_builtin_type(command.args[0]);

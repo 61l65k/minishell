@@ -134,7 +134,7 @@ void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 	t_charflags	flags;
 	t_envhelper	eh;
 
-	ft_memset(&eh, 0, sizeof(t_envhelper));
+	eh = (t_envhelper){0};
 	init_char_flags(&flags, &state->input_string[h->i], h);
 	if (flags.is_env_var && ft_checkdollar(state, h))
 		flags.is_env_var = false;

@@ -43,7 +43,7 @@ void	ensure_mem_for_cmd(t_parsehelper *h, t_shellstate *state,
  */
 void	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 {
-	ft_memset(flags, 0, sizeof(t_charflags));
+	*flags = (t_charflags){0};
 	if ((*c == '\'' && !h->in_double_quote) || (*c == '"'
 			&& !h->in_single_quote))
 	{

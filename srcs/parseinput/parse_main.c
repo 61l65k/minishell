@@ -66,7 +66,7 @@ static int	count_op_cmds(t_shellstate *state, int *cmd_count)
 {
 	t_operatorhelper	op;
 
-	ft_memset(&op, 0, sizeof(t_operatorhelper));
+	op = (t_operatorhelper){0};
 	op.operators_capacity = 100;
 	op.cmd_count = 1;
 	op.ops = ft_calloc(op.operators_capacity, sizeof(t_operators));
@@ -127,7 +127,7 @@ int	ft_parseinput(t_shellstate *s)
 	int				i;
 	t_parsehelper	h;
 
-	ft_memset(&h, 0, sizeof(t_parsehelper));
+	h = (t_parsehelper){0};
 	s->parsed_args = split_cmds(s, &h);
 	if (!s->parsed_args)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), EXIT_FAILURE);
