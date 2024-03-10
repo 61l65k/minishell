@@ -23,7 +23,7 @@ bool	need_handling(t_lsthelper *t, bool check_quoted)
 			if (!t->in_quote || (t->start[t->i] == t->current_quote
 					&& t->start[t->i + 1] && t->start[t->i + 1] != ' '))
 			{
-				t->is_adjacted = true;
+				t->is_adjacent = true;
 				return (0);
 			}
 			return (1);
@@ -32,7 +32,7 @@ bool	need_handling(t_lsthelper *t, bool check_quoted)
 	else
 	{
 		if ((!t->in_quote && t->start[t->i] == ' ') || t->i == t->length
-			|| t->is_adjacted)
+			|| t->is_adjacent)
 			return (1);
 	}
 	return (0);
@@ -41,7 +41,7 @@ bool	need_handling(t_lsthelper *t, bool check_quoted)
 bool	need_handling_non_quoted(t_lsthelper *t)
 {
 	if ((!t->in_quote && t->start[t->i] == ' ') || t->i == t->length
-		|| t->is_adjacted)
+		|| t->is_adjacent)
 		return (1);
 	return (0);
 }

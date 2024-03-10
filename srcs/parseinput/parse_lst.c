@@ -114,9 +114,9 @@ static t_list	*allocate_lst(t_lsthelper *t)
 				t->arg_len = t->i - t->arg_start;
 			else
 				t->arg_len = t->i - t->arg_start + 1;
-			if (t->is_adjacted)
+			if (t->is_adjacent)
 			{
-				if (handle_adjacted(t) == FAILURE)
+				if (handle_adjacent(t) == FAILURE)
 					return (NULL);
 			}
 			else if (handle_non_quoted(t))
