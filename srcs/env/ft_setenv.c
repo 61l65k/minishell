@@ -39,8 +39,6 @@ int	ft_setenv_entry(const char *entry, t_shellstate *state)
 	const size_t	key_len = env_key_len(entry);
 	char			**new_envp;
 
-	if (!entry || !state)
-		return (0);
 	if (key_len == 0 || (entry[key_len] != '=' && entry[key_len] != '\0'))
 		return (-1);
 	if (!env_entry_is_valid(entry))

@@ -26,9 +26,7 @@ typedef enum e_operators	t_operators;
 enum						e_returnvalues
 {
 	SUCCESS = 0,
-	FAILURE = 1,
-	FOUNDCMD = 2,
-	FOUNDOP = 3,
+	FAILURE = 1
 };
 
 typedef struct s_parsehelper
