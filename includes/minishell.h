@@ -46,7 +46,7 @@ typedef enum e_operators
 
 typedef struct s_shellstate
 {
-	char				input_string[ARG_MAX];
+	char				*input_string;
 	char				**parsed_args;
 	t_list				**parsed_cmds;
 	t_operators			*operators;

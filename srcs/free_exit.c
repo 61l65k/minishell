@@ -48,6 +48,8 @@ void	free_parsed_cmds_list(t_list **array_of_lists)
  */
 void	ft_free_resets(t_shellstate *state)
 {
+	free(state->input_string);
+	state->input_string = NULL;
 	if (state->parsed_cmds)
 	{
 		free_parsed_cmds_list(state->parsed_cmds);

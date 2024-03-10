@@ -19,18 +19,15 @@
 static void	ft_takeinput(t_shellstate *state)
 {
 	static char	prompt[PATH_MAX + 4];
-	char		*buf;
 
 	if (getcwd(prompt, PATH_MAX) == NULL)
 		ft_free_exit(state, ERR_GETCWD, EXIT_FAILURE);
 	ft_strlcat(prompt, "\% ", sizeof(prompt));
-	buf = readline(prompt);
-	if (buf == NULL)
+	state->input_string = readline(prompt);
+	if (state->input_string == NULL)
 		ft_free_exit(state, NULL, EXIT_FAILURE);
-	if (ft_strlen(buf))
-		add_history(buf);
-	ft_strlcpy(state->input_string, buf, sizeof(state->input_string));
-	free(buf);
+	if (ft_strlen(state->input_string))
+		add_history(state->input_string);
 }
 
 int	main(int argc, char **argv, const char **envp)
