@@ -110,14 +110,14 @@ typedef struct s_wildcardhelper
 	char					*matched_arg;
 }							t_wildcardhelper;
 
-typedef struct s_adjactedhelper
+typedef struct s_adjacenthelper
 {
 	char					*buff;
 	size_t					buffer_index;
 	size_t					buff_size;
 	char					current_quote;
 	char					*new_buff;
-}							t_adjactedhelper;
+}							t_adjacenthelper;
 
 typedef struct s_lsthelper
 {
@@ -134,7 +134,7 @@ typedef struct s_lsthelper
 	t_list					*new_node;
 	size_t					arg_len;
 	char					current_quote;
-	bool					is_adjacted;
+	bool					is_adjacent;
 }							t_lsthelper;
 
 char						**strarrjoin(const char **arr, const char *str);
@@ -159,7 +159,7 @@ int							apply_cmd_redirections(t_exechelper *h,
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
-int							handle_adjacted(t_lsthelper *t);
+int							handle_adjacent(t_lsthelper *t);
 t_operators					check_for_op(t_operatorhelper *op,
 								t_shellstate *state, int index);
 int							check_parentheses(t_operatorhelper *op,
