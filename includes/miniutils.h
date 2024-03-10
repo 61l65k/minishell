@@ -95,6 +95,15 @@ typedef struct s_redirecthelper
 	int						flags;
 }							t_redirecthelper;
 
+typedef struct s_hdochelper
+{
+	int						pipe_fds[2];
+	char					*delimiter;
+	t_shellstate			*s;
+	pid_t					pid;
+	t_redirecthelper		*rh;
+}							t_hdochelper;
+
 typedef struct s_wildcardhelper
 {
 	DIR						*dir;

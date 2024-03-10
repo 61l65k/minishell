@@ -18,6 +18,7 @@
 #include <readline/readline.h>
 #include "io_type.h"
 #include "builtin.h"
+#include "minimessages.h"
 #include "vec/vec.h"
 
 int	apply_main_process_redirections(t_command *command)
@@ -95,9 +96,7 @@ int	open_heredoc(const char *delimiter, int fd_out)
 		if (line == NULL)
 		{
 			ft_fprintf(STDERR_FILENO,
-				"minishell: warning: here-document ");
-			ft_fprintf(STDERR_FILENO,
-				"delimited by end-of-file (wanted `%s')\n", delimiter);
+				HDOC_DELIMMSG, delimiter);
 			break ;
 		}
 		if (ft_strcmp(line, delimiter) == 0)
