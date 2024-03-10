@@ -31,6 +31,7 @@ delimited by end-of-file (wanted `%s')\n"
 # define ERR_HEREDOC_DELIMITER \
 	"minishell: syntax error near unexpected \
 token `newline'\n"
+# define SIGINT_EXIT 130
 
 enum	e_errors
 {

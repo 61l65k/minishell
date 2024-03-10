@@ -64,10 +64,7 @@ static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<<") == 0)
-	{
-		if (handle_heredoc(rh, c_arr[rh->i++ + 1], s) == FAILURE)
-			return (FAILURE);
-	}
+		handle_heredoc(rh, c_arr[rh->i++ + 1], s);
 	else
 		shift_array_elements(c_arr, rh);
 	return (SUCCESS);

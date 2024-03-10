@@ -56,7 +56,6 @@ typedef struct s_shellstate
 	bool				is_child_process;
 	char				**envp;
 	t_vec				pid;
-	bool				in_heredoc;
 	struct sigaction	sigaction;
 	struct sigaction	ignoreaction;
 }						t_shellstate;
@@ -77,7 +76,7 @@ void					setup_terminal(void);
 void					ft_execvp(const char *file, char *const argv[],
 							char *const envp[]);
 char					*ft_getenv(const char *name, char *const envp[]);
-int						handle_heredoc(t_redirecthelper *rh, char *delimiter,
+void					handle_heredoc(t_redirecthelper *rh, char *delimiter,
 							t_shellstate *s);
 int						redirect_fd(char *filename, t_redirecthelper *rh,
 							bool fd_out);

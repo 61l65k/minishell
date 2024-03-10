@@ -21,7 +21,7 @@
 static void	heredoc_signal_handler(int signo)
 {
 	if (signo == SIGINT)
-		_exit(EXIT_SUCCESS);
+		exit(SIGINT_EXIT);
 }
 
 static void	heredoc_child_process(t_hdochelper *h)
@@ -53,17 +53,19 @@ static void	heredoc_child_process(t_hdochelper *h)
 
 static void	handle_main_process(t_hdochelper *h)
 {
+	int	status;
+
 	sigaction(SIGINT, &h->s->ignoreaction, &h->s->sigaction);
-	h->s->in_heredoc = true;
 	close(h->pipe_fds[1]);
-	waitpid(h->pid, NULL, 0);
+	waitpid(h->pid, &status, 0);
 	sigaction(SIGINT, &h->s->sigaction, NULL);
-	h->s->in_heredoc = false;
+	if (WEXITSTATUS(status) == SIGINT_EXIT)
+		return (close(h->pipe_fds[0]), exit(SIGINT_EXIT));
 	h->rh->fd = h->pipe_fds[0];
 	redirect_fd(NULL, h->rh, false);
 }
 
-int	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s)
+void	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s)
 {
 	t_hdochelper	h;
 
@@ -72,16 +74,15 @@ int	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s)
 	h.rh = rh;
 	h.delimiter = delimiter;
 	if (!delimiter)
-		return (ft_putstr_fd(ERR_HEREDOC_DELIMITER, STDERR_FILENO), 1);
+		return (ft_putstr_fd(ERR_HEREDOC_DELIMITER, STDERR_FILENO));
 	if (pipe(h.pipe_fds) == -1)
-		return (perror("pipe"), FAILURE);
+		return (perror("pipe"), exit(EXIT_FAILURE));
 	h.pid = fork();
 	if (h.pid == -1)
 		return (perror("fork() heredoc"), close(h.pipe_fds[0]),
-			close(h.pipe_fds[1]), FAILURE);
+			close(h.pipe_fds[1]), exit(EXIT_FAILURE));
 	if (h.pid == 0)
 		heredoc_child_process(&h);
 	else
 		handle_main_process(&h);
-	return (SUCCESS);
 }
