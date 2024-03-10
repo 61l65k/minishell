@@ -66,7 +66,8 @@ static bool	is_valid_redirect_syntax(t_list *arg_list)
 				return (false);
 			}
 			curr = curr->next;
-			if (get_io_type(curr->content) != IO_NONE)
+			if (get_io_type(curr->content) != IO_NONE
+			&& curr->is_quoted_redirector == false)
 			{
 				print_syntax_err(curr->content, "newline");
 				return (false);
