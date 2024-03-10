@@ -53,11 +53,17 @@ static int	validation_loop(t_shellstate *s, t_operatorhelper *op)
 		else if (s->input_string[op->i] == '"' && !op->in_single_quote)
 			op->in_double_quote = !op->in_double_quote;
 		if (!op->in_single_quote && !op->in_double_quote)
-			ensure_mem_cpy_op(op, check_for_op(op, s), s);
+		{
+			if (check_parentheses(op, s) == FAILURE)
+				return (FAILURE);
+			ensure_mem_cpy_op(op, check_for_op(op, s, -1), s);
+		}
 		op->i++;
 	}
 	if (op->in_single_quote || op->in_double_quote)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), FAILURE);
+	if (op->paren_depth != 0)
+		return (ft_putstr_fd(ERR_PARENTHESES, STDERR_FILENO), FAILURE);
 	return (SUCCESS);
 }
 

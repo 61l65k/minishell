@@ -17,13 +17,18 @@
 /**
  * @brief Check if the the current character is operator.
  */
-t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state)
+t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state, int index)
 {
-	if (ft_strncmp(state->input_string + op->i, "&&", 2) == 0)
+	int	i;
+
+	i = op->i;
+	if (index != -1)
+		i = index;
+	if (ft_strncmp(state->input_string + i, "&&", 2) == 0)
 		return (OP_AND);
-	if (ft_strncmp(state->input_string + op->i, "||", 2) == 0)
+	if (ft_strncmp(state->input_string + i, "||", 2) == 0)
 		return (OP_OR);
-	if (state->input_string[op->i] == '|')
+	if (state->input_string[i] == '|')
 		return (OP_PIPE);
 	return (OP_NONE);
 }

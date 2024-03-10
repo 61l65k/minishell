@@ -51,6 +51,7 @@ typedef struct s_operatorhelper
 	int						cmd_count;
 	t_operators				*ops;
 	size_t					operators_capacity;
+	int						paren_depth;
 }							t_operatorhelper;
 
 typedef struct s_exechelper
@@ -160,5 +161,7 @@ void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
 int							handle_adjacted(t_lsthelper *t);
 t_operators					check_for_op(t_operatorhelper *op,
-								t_shellstate *state);
+								t_shellstate *state, int index);
+int							check_parentheses(t_operatorhelper *op,
+								t_shellstate *s);
 #endif

@@ -23,8 +23,10 @@
 # define ERR_PIPE "\033[0;31mError: pipe() failed\n \033[0m"
 # define ERR_FORK "\033[0;31mError: fork() failed\n \033[0m"
 # define ERR_SIGACTION "\033[0;31mError: sigaction() failed\n\033[0m"
-# define ERR_QUOTES "\033[0;31mError: quotes not closed\n\033[0m"
+# define ERR_QUOTES "\033[0;31mminishell: quotes not closed\n\033[0m"
 # define ERR_MALLOC "\033[0;31mError: malloc() failed\n\033[0m"
+# define ERR_PARENTHESES "\033[0;31mminishell: parentheses not closed\n\033[0m"
+
 # define HDOC_DELIMMSG \
 	"minishell: warning: here-document \
 delimited by end-of-file (wanted `%s')\n"
