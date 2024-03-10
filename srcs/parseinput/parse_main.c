@@ -44,11 +44,28 @@ static void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
 	op->cmd_count++;
 }
 
+static int	validation_loop(t_shellstate *s, t_operatorhelper *op)
+{
+	while (s->input_string[op->i])
+	{
+		if (s->input_string[op->i] == '\'' && !op->in_double_quote)
+			op->in_single_quote = !op->in_single_quote;
+		else if (s->input_string[op->i] == '"' && !op->in_single_quote)
+			op->in_double_quote = !op->in_double_quote;
+		if (!op->in_single_quote && !op->in_double_quote)
+			ensure_mem_cpy_op(op, check_for_op(op, s), s);
+		op->i++;
+	}
+	if (op->in_single_quote || op->in_double_quote)
+		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), FAILURE);
+	return (SUCCESS);
+}
+
 /**
  * @brief Counts the amount of commands in the input string.
  * & Returns the amount of commands.
  */
-static int	count_op_cmds(t_shellstate *state, int *cmd_count)
+static int	count_op_cmds(t_shellstate *s, int *cmd_count)
 {
 	t_operatorhelper	op;
 
@@ -57,23 +74,15 @@ static int	count_op_cmds(t_shellstate *state, int *cmd_count)
 	op.cmd_count = 1;
 	op.ops = ft_calloc(op.operators_capacity, sizeof(t_operators));
 	if (!op.ops)
-		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-	while (state->input_string[op.i])
-	{
-		if (state->input_string[op.i] == '\'' && !op.in_double_quote)
-			op.in_single_quote = !op.in_single_quote;
-		else if (state->input_string[op.i] == '"' && !op.in_single_quote)
-			op.in_double_quote = !op.in_double_quote;
-		if (!op.in_single_quote && !op.in_double_quote)
-			ensure_mem_cpy_op(&op, check_for_op(&op, state), state);
-		op.i++;
-	}
-	state->operators = ft_realloc(state->operators, state->operator_count
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	if (validation_loop(s, &op) == FAILURE)
+		return (free(op.ops), FAILURE);
+	s->operators = ft_realloc(s->operators, s->operator_count
 			* sizeof(t_operators), op.cmd_count * sizeof(t_operators));
-	ft_memcpy(state->operators, op.ops, op.cmd_count * sizeof(t_operators));
-	state->operator_count = op.cmd_count - 1;
+	ft_memcpy(s->operators, op.ops, op.cmd_count * sizeof(t_operators));
+	s->operator_count = op.cmd_count - 1;
 	*cmd_count = op.cmd_count;
-	return (free(op.ops), op.in_single_quote || op.in_double_quote);
+	return (free(op.ops), SUCCESS);
 }
 
 /**
@@ -84,7 +93,7 @@ static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
 {
 	h->i = -1;
 	h->alloc_size = ft_strlen(state->input_string) + 1;
-	if (count_op_cmds(state, &h->command_count) == QUOTE_ERROR)
+	if (count_op_cmds(state, &h->command_count) != SUCCESS)
 		return (NULL);
 	h->commands = ft_calloc(h->command_count + 1, sizeof(char *));
 	h->curr_cmd = ft_calloc(h->alloc_size, 1);
@@ -116,7 +125,7 @@ int	ft_parseinput(t_shellstate *s)
 	h = (t_parsehelper){0};
 	s->parsed_args = split_cmds(s, &h);
 	if (!s->parsed_args)
-		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), EXIT_FAILURE);
+		return (FAILURE);
 	while (s->parsed_args[s->cmd_count])
 		s->cmd_count++;
 	s->operator_count = s->cmd_count - 1;
