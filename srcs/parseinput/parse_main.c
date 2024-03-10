@@ -17,20 +17,6 @@
 #include <stdlib.h>
 
 /**
- * @brief Check if the the current character is operator.
- */
-static t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state)
-{
-	if (ft_strncmp(state->input_string + op->i, "&&", 2) == 0)
-		return (OP_AND);
-	if (ft_strncmp(state->input_string + op->i, "||", 2) == 0)
-		return (OP_OR);
-	if (state->input_string[op->i] == '|')
-		return (OP_PIPE);
-	return (OP_NONE);
-}
-
-/**
  * @brief ensures that there is enough memory for the operators array.
  */
 static void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,

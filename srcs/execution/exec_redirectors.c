@@ -105,9 +105,11 @@ int	apply_cmd_redirections(t_exechelper *h, t_shellstate *s,
 	rh.i = 0;
 	while (curr_cmd && h->cmd_arr[rh.i])
 	{
-		if (curr_cmd->is_quoted_redirector == false && handle_redir(&rh,
-				h->cmd_arr, s) == FAILURE)
-			return (FAILURE);
+		if (curr_cmd->is_quoted_redirector == false)
+		{
+			if (handle_redir(&rh, h->cmd_arr, s) == FAILURE)
+				return (FAILURE);
+		}
 		curr_cmd = curr_cmd->next;
 		rh.i++;
 	}

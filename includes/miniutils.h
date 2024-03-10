@@ -159,4 +159,6 @@ int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
 int							handle_adjacted(t_lsthelper *t);
+t_operators					check_for_op(t_operatorhelper *op,
+								t_shellstate *state);
 #endif

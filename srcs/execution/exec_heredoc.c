@@ -51,7 +51,7 @@ static void	heredoc_child_process(t_hdochelper *h)
 	exit(EXIT_SUCCESS);
 }
 
-static void	handle_main_process(t_hdochelper *h)
+static void	handle_higher_process(t_hdochelper *h)
 {
 	int	status;
 
@@ -84,5 +84,5 @@ void	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s)
 	if (h.pid == 0)
 		heredoc_child_process(&h);
 	else
-		handle_main_process(&h);
+		handle_higher_process(&h);
 }

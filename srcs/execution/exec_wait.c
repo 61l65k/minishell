@@ -37,7 +37,7 @@ void	wait_remaining_children(t_shellstate *state)
  */
 void	wait_child(t_shellstate *state, pid_t pid)
 {
-	int		status;
+	int	status;
 
 	status = 0;
 	waitpid(pid, &status, 0);

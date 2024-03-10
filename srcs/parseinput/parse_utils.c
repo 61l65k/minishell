@@ -15,6 +15,20 @@
 #include "miniutils.h"
 
 /**
+ * @brief Check if the the current character is operator.
+ */
+t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state)
+{
+	if (ft_strncmp(state->input_string + op->i, "&&", 2) == 0)
+		return (OP_AND);
+	if (ft_strncmp(state->input_string + op->i, "||", 2) == 0)
+		return (OP_OR);
+	if (state->input_string[op->i] == '|')
+		return (OP_PIPE);
+	return (OP_NONE);
+}
+
+/**
  * @brief Ensures that there is enough memory for the command.
  * If not, reallocates double the size of the current memory.
  */
