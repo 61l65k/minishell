@@ -24,12 +24,16 @@ const char	*op_to_str(t_operators op)
 	[OP_REDIRECT_OUT] = ">",
 	[OP_REDIRECT_IN] = "<"};
 
+	if (op < 0 || op >= OP_OPERATOR_COUNT)
+		return ("unknown operator");
 	return (names[op]);
 }
 
 t_operators	str_to_op(const char *str)
 {
-	if (ft_strcmp(str, "&&") == 0)
+	if (str == NULL)
+		return (OP_NONE);
+	else if (ft_strcmp(str, "&&") == 0)
 		return (OP_AND);
 	else if (ft_strcmp(str, "||") == 0)
 		return (OP_OR);
