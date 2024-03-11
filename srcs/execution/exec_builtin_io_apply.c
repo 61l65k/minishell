@@ -19,20 +19,33 @@
 #include "io_type.h"
 #include "builtin.h"
 #include "minimessages.h"
+#include "minishell.h"
 #include "vec/vec.h"
+
+int	back_up_main_process_fds(t_command *command)
+{
+	command->fd_stdin_backup = dup(STDIN_FILENO);
+	if (command->fd_stdin_backup == -1)
+	{
+		ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
+		return (-1);
+	}
+	command->fd_stdout_backup = dup(STDOUT_FILENO);
+	if (command->fd_stdout_backup == -1)
+	{
+		ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
+		return (-1);
+	}
+	return (0);
+}
 
 int	apply_main_process_redirections(t_command *command)
 {
 	t_io	*io_current;
 	size_t	i;
 
-	command->fd_stdin_backup = dup(STDIN_FILENO);
-	command->fd_stdout_backup = dup(STDOUT_FILENO);
-	if (command->fd_stdin_backup == -1 || command->fd_stdout_backup == -1)
-	{
-		ft_fprintf(STDERR_FILENO, "minishell: %s\n", strerror(errno));
+	if (back_up_main_process_fds(command) == -1)
 		return (-1);
-	}
 	i = 0;
 	while (i < command->io_vec.len)
 	{
@@ -43,7 +56,10 @@ int	apply_main_process_redirections(t_command *command)
 		if (dup_fd(io_current) == -1)
 			return (-1);
 		if (io_current->type == IO_IN_HEREDOC)
-			open_heredoc(io_current->filename, -1);
+		{
+			if (open_heredoc(io_current->filename, -1) == SIGINT_EXIT)
+				return (-1);
+		}
 		i++;
 	}
 	return (0);
@@ -92,11 +108,12 @@ int	open_heredoc(const char *delimiter, int fd_out)
 
 	while (1)
 	{
+		if (g_signal_flag == 130)
+			return (SIGINT_EXIT);
 		line = readline("heredoc> ");
 		if (line == NULL)
 		{
-			ft_fprintf(STDERR_FILENO,
-				HDOC_DELIMMSG, delimiter);
+			ft_fprintf(STDERR_FILENO, HDOC_DELIMMSG, delimiter);
 			break ;
 		}
 		if (ft_strcmp(line, delimiter) == 0)
