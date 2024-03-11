@@ -51,8 +51,6 @@ int	main(int argc, char **argv, const char **envp)
 		ft_takeinput(&state);
 		if (ft_parseinput(&state) == SUCCESS && is_valid_syntax(&state))
 			state.last_exit_status = ft_executecmd(&state);
-		else
-			state.last_exit_status = 2;
 	}
 	ft_free_exit(&state, NULL, EXIT_SUCCESS);
 	return (0);
