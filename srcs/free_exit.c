@@ -15,12 +15,14 @@
 #include "miniutils.h"
 
 /**
- * @brief Frees all & Exit the shell with an error message or with success.
+ * @brief Frees all & Exit the shell. Prints msg with perror if exit_code != 0.
  */
-void	ft_free_exit(t_shellstate *state, const char *error_msg, int exit_code)
+void	ft_free_exit(t_shellstate *state, const char *msg, int exit_code)
 {
-	if (error_msg)
-		perror(error_msg);
+	if (msg && exit_code != EXIT_SUCCESS)
+		perror(msg);
+	else if (msg)
+		printf("%s\n", msg);
 	ft_free_resets(state);
 	free_str_array(state->envp);
 	state->envp = NULL;
