@@ -43,30 +43,22 @@ static int	handle_quoted(t_lsthelper *t)
 
 static int	handle_wildcard(t_lsthelper *t)
 {
-	while (true)
+	bool	found_match;
+
+	found_match = false;
+	while ((t->wcard.entry = readdir(t->wcard.dir)) != NULL)
 	{
-		t->wcard.entry = readdir(t->wcard.dir);
-		if (!t->wcard.entry)
-			break ;
-		if (!wildcard_match(t->arg, t->wcard.entry->d_name))
-			continue ;
-		t->wcard.matched_arg = ft_strdup(t->wcard.entry->d_name);
-		if (t->wcard.matched_arg != NULL)
+		if (wildcard_match(t->arg, t->wcard.entry->d_name))
 		{
-			t->new_node = ft_lstnew(t->wcard.matched_arg);
-			if (t->new_node != NULL)
-			{
-				if (!t->head)
-					t->head = t->new_node;
-				else
-					t->current->next = t->new_node;
-				t->current = t->new_node;
-				continue ;
-			}
-			free(t->wcard.matched_arg);
+			create_add_node_wcard(t, t->wcard.entry->d_name);
+			found_match = true;
 		}
 	}
-	return (closedir(t->wcard.dir), free(t->arg), SUCCESS);
+	if (!found_match)
+		create_add_node_wcard(t, t->arg);
+	closedir(t->wcard.dir);
+	free(t->arg);
+	return (SUCCESS);
 }
 
 static int	handle_non_quoted(t_lsthelper *t)

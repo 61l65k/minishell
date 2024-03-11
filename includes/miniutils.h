@@ -165,4 +165,5 @@ t_operators					check_for_op(t_operatorhelper *op,
 								t_shellstate *state, int index);
 int							check_parentheses(t_operatorhelper *op,
 								t_shellstate *s);
+void						create_add_node_wcard(t_lsthelper *t, char *data);
 #endif

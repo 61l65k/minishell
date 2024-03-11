@@ -13,6 +13,28 @@
 #include "minishell.h"
 #include "miniutils.h"
 
+void	create_add_node_wcard(t_lsthelper *t, char *data)
+{
+	char	*node_data;
+	t_list	*new_node;
+
+	node_data = ft_strdup(data);
+	if (node_data != NULL)
+	{
+		new_node = ft_lstnew(node_data);
+		if (new_node != NULL)
+		{
+			if (!t->head)
+				t->head = new_node;
+			else
+				t->current->next = new_node;
+			t->current = new_node;
+		}
+		else
+			free(node_data);
+	}
+}
+
 bool	need_handling(t_lsthelper *t, bool check_quoted)
 {
 	if (check_quoted)
