@@ -37,6 +37,8 @@ int	get_command(t_list *arg_list, t_command *command)
 		return (FAILURE);
 	}
 	remove_redirections_from_args(command->args, arg_list);
+	command->fd_stdin_backup = -1;
+	command->fd_stdout_backup = -1;
 	return (SUCCESS);
 }
 
