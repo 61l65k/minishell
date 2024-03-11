@@ -14,7 +14,7 @@
 #include "minishell.h"
 #include "miniutils.h"
 
-void	create_add_node_wcard(t_lsthelper *t, char *data)
+void	create_add_node_wcard(t_lsthelper *lh, char *data)
 {
 	char	*node_data;
 	t_list	*new_node;
@@ -25,11 +25,11 @@ void	create_add_node_wcard(t_lsthelper *t, char *data)
 		new_node = ft_lstnew(node_data);
 		if (new_node != NULL)
 		{
-			if (!t->head)
-				t->head = new_node;
+			if (!lh->head)
+				lh->head = new_node;
 			else
-				t->current->next = new_node;
-			t->current = new_node;
+				lh->current->next = new_node;
+			lh->current = new_node;
 		}
 		else
 			free(node_data);
