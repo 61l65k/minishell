@@ -54,7 +54,6 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	if (check_pipedoc(s, h))
 	{
-		// printf("here\n");
 		if (redirect(h, s, s->parsed_cmds[h->i]) == FAILURE)
 			exit(EXIT_FAILURE);
 	}
@@ -121,6 +120,8 @@ int	ft_executecmd(t_shellstate *state)
 	h = (t_exechelper){0};
 	while (h.i < state->cmd_count)
 	{
+		if (g_signal_flag)
+			break ;
 		if (is_pipeline(state, &h) == true)
 			handle_fork(state, &h);
 		else if (builtin_main(state, state->parsed_cmds[h.i]) == BI_NOT_BUILTIN)

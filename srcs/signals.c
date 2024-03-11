@@ -10,9 +10,21 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin.h"
 #include "minishell.h"
 #include "miniutils.h"
 #include <signal.h>
+
+volatile sig_atomic_t	g_signal_flag = 0;
+
+void	check_g_signal_flag(t_shellstate *s)
+{
+	if (g_signal_flag)
+	{
+		s->last_exit_status = g_signal_flag;
+		g_signal_flag = 0;
+	}
+}
 
 /**
  * @brief Sets the terminal to no echo mode.
@@ -52,6 +64,7 @@ void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 	(void)info;
 	if (signo == SIGINT)
 	{
+		g_signal_flag = 130;
 		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();

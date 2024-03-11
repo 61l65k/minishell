@@ -18,17 +18,18 @@
  */
 static void	ft_takeinput(t_shellstate *state)
 {
-	static char		prompt[PATH_MAX + sizeof(DBLUE_E RESET_E"$ ") + 1];
+	static char		prompt[PATH_MAX + sizeof(DBLUE_E RESET_E "$ ") + 1];
 	const size_t	len = ft_strlcpy(prompt, DBLUE_E, sizeof(prompt));
 
 	if (getcwd(prompt + len, PATH_MAX) == NULL)
 		ft_free_exit(state, ERR_GETCWD, EXIT_FAILURE);
-	ft_strncat(prompt, RESET_E"$ ", sizeof(prompt));
+	ft_strncat(prompt, RESET_E "$ ", sizeof(prompt));
 	state->input_string = readline(prompt);
 	if (state->input_string == NULL)
 		ft_free_exit(state, "exit", EXIT_SUCCESS);
 	if (ft_strlen(state->input_string))
 		add_history(state->input_string);
+	check_g_signal_flag(state);
 }
 
 int	main(int argc, char **argv, const char **envp)

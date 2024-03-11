@@ -23,7 +23,10 @@
 static void	heredoc_signal_handler(int signo)
 {
 	if (signo == SIGINT)
+	{
+		g_signal_flag = 130;
 		exit(SIGINT_EXIT);
+	}
 }
 
 static void	heredoc_child_process(t_hdochelper *h)

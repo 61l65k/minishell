@@ -43,44 +43,51 @@ typedef enum e_operators
 	OP_REDIRECT_OUT,
 	OP_REDIRECT_IN,
 	OP_OPERATOR_COUNT
-}						t_operators;
+}								t_operators;
 
 typedef struct s_shellstate
 {
-	char				*input_string;
-	char				**parsed_args;
-	t_list				**parsed_cmds;
-	t_operators			*operators;
-	int					cmd_count;
-	int					operator_count;
-	int					last_exit_status;
-	bool				is_child_process;
-	char				**envp;
-	t_vec				pid;
-	struct sigaction	sigaction;
-	struct sigaction	ignoreaction;
-}						t_shellstate;
+	char						*input_string;
+	char						**parsed_args;
+	t_list						**parsed_cmds;
+	t_operators					*operators;
+	int							cmd_count;
+	int							operator_count;
+	int							last_exit_status;
+	bool						is_child_process;
+	char						**envp;
+	t_vec						pid;
+	struct sigaction			sigaction;
+	struct sigaction			ignoreaction;
+}								t_shellstate;
 
-bool					is_valid_syntax(t_shellstate *state);
-void					print_syntax_err(const char *token, const char *backup);
-t_operators				str_to_op(const char *str);
-const char				*op_to_str(t_operators op);
-void					ft_free_exit(t_shellstate *state, const char *errormsg,
-							int exitcode);
-int						ft_executecmd(t_shellstate *state);
-void					wait_remaining_children(t_shellstate *state);
-void					wait_child(t_shellstate *state, pid_t pid);
-void					ft_free_resets(t_shellstate *state);
-void					ft_displayhistory(void);
-int						init_signals(t_shellstate *s);
-void					setup_terminal(void);
-void					ft_execvp(const char *file, char *const argv[],
-							char *const envp[]);
-char					*ft_getenv(const char *name, char *const envp[]);
-void					handle_heredoc(t_redirecthelper *rh, char *delimiter,
-							t_shellstate *s, t_exechelper *h);
-int						update_fds(char *filename, t_redirecthelper *rh,
-							bool fd_out);
-bool					check_pipedoc(t_shellstate *s, t_exechelper *h);
-void					check_operators(t_exechelper *h, t_shellstate *s);
+extern volatile sig_atomic_t	g_signal_flag;
+
+bool							is_valid_syntax(t_shellstate *state);
+void							print_syntax_err(const char *token,
+									const char *backup);
+t_operators						str_to_op(const char *str);
+const char						*op_to_str(t_operators op);
+void							ft_free_exit(t_shellstate *state,
+									const char *errormsg, int exitcode);
+int								ft_executecmd(t_shellstate *state);
+void							wait_remaining_children(t_shellstate *state);
+void							wait_child(t_shellstate *state, pid_t pid);
+void							ft_free_resets(t_shellstate *state);
+void							ft_displayhistory(void);
+int								init_signals(t_shellstate *s);
+void							setup_terminal(void);
+void							ft_execvp(const char *file, char *const argv[],
+									char *const envp[]);
+char							*ft_getenv(const char *name,
+									char *const envp[]);
+void							handle_heredoc(t_redirecthelper *rh,
+									char *delimiter, t_shellstate *s,
+									t_exechelper *h);
+int								update_fds(char *filename, t_redirecthelper *rh,
+									bool fd_out);
+bool							check_pipedoc(t_shellstate *s, t_exechelper *h);
+void							check_operators(t_exechelper *h,
+									t_shellstate *s);
+void							check_g_signal_flag(t_shellstate *s);
 #endif
