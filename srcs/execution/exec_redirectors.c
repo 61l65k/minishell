@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin.h"
 #include "libft.h"
 #include "minishell.h"
 #include "miniutils.h"
@@ -47,7 +48,8 @@ static void	shift_array_elements(char **c_arr, t_redirecthelper *rh)
 	c_arr[rh->j++] = c_arr[rh->i];
 }
 
-static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
+static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s,
+		t_exechelper *h)
 {
 	if (ft_strcmp(c_arr[rh->i], ">") == 0 || ft_strcmp(c_arr[rh->i], ">>") == 0)
 	{
@@ -65,7 +67,7 @@ static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<<") == 0)
-		handle_heredoc(rh, c_arr[rh->i++ + 1], s);
+		handle_heredoc(rh, c_arr[rh->i++ + 1], s, h);
 	else
 		shift_array_elements(c_arr, rh);
 	return (SUCCESS);
@@ -107,7 +109,7 @@ int	redirect(t_exechelper *h, t_shellstate *s, const t_list *curr_cmd)
 	{
 		if (curr_cmd->is_quoted_redirector == false)
 		{
-			if (handle_redir(&rh, h->cmd_arr, s) == FAILURE)
+			if (handle_redir(&rh, h->cmd_arr, s, h) == FAILURE)
 				return (FAILURE);
 		}
 		curr_cmd = curr_cmd->next;
