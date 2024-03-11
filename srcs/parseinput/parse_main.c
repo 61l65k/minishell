@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin.h"
 #include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
@@ -91,36 +92,50 @@ static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
 	return (free(h->curr_cmd), h->commands);
 }
 
+static int	process_str_to_lst(t_parsehelper *ph, t_shellstate *s)
+{
+	int	i;
+
+	i = 0;
+	while (i < s->cmd_count)
+	{
+		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i], ph);
+		if (s->parsed_cmds[i] == NULL)
+		{
+			if (ph->ambigious_error)
+				return (set_exit_status(s, EXIT_FAILURE), FAILURE);
+			else
+			{
+				print_syntax_err(op_to_str(s->operators[i]), s->parsed_args[i]);
+				set_exit_status(s, SYNTAX_ERROR);
+				return (free_and_null_str_array(&s->parsed_args), FAILURE);
+			}
+		}
+		i++;
+	}
+	free_and_null_str_array(&s->parsed_args);
+	if (!s->parsed_cmds[0])
+		return (set_exit_status(s, SUCCESS), FAILURE);
+	return (SUCCESS);
+}
+
 /**
  * @brief Top function for starting parsing the input string.
  * & Returns 0 if successful, returns non zero on errors.
  */
 int	ft_parseinput(t_shellstate *s)
 {
-	int				i;
-	t_parsehelper	h;
+	t_parsehelper	ph;
 
-	h = (t_parsehelper){0};
-	s->parsed_args = split_cmds(s, &h);
+	ph = (t_parsehelper){0};
+	s->parsed_args = split_cmds(s, &ph);
 	if (!s->parsed_args)
-		return (FAILURE);
+		return (set_exit_status(s, SYNTAX_ERROR), FAILURE);
 	while (s->parsed_args[s->cmd_count])
 		s->cmd_count++;
 	s->operator_count = s->cmd_count - 1;
 	s->parsed_cmds = ft_calloc(s->cmd_count + 1, sizeof(t_list *));
 	if (!s->parsed_cmds)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	i = -1;
-	while (++i < s->cmd_count)
-	{
-		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i], &h);
-		if (s->parsed_cmds[i] == NULL)
-		{
-			if (!h.ambigious_error)
-				print_syntax_err(op_to_str(s->operators[i]), s->parsed_args[i]);
-			return (free_and_null_str_array(&s->parsed_args), 2);
-		}
-	}
-	free_and_null_str_array(&s->parsed_args);
-	return (EXIT_SUCCESS);
+	return (process_str_to_lst(&ph, s));
 }

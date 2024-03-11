@@ -62,8 +62,7 @@ static int	handle_wildcard(t_lsthelper *lh, t_parsehelper *ph)
 		}
 	}
 	if (lh->wcard.match_count > 1 && is_prev_redirector(prev, ph))
-		return (ft_fprintf(STDERR_FILENO, ERR_AMBIGIOUS_REDIRECT, lh->arg),
-			FAILURE);
+		return (ft_fprintf(2, ERR_AMBIGIOUS_REDIRECT, lh->arg), FAILURE);
 	if (!lh->wcard.match_count)
 		create_add_node_wcard(lh, lh->arg);
 	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);

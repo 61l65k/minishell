@@ -90,4 +90,6 @@ bool							check_pipedoc(t_shellstate *s, t_exechelper *h);
 void							check_operators(t_exechelper *h,
 									t_shellstate *s);
 void							check_g_signal_flag(t_shellstate *s);
+void							set_exit_status(t_shellstate *state,
+									int status);
 #endif

@@ -47,6 +47,7 @@ enum	e_errors
 	NO_ERROR,
 	FALSE_INPUT,
 	QUOTE_ERROR = 1,
+	SYNTAX_ERROR = 2,
 };
 
 #endif
