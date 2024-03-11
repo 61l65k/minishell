@@ -111,6 +111,7 @@ typedef struct s_wildcardhelper
 	struct dirent			*entry;
 	char					*matched_arg;
 	int						match_count;
+	t_list					*prev;
 }							t_wildcardhelper;
 
 typedef struct s_adjacenthelper

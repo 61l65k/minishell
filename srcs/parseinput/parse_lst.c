@@ -45,8 +45,7 @@ static int	handle_quoted(t_lsthelper *lh)
 
 static int	handle_wildcard(t_lsthelper *lh, t_parsehelper *ph)
 {
-	const t_list	*prev = lh->current;
-
+	lh->wcard.prev = lh->current;
 	while (true)
 	{
 		lh->wcard.entry = readdir(lh->wcard.dir);
@@ -61,8 +60,13 @@ static int	handle_wildcard(t_lsthelper *lh, t_parsehelper *ph)
 			create_add_node_wcard(lh, lh->wcard.entry->d_name);
 		}
 	}
-	if (lh->wcard.match_count > 1 && is_prev_redirector(prev, ph))
-		return (ft_fprintf(2, ERR_AMBIGIOUS_REDIRECT, lh->arg), FAILURE);
+	if (lh->wcard.match_count > 1 && is_prev_redirector(lh->wcard.prev, ph))
+	{
+		ft_lstclear(&lh->wcard.prev->next, free);
+		lh->current = lh->wcard.prev;
+		create_add_node_wcard(lh, lh->arg);
+		lh->current->ambigious_redirect = true;
+	}
 	if (!lh->wcard.match_count)
 		create_add_node_wcard(lh, lh->arg);
 	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);

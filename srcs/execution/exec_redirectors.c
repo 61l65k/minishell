@@ -11,7 +11,9 @@
 /* ************************************************************************** */
 
 #include "builtin.h"
+#include "ft_printf/ft_printf.h"
 #include "libft.h"
+#include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
 #include <readline/readline.h>
