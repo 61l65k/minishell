@@ -46,8 +46,14 @@ static int	handle_wildcard(t_lsthelper *t)
 	bool	found_match;
 
 	found_match = false;
-	while ((t->wcard.entry = readdir(t->wcard.dir)) != NULL)
+	while (true)
 	{
+		t->wcard.entry = readdir(t->wcard.dir);
+		if (!t->wcard.entry)
+			break ;
+		if (t->wcard.entry->d_name[0] == '.' && (t->arg[0] != '.'
+				&& t->arg[1] != '*'))
+			continue ;
 		if (wildcard_match(t->arg, t->wcard.entry->d_name))
 		{
 			create_add_node_wcard(t, t->wcard.entry->d_name);

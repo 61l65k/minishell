@@ -87,28 +87,20 @@ void	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
  */
 bool	wildcard_match(const char *pattern, const char *str)
 {
-	if (ft_strcmp(pattern, "*") == 0 && *str == '.')
-		return (false);
-	while (*str)
+	if (!*pattern)
+		return (!*str);
+	if (*pattern == '*')
 	{
-		if (*pattern == '*')
-		{
-			if (!*++pattern)
-				return (true);
-			while (*str && *pattern != *str)
-				str++;
-		}
-		else
-		{
-			if (*pattern != *str)
-				return (false);
-			str++;
-			pattern++;
-		}
+		if (wildcard_match(pattern + 1, str))
+			return (true);
+		if (*str && wildcard_match(pattern, str + 1))
+			return (true);
 	}
-	while (*pattern == '*')
-		pattern++;
-	return (!*pattern && !*str);
+	else if (*pattern == *str || (*pattern == '?' && *str))
+	{
+		return (wildcard_match(pattern + 1, str + 1));
+	}
+	return (false);
 }
 
 int	ft_checkdollar(t_shellstate *s, t_parsehelper *h)
