@@ -144,7 +144,7 @@ int	ft_parseinput(t_shellstate *s)
 		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i]);
 		if (s->parsed_cmds[i] == NULL)
 		{
-			print_syntax_err(s->parsed_args[i], op_to_str(s->operators[i]));
+			print_syntax_err(op_to_str(s->operators[i]), s->parsed_args[i]);
 			return (free_and_null_str_array(&s->parsed_args), 2);
 		}
 	}

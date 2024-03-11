@@ -26,31 +26,7 @@ void	print_syntax_err(const char *token, const char *backup)
 		ft_fprintf(STDERR_FILENO, "minishell: syntax error\n");
 }
 
-static bool	is_valid_cmd_count(t_shellstate *state)
-{
-	int	i;
-
-	i = 0;
-	while (state->parsed_cmds[i] && state->operators[i])
-	{
-		if (state->operators[i] == OP_NONE)
-			break ;
-		i++;
-	}
-	if (state->parsed_cmds[i] && state->parsed_cmds[i + 1])
-	{
-		print_syntax_err(state->parsed_cmds[i + 1]->content, NULL);
-		return (false);
-	}
-	if (state->operators[i] != OP_NONE)
-	{
-		print_syntax_err(op_to_str(state->operators[i]), NULL);
-		return (false);
-	}
-	return (true);
-}
-
-static bool	is_valid_redirect_syntax(t_list *arg_list)
+static bool	is_valid_redirect_syntax(t_list *arg_list, t_operators op)
 {
 	t_list		*curr;
 
@@ -62,11 +38,12 @@ static bool	is_valid_redirect_syntax(t_list *arg_list)
 		{
 			if (curr->next == NULL || curr->next->content == NULL)
 			{
-				print_syntax_err("newline", NULL);
+				print_syntax_err(op_to_str(op), "newline");
 				return (false);
 			}
 			curr = curr->next;
-			if (get_io_type(curr->content) != IO_NONE)
+			if (get_io_type(curr->content) != IO_NONE
+				&& curr->is_quoted_redirector == false)
 			{
 				print_syntax_err(curr->content, "newline");
 				return (false);
@@ -81,13 +58,16 @@ bool	is_valid_syntax(t_shellstate *state)
 {
 	int	i;
 
-	if (is_valid_cmd_count(state) == false)
-		return (false);
 	i = 0;
 	while (state->parsed_cmds[i])
 	{
-		if (is_valid_redirect_syntax(state->parsed_cmds[i]) == false)
+		if (is_valid_redirect_syntax(
+				state->parsed_cmds[i],
+				state->operators[i])
+			== false)
+		{
 			return (false);
+		}
 		i++;
 	}
 	return (true);
