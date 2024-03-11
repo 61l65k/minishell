@@ -16,34 +16,6 @@
 #include "miniutils.h"
 #include <stdlib.h>
 
-/**
- * @brief ensures that there is enough memory for the operators array.
- */
-static void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
-		t_shellstate *state)
-{
-	size_t		new_capacity;
-	t_operators	*new_operators;
-
-	if (operator_type == OP_NONE)
-		return ;
-	if (operator_type == OP_HEREDOC || operator_type == OP_APPEND
-		|| operator_type == OP_OR || operator_type == OP_AND)
-		op->i++;
-	if ((size_t)op->cmd_count >= op->operators_capacity)
-	{
-		new_capacity = op->operators_capacity * 2;
-		new_operators = ft_realloc(op->ops, op->operators_capacity
-				* sizeof(t_operators), new_capacity * sizeof(t_operators));
-		if (!new_operators)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		op->ops = new_operators;
-		op->operators_capacity = new_capacity;
-	}
-	op->ops[op->ops_i++] = operator_type;
-	op->cmd_count++;
-}
-
 static int	validation_loop(t_shellstate *s, t_operatorhelper *op)
 {
 	while (s->input_string[op->i])
@@ -141,10 +113,11 @@ int	ft_parseinput(t_shellstate *s)
 	i = -1;
 	while (++i < s->cmd_count)
 	{
-		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i]);
+		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i], &h);
 		if (s->parsed_cmds[i] == NULL)
 		{
-			print_syntax_err(op_to_str(s->operators[i]), s->parsed_args[i]);
+			if (!h.ambigious_error)
+				print_syntax_err(op_to_str(s->operators[i]), s->parsed_args[i]);
 			return (free_and_null_str_array(&s->parsed_args), 2);
 		}
 	}

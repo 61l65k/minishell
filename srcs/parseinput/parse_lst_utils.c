@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
 
@@ -66,4 +67,39 @@ bool	need_handling_non_quoted(t_lsthelper *t)
 		|| t->is_adjacent)
 		return (1);
 	return (0);
+}
+
+/**
+ * @brief Matches the pattern with the string.
+ */
+bool	wildcard_match(const char *pattern, const char *str)
+{
+	if (!*pattern)
+		return (!*str);
+	if (*pattern == '*')
+	{
+		if (wildcard_match(pattern + 1, str))
+			return (true);
+		if (*str && wildcard_match(pattern, str + 1))
+			return (true);
+	}
+	else if (*pattern == *str || (*pattern == '?' && *str))
+	{
+		return (wildcard_match(pattern + 1, str + 1));
+	}
+	return (false);
+}
+
+bool	is_prev_redirector(const t_list *prev, t_parsehelper *ph)
+{
+	if (prev == NULL)
+		return (false);
+	if (!prev->is_quoted_redirector && (ft_strcmp(prev->content, ">") == 0
+			|| ft_strcmp(prev->content, "<") == 0 || ft_strcmp(prev->content,
+				">>") == 0))
+	{
+		ph->ambigious_error = true;
+		return (true);
+	}
+	return (false);
 }

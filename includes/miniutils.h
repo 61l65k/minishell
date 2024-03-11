@@ -26,7 +26,7 @@ typedef enum e_operators	t_operators;
 enum						e_returnvalues
 {
 	SUCCESS = 0,
-	FAILURE = 1
+	FAILURE = 1,
 };
 
 typedef struct s_parsehelper
@@ -40,6 +40,7 @@ typedef struct s_parsehelper
 	size_t					j;
 	size_t					i;
 	size_t					alloc_size;
+	bool					ambigious_error;
 }							t_parsehelper;
 
 typedef struct s_operatorhelper
@@ -109,6 +110,7 @@ typedef struct s_wildcardhelper
 	DIR						*dir;
 	struct dirent			*entry;
 	char					*matched_arg;
+	int						match_count;
 }							t_wildcardhelper;
 
 typedef struct s_adjacenthelper
@@ -145,7 +147,7 @@ void						free_str_array(char **str_arr);
 void						free_and_null_str_array(char ***str_arr_ptr);
 int							ft_parseinput(t_shellstate *state);
 char						*trim_spaces(const char *str);
-t_list						*str_to_lst(const char *str);
+t_list						*str_to_lst(const char *str, t_parsehelper *ph);
 int							ft_isenv_var(int c);
 void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);
@@ -166,4 +168,8 @@ t_operators					check_for_op(t_operatorhelper *op,
 int							check_parentheses(t_operatorhelper *op,
 								t_shellstate *s);
 void						create_add_node_wcard(t_lsthelper *t, char *data);
+bool						is_prev_redirector(const t_list *prev,
+								t_parsehelper *ph);
+void						ensure_mem_cpy_op(t_operatorhelper *op,
+								t_operators operator_type, t_shellstate *state);
 #endif

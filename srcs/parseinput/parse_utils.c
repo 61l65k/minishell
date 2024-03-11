@@ -15,6 +15,34 @@
 #include "miniutils.h"
 
 /**
+ * @brief ensures that there is enough memory for the operators array.
+ */
+void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
+		t_shellstate *state)
+{
+	size_t		new_capacity;
+	t_operators	*new_operators;
+
+	if (operator_type == OP_NONE)
+		return ;
+	if (operator_type == OP_HEREDOC || operator_type == OP_APPEND
+		|| operator_type == OP_OR || operator_type == OP_AND)
+		op->i++;
+	if ((size_t)op->cmd_count >= op->operators_capacity)
+	{
+		new_capacity = op->operators_capacity * 2;
+		new_operators = ft_realloc(op->ops, op->operators_capacity
+				* sizeof(t_operators), new_capacity * sizeof(t_operators));
+		if (!new_operators)
+			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+		op->ops = new_operators;
+		op->operators_capacity = new_capacity;
+	}
+	op->ops[op->ops_i++] = operator_type;
+	op->cmd_count++;
+}
+
+/**
  * @brief Check if the the current character is operator.
  */
 t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state, int index)
@@ -80,27 +108,6 @@ void	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
 		flags->is_redir = (*c == '>' || *c == '<' || (*c == '>' && *(c
 						+ 1) == '>') || (*c == '<' && *(c + 1) == '<'));
 	}
-}
-
-/**
- * @brief Matches the pattern with the string.
- */
-bool	wildcard_match(const char *pattern, const char *str)
-{
-	if (!*pattern)
-		return (!*str);
-	if (*pattern == '*')
-	{
-		if (wildcard_match(pattern + 1, str))
-			return (true);
-		if (*str && wildcard_match(pattern, str + 1))
-			return (true);
-	}
-	else if (*pattern == *str || (*pattern == '?' && *str))
-	{
-		return (wildcard_match(pattern + 1, str + 1));
-	}
-	return (false);
 }
 
 int	ft_checkdollar(t_shellstate *s, t_parsehelper *h)

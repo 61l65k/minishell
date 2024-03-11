@@ -10,64 +10,66 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
+#include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
 
-static int	handle_quoted(t_lsthelper *t)
+static int	handle_quoted(t_lsthelper *lh)
 {
-	if (!t->in_quote)
+	if (!lh->in_quote)
 	{
-		t->in_quote = 1;
-		t->current_quote = t->start[t->i];
+		lh->in_quote = 1;
+		lh->current_quote = lh->start[lh->i];
 	}
 	else
 	{
-		t->in_quote = false;
-		t->arg_len = t->i - t->arg_start;
-		t->arg = ft_strndup(t->start + t->arg_start, t->arg_len);
-		if (!t->arg)
-			return (ft_lstclear(&t->head, free), FAILURE);
-		t->new_node = ft_lstnew(t->arg);
-		if (!t->new_node)
-			return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
-		ft_isquotedredirector(t->new_node);
-		if (!t->head)
-			t->head = t->new_node;
+		lh->in_quote = false;
+		lh->arg_len = lh->i - lh->arg_start;
+		lh->arg = ft_strndup(lh->start + lh->arg_start, lh->arg_len);
+		if (!lh->arg)
+			return (ft_lstclear(&lh->head, free), FAILURE);
+		lh->new_node = ft_lstnew(lh->arg);
+		if (!lh->new_node)
+			return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
+		ft_isquotedredirector(lh->new_node);
+		if (!lh->head)
+			lh->head = lh->new_node;
 		else
-			t->current->next = t->new_node;
-		t->current = t->new_node;
+			lh->current->next = lh->new_node;
+		lh->current = lh->new_node;
 	}
-	t->arg_start = ++t->i;
+	lh->arg_start = ++lh->i;
 	return (SUCCESS);
 }
 
-static int	handle_wildcard(t_lsthelper *t)
+static int	handle_wildcard(t_lsthelper *lh, t_parsehelper *ph)
 {
-	bool	found_match;
+	const t_list	*prev = lh->current;
 
-	found_match = false;
 	while (true)
 	{
-		t->wcard.entry = readdir(t->wcard.dir);
-		if (!t->wcard.entry)
+		lh->wcard.entry = readdir(lh->wcard.dir);
+		if (!lh->wcard.entry)
 			break ;
-		if (t->wcard.entry->d_name[0] == '.' && (t->arg[0] != '.'
-				&& t->arg[1] != '*'))
+		if (lh->wcard.entry->d_name[0] == '.' && (lh->arg[0] != '.'
+				&& lh->arg[1] != '*'))
 			continue ;
-		if (wildcard_match(t->arg, t->wcard.entry->d_name))
+		if (wildcard_match(lh->arg, lh->wcard.entry->d_name))
 		{
-			create_add_node_wcard(t, t->wcard.entry->d_name);
-			found_match = true;
+			lh->wcard.match_count++;
+			create_add_node_wcard(lh, lh->wcard.entry->d_name);
 		}
 	}
-	if (!found_match)
-		create_add_node_wcard(t, t->arg);
-	closedir(t->wcard.dir);
-	free(t->arg);
-	return (SUCCESS);
+	if (lh->wcard.match_count > 1 && is_prev_redirector(prev, ph))
+		return (ft_fprintf(STDERR_FILENO, ERR_AMBIGIOUS_REDIRECT, lh->arg),
+			FAILURE);
+	if (!lh->wcard.match_count)
+		create_add_node_wcard(lh, lh->arg);
+	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);
 }
 
-static int	handle_non_quoted(t_lsthelper *t)
+static int	handle_non_quoted(t_lsthelper *t, t_parsehelper *ph)
 {
 	if (!t->in_quote && t->arg_len > 0)
 	{
@@ -77,7 +79,7 @@ static int	handle_non_quoted(t_lsthelper *t)
 		if (ft_strchr(t->arg, '*'))
 		{
 			t->wcard.dir = opendir(".");
-			if (!t->wcard.dir || handle_wildcard(t) == FAILURE)
+			if (!t->wcard.dir || handle_wildcard(t, ph) == FAILURE)
 				return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
 		}
 		else
@@ -96,48 +98,50 @@ static int	handle_non_quoted(t_lsthelper *t)
 	return (SUCCESS);
 }
 
-static t_list	*allocate_lst(t_lsthelper *t)
+static t_list	*allocate_lst(t_lsthelper *lh, t_parsehelper *ph)
 {
-	while (t->i <= t->length)
+	while (lh->i <= lh->length)
 	{
-		if (need_handling(t, true))
+		if (need_handling(lh, true))
 		{
-			if (handle_quoted(t))
+			if (handle_quoted(lh))
 				return (NULL);
 			continue ;
 		}
-		if (need_handling(t, false))
+		if (need_handling(lh, false))
 		{
-			if (!t->in_quote)
-				t->arg_len = t->i - t->arg_start;
+			if (!lh->in_quote)
+				lh->arg_len = lh->i - lh->arg_start;
 			else
-				t->arg_len = t->i - t->arg_start + 1;
-			if (t->is_adjacent)
+				lh->arg_len = lh->i - lh->arg_start + 1;
+			if (lh->is_adjacent)
 			{
-				if (handle_adjacent(t) == FAILURE)
+				if (handle_adjacent(lh) == FAILURE)
 					return (NULL);
 			}
-			else if (handle_non_quoted(t))
+			else if (handle_non_quoted(lh, ph))
 				return (NULL);
 		}
-		t->i++;
+		lh->i++;
 	}
-	return (t->head);
+	return (lh->head);
 }
 
-t_list	*str_to_lst(const char *str)
+t_list	*str_to_lst(const char *str, t_parsehelper *ph)
 {
-	t_lsthelper	t;
+	t_lsthelper	lh;
 
+	ph->ambigious_error = false;
+	(void)ph;
 	if (str == NULL)
 		return (NULL);
-	t = (t_lsthelper){0};
-	t.start = str;
-	t.end = str + ft_strlen(str) - 1;
-	while (*t.start && (*t.start == ' ' || *t.start == '\t'))
-		t.start++;
-	while (t.end > t.start && (*t.end == ' ' || *t.end == '\t'))
-		t.end--;
-	t.length = t.end - t.start + 1;
-	return (allocate_lst(&t));
+	lh = (t_lsthelper){0};
+	lh.start = str;
+	lh.end = str + ft_strlen(str) - 1;
+	while (*lh.start && (*lh.start == ' ' || *lh.start == '\t'))
+		lh.start++;
+	while (lh.end > lh.start && (*lh.end == ' ' || *lh.end == '\t'))
+		lh.end--;
+	lh.length = lh.end - lh.start + 1;
+	return (allocate_lst(&lh, ph));
 }
