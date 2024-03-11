@@ -14,15 +14,17 @@
 #include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
+#include "miniutils.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 /**
- * @brief Sets up fd's for the child before executing the command.
+ * @brief Duplicates the fd's forward if we are in a pipeline.
+ * so next command can read from it.
+ * & closes the pipefd if we are not in a pipeline.
  */
-static void	handle_child_process(t_shellstate *s, t_exechelper *h)
+static void	dup_forward_fd(t_shellstate *s, t_exechelper *h)
 {
-	s->is_child_process = true;
 	if (h->fd_in != 0)
 	{
 		dup2(h->fd_in, STDIN_FILENO);
@@ -39,10 +41,24 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 		close(h->pipefd[0]);
 		close(h->pipefd[1]);
 	}
+}
+
+/**
+ * @brief Sets up fd's for the child before executing the command.
+ */
+static void	handle_child_process(t_shellstate *s, t_exechelper *h)
+{
+	s->is_child_process = true;
 	h->cmd_arr = lst_to_2darray(s->parsed_cmds[h->i]);
 	if (!h->cmd_arr)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	if (apply_cmd_redirections(h, s, s->parsed_cmds[h->i]) == FAILURE)
+	if (check_pipedoc(s, h))
+	{
+		if (redirect(h, s, s->parsed_cmds[h->i]) == FAILURE)
+			exit(EXIT_FAILURE);
+	}
+	dup_forward_fd(s, h);
+	if (!h->pipe_doc && redirect(h, s, s->parsed_cmds[h->i]) == FAILURE)
 		exit(EXIT_FAILURE);
 	builtin_child(s, h);
 	ft_execvp(h->cmd_arr[0], h->cmd_arr, s->envp);
@@ -51,18 +67,17 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 /**
  * @brief Handles fd's for the parent process after a fork.
  */
-static void	handle_parent_process(t_shellstate *state, t_exechelper *helper)
+static void	handle_parent_process(t_shellstate *s, t_exechelper *h)
 {
-	if (helper->fd_in != 0)
+	if (h->fd_in != 0)
 	{
-		close(helper->fd_in);
-		helper->fd_in = 0;
+		close(h->fd_in);
+		h->fd_in = 0;
 	}
-	if (helper->i < state->cmd_count - 1
-		&& state->operators[helper->i] == OP_PIPE)
+	if (h->i < s->cmd_count - 1 && s->operators[h->i] == OP_PIPE)
 	{
-		helper->fd_in = helper->pipefd[0];
-		close(helper->pipefd[1]);
+		h->fd_in = h->pipefd[0];
+		close(h->pipefd[1]);
 	}
 }
 
@@ -94,26 +109,6 @@ static void	handle_fork(t_shellstate *s, t_exechelper *h)
 }
 
 /**
- * @brief Checks the operators and skips the commands if needed.
- */
-static void	check_operators(t_exechelper *h, t_shellstate *s)
-{
-	if (h->i < s->operator_count)
-	{
-		if (s->operators[h->i] == OP_AND && s->last_exit_status != 0)
-		{
-			while (h->i < s->operator_count && s->operators[h->i] != OP_OR)
-				h->i++;
-		}
-		else if (s->operators[h->i] == OP_OR && s->last_exit_status == 0)
-		{
-			while (h->i < s->operator_count && s->operators[h->i] != OP_AND)
-				h->i++;
-		}
-	}
-}
-
-/**
  * @brief Executes the parsed commands and handles all operators.
  * & Returns the exit status of the last command.
  */
@@ -129,6 +124,7 @@ int	ft_executecmd(t_shellstate *state)
 		else if (builtin_main(state, state->parsed_cmds[h.i]) == BI_NOT_BUILTIN)
 			handle_fork(state, &h);
 		check_operators(&h, state);
+		h.pipe_doc = 0;
 		h.i++;
 	}
 	wait_remaining_children(state);

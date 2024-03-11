@@ -14,6 +14,7 @@
 #include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -62,7 +63,7 @@ static void	handle_higher_process(t_hdochelper *h)
 	if (WEXITSTATUS(status) == SIGINT_EXIT)
 		return (close(h->pipe_fds[0]), exit(SIGINT_EXIT));
 	h->rh->fd = h->pipe_fds[0];
-	redirect_fd(NULL, h->rh, false);
+	update_fds(NULL, h->rh, false);
 }
 
 void	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s)

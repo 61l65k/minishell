@@ -16,8 +16,9 @@
 #include <readline/readline.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-int	redirect_fd(char *filename, t_redirecthelper *rh, bool fd_out)
+int	update_fds(char *filename, t_redirecthelper *rh, bool fd_out)
 {
 	if (rh->fd == -1 && filename)
 	{
@@ -54,13 +55,13 @@ static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s)
 		if (ft_strcmp(c_arr[rh->i], ">>") == 0)
 			rh->flags = (O_WRONLY | O_CREAT | O_APPEND);
 		rh->fd = open(c_arr[rh->i + 1], rh->flags, 0644);
-		if (redirect_fd(c_arr[rh->i++ + 1], rh, true) == FAILURE)
+		if (update_fds(c_arr[rh->i++ + 1], rh, true) == FAILURE)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<") == 0)
 	{
 		rh->fd = open(c_arr[rh->i + 1], O_RDONLY);
-		if (redirect_fd(c_arr[rh->i++ + 1], rh, false) == FAILURE)
+		if (update_fds(c_arr[rh->i++ + 1], rh, false) == FAILURE)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<<") == 0)
@@ -95,8 +96,7 @@ static int	apply_fd_redirections(int last_out_fd, int last_in_fd)
 	return (SUCCESS);
 }
 
-int	apply_cmd_redirections(t_exechelper *h, t_shellstate *s,
-		const t_list *curr_cmd)
+int	redirect(t_exechelper *h, t_shellstate *s, const t_list *curr_cmd)
 {
 	t_redirecthelper	rh;
 

@@ -78,6 +78,8 @@ void					ft_execvp(const char *file, char *const argv[],
 char					*ft_getenv(const char *name, char *const envp[]);
 void					handle_heredoc(t_redirecthelper *rh, char *delimiter,
 							t_shellstate *s);
-int						redirect_fd(char *filename, t_redirecthelper *rh,
+int						update_fds(char *filename, t_redirecthelper *rh,
 							bool fd_out);
+bool					check_pipedoc(t_shellstate *s, t_exechelper *h);
+void					check_operators(t_exechelper *h, t_shellstate *s);
 #endif
