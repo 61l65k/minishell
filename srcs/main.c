@@ -18,10 +18,9 @@
  */
 static void	ft_takeinput(t_shellstate *state)
 {
-	static char	prompt[PATH_MAX + sizeof(DBLUE_E) + sizeof(RESET_E"$ ") + 1];
-	size_t		len;
+	static char		prompt[PATH_MAX + sizeof(DBLUE_E RESET_E"$ ") + 1];
+	const size_t	len = ft_strlcpy(prompt, DBLUE_E, sizeof(prompt));
 
-	len = ft_strlcpy(prompt, DBLUE_E, sizeof(prompt));
 	if (getcwd(prompt + len, PATH_MAX) == NULL)
 		ft_free_exit(state, ERR_GETCWD, EXIT_FAILURE);
 	ft_strncat(prompt, RESET_E"$ ", sizeof(prompt));
