@@ -13,6 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include "builtin.h"
 # include "libft.h"
 # include "minimessages.h"
 # include "miniutils.h"
@@ -77,7 +78,7 @@ void					ft_execvp(const char *file, char *const argv[],
 							char *const envp[]);
 char					*ft_getenv(const char *name, char *const envp[]);
 void					handle_heredoc(t_redirecthelper *rh, char *delimiter,
-							t_shellstate *s);
+							t_shellstate *s, t_exechelper *h);
 int						update_fds(char *filename, t_redirecthelper *rh,
 							bool fd_out);
 bool					check_pipedoc(t_shellstate *s, t_exechelper *h);

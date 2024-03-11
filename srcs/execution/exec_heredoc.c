@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin.h"
 #include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
@@ -52,38 +53,40 @@ static void	heredoc_child_process(t_hdochelper *h)
 	exit(EXIT_SUCCESS);
 }
 
-static void	handle_higher_process(t_hdochelper *h)
+static void	handle_higher_process(t_hdochelper *hd, t_exechelper *h)
 {
 	int	status;
 
-	sigaction(SIGINT, &h->s->ignoreaction, &h->s->sigaction);
-	close(h->pipe_fds[1]);
-	waitpid(h->pid, &status, 0);
-	sigaction(SIGINT, &h->s->sigaction, NULL);
+	sigaction(SIGINT, &hd->s->ignoreaction, &hd->s->sigaction);
+	close(hd->pipe_fds[1]);
+	waitpid(hd->pid, &status, 0);
+	sigaction(SIGINT, &hd->s->sigaction, NULL);
 	if (WEXITSTATUS(status) == SIGINT_EXIT)
-		return (close(h->pipe_fds[0]), exit(SIGINT_EXIT));
-	h->rh->fd = h->pipe_fds[0];
-	update_fds(NULL, h->rh, false);
+		return (close(hd->pipe_fds[0]), close(h->pipefd[0]),
+			close(h->pipefd[1]), exit(SIGINT_EXIT));
+	hd->rh->fd = hd->pipe_fds[0];
+	update_fds(NULL, hd->rh, false);
 }
 
-void	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s)
+void	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s,
+		t_exechelper *h)
 {
-	t_hdochelper	h;
+	t_hdochelper	hd;
 
-	h = (t_hdochelper){0};
-	h.s = s;
-	h.rh = rh;
-	h.delimiter = delimiter;
+	hd = (t_hdochelper){0};
+	hd.s = s;
+	hd.rh = rh;
+	hd.delimiter = delimiter;
 	if (!delimiter)
 		return (ft_putstr_fd(ERR_HEREDOC_DELIMITER, STDERR_FILENO));
-	if (pipe(h.pipe_fds) == -1)
+	if (pipe(hd.pipe_fds) == -1)
 		return (perror("pipe"), exit(EXIT_FAILURE));
-	h.pid = fork();
-	if (h.pid == -1)
-		return (perror("fork() heredoc"), close(h.pipe_fds[0]),
-			close(h.pipe_fds[1]), exit(EXIT_FAILURE));
-	if (h.pid == 0)
-		heredoc_child_process(&h);
+	hd.pid = fork();
+	if (hd.pid == -1)
+		return (perror("fork() heredoc"), close(hd.pipe_fds[0]),
+			close(hd.pipe_fds[1]), exit(EXIT_FAILURE));
+	if (hd.pid == 0)
+		heredoc_child_process(&hd);
 	else
-		handle_higher_process(&h);
+		handle_higher_process(&hd, h);
 }

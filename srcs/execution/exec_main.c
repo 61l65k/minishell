@@ -36,7 +36,7 @@ static void	dup_forward_fd(t_shellstate *s, t_exechelper *h)
 		dup2(h->pipefd[1], STDOUT_FILENO);
 		close(h->pipefd[1]);
 	}
-	else if (h->i < s->cmd_count - 1)
+	else if (h->i < s->cmd_count - 1 && s->operators[h->i] == OP_PIPE)
 	{
 		close(h->pipefd[0]);
 		close(h->pipefd[1]);
