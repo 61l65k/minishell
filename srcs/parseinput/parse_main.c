@@ -96,8 +96,8 @@ static int	process_str_to_lst(t_parsehelper *ph, t_shellstate *s)
 {
 	int	i;
 
-	i = 0;
-	while (i < s->cmd_count)
+	i = -1;
+	while (++i < s->cmd_count)
 	{
 		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i], ph);
 		if (s->parsed_cmds[i] == NULL)
@@ -106,12 +106,14 @@ static int	process_str_to_lst(t_parsehelper *ph, t_shellstate *s)
 				return (set_exit_status(s, EXIT_FAILURE), FAILURE);
 			else
 			{
+				if (i == 0 && is_spaces(s->parsed_args[i]))
+					return (free_and_null_str_array(&s->parsed_args),
+						set_exit_status(s, SUCCESS), SUCCESS);
 				print_syntax_err(op_to_str(s->operators[i]), s->parsed_args[i]);
 				set_exit_status(s, SYNTAX_ERROR);
 				return (free_and_null_str_array(&s->parsed_args), FAILURE);
 			}
 		}
-		i++;
 	}
 	free_and_null_str_array(&s->parsed_args);
 	if (!s->parsed_cmds[0])

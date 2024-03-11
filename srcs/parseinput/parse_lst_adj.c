@@ -77,3 +77,18 @@ int	handle_adjacent(t_lsthelper *t)
 	t->is_adjacent = false;
 	return (SUCCESS);
 }
+
+bool	is_spaces(const char *str)
+{
+	if (!str || !*str)
+		return (false);
+	while (*str)
+	{
+		if (!isspace((unsigned char)*str))
+		{
+			return (false);
+		}
+		str++;
+	}
+	return (true);
+}
