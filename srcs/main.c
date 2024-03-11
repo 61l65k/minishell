@@ -26,7 +26,7 @@ static void	ft_takeinput(t_shellstate *state)
 	ft_strncat(prompt, RESET_E"$ ", sizeof(prompt));
 	state->input_string = readline(prompt);
 	if (state->input_string == NULL)
-		ft_free_exit(state, ERR_READLINE, EXIT_FAILURE);
+		ft_free_exit(state, NULL, EXIT_FAILURE);
 	if (ft_strlen(state->input_string))
 		add_history(state->input_string);
 }
