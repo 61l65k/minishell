@@ -54,6 +54,7 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	if (check_pipedoc(s, h))
 	{
+		// printf("here\n");
 		if (redirect(h, s, s->parsed_cmds[h->i]) == FAILURE)
 			exit(EXIT_FAILURE);
 	}
@@ -101,7 +102,8 @@ static void	handle_fork(t_shellstate *s, t_exechelper *h)
 	else
 	{
 		handle_parent_process(s, h);
-		if (s->operators[h->i] == OP_OR || s->operators[h->i] == OP_AND)
+		if (s->operators[h->i] == OP_OR || s->operators[h->i] == OP_AND
+			|| check_pipedoc(s, h))
 			wait_child(s, h->pid_current);
 		else
 			vec_insert(&s->pid, &h->pid_current, 0);
