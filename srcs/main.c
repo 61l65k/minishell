@@ -14,7 +14,7 @@
 
 /**
  * @brief Takes input from the user and stores it in state->input_string.
- * & Exits if calls to getcwd or readline fail.
+ * & Exits if calls to getcwd fail or if readline returns NULL (=eof).
  */
 static void	ft_takeinput(t_shellstate *state)
 {
@@ -26,7 +26,7 @@ static void	ft_takeinput(t_shellstate *state)
 	ft_strncat(prompt, RESET_E"$ ", sizeof(prompt));
 	state->input_string = readline(prompt);
 	if (state->input_string == NULL)
-		ft_free_exit(state, NULL, EXIT_FAILURE);
+		ft_free_exit(state, "exit", EXIT_SUCCESS);
 	if (ft_strlen(state->input_string))
 		add_history(state->input_string);
 }
