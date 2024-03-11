@@ -71,6 +71,5 @@ bool	is_valid_syntax(t_shellstate *state)
 		}
 		i++;
 	}
-	state->last_exit_status = 2;
 	return (true);
 }
