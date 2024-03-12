@@ -109,7 +109,6 @@ typedef struct s_wildcardhelper
 {
 	DIR						*dir;
 	struct dirent			*entry;
-	char					*matched_arg;
 	int						match_count;
 	t_list					*prev;
 }							t_wildcardhelper;
