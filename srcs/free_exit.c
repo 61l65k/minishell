@@ -88,12 +88,3 @@ char	**lst_to_2darray(t_list *list)
 	array[i] = NULL;
 	return (array);
 }
-
-void	ft_isquotedredirector(t_list *node)
-{
-	const char	*c = node->content;
-
-	if (!ft_strcmp(c, ">>") || !ft_strcmp(c, ">") || !ft_strcmp(c, "<")
-		|| !ft_strcmp(c, "<<"))
-		printf("unreachable code\n");
-}

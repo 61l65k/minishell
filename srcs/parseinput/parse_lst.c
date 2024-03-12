@@ -16,34 +16,6 @@
 #include "minishell.h"
 #include "miniutils.h"
 
-static int	handle_quoted(t_lsthelper *lh)
-{
-	if (!lh->in_quote)
-	{
-		lh->in_quote = 1;
-		lh->current_quote = lh->start[lh->i];
-	}
-	else
-	{
-		lh->in_quote = false;
-		lh->arg_len = lh->i - lh->arg_start;
-		lh->arg = ft_strndup(lh->start + lh->arg_start, lh->arg_len);
-		if (!lh->arg)
-			return (ft_lstclear(&lh->head, free), FAILURE);
-		lh->new_node = ft_lstnew(lh->arg);
-		if (!lh->new_node)
-			return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
-		ft_isquotedredirector(lh->new_node);
-		if (!lh->head)
-			lh->head = lh->new_node;
-		else
-			lh->current->next = lh->new_node;
-		lh->current = lh->new_node;
-	}
-	lh->arg_start = ++lh->i;
-	return (SUCCESS);
-}
-
 static int	handle_wildcard(t_lsthelper *lh)
 {
 	lh->wcard.prev = lh->current;
@@ -107,15 +79,14 @@ static int	handle_non_quoted(t_lsthelper *lh)
 
 static t_list	*allocate_lst(t_lsthelper *lh)
 {
+	bool	needs_handling_for_quoted;
+	bool	needs_handling_for_unquoted;
+
 	while (lh->i <= lh->length)
 	{
-		if (need_handling(lh, true))
-		{
-			if (handle_quoted(lh))
-				return (NULL);
-			continue ;
-		}
-		if (need_handling(lh, false))
+		needs_handling_for_quoted = need_handling(lh, true);
+		needs_handling_for_unquoted = need_handling(lh, false);
+		if (!needs_handling_for_quoted && needs_handling_for_unquoted)
 		{
 			if (!lh->in_quote)
 				lh->arg_len = lh->i - lh->arg_start;

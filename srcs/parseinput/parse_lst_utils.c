@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "io_type.h"
 #include "minimessages.h"
 #include "minishell.h"
-#include "io_type.h"
 #include "miniutils.h"
 
 void	create_add_node_wcard(t_lsthelper *lh, char *data)
@@ -39,35 +39,25 @@ void	create_add_node_wcard(t_lsthelper *lh, char *data)
 
 bool	need_handling(t_lsthelper *t, bool check_quoted)
 {
+	const bool	is_quote = t->start[t->i] == '\'' || t->start[t->i] == '"';
+	const bool	valid_quote_transition = !t->in_quote
+			|| (t->start[t->i] == t->current_quote && t->start[t->i + 1]
+				&& t->start[t->i + 1] != ' ');
+
 	if (check_quoted)
 	{
-		if ((t->start[t->i] == '\'' || t->start[t->i] == '"') && (!t->in_quote
-				|| t->start[t->i] == t->current_quote))
+		if (is_quote && (!t->in_quote || t->start[t->i] == t->current_quote))
 		{
-			if (!t->in_quote || (t->start[t->i] == t->current_quote
-					&& t->start[t->i + 1] && t->start[t->i + 1] != ' '))
-			{
-				t->is_adjacent = true;
-				return (0);
-			}
-			return (1);
+			t->is_adjacent = valid_quote_transition;
+			return (!t->is_adjacent);
 		}
 	}
 	else
 	{
-		if ((!t->in_quote && t->start[t->i] == ' ') || t->i == t->length
-			|| t->is_adjacent)
-			return (1);
+		return ((!t->in_quote && t->start[t->i] == ' ') || t->i == t->length
+			|| t->is_adjacent);
 	}
-	return (0);
-}
-
-bool	need_handling_non_quoted(t_lsthelper *t)
-{
-	if ((!t->in_quote && t->start[t->i] == ' ') || t->i == t->length
-		|| t->is_adjacent)
-		return (1);
-	return (0);
+	return (false);
 }
 
 /**
