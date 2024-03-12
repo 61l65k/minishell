@@ -64,6 +64,7 @@ typedef struct s_exechelper
 	int						status;
 	pid_t					pid_current;
 	bool					pipe_doc;
+	const t_list			*curr_cmd;
 }							t_exechelper;
 
 typedef struct s_envhelper
@@ -92,7 +93,6 @@ typedef struct s_redirecthelper
 	int						last_out_fd;
 	int						last_in_fd;
 	int						i;
-	int						j;
 	int						flags;
 }							t_redirecthelper;
 
@@ -156,8 +156,7 @@ void						init_char_flags(t_charflags *flags, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);
-int							redirect(t_exechelper *h, t_shellstate *s,
-								const t_list *lst);
+int							handle_redirect(t_exechelper *eh, t_shellstate *s);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
@@ -172,4 +171,5 @@ void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);
 bool						confirm_rm(t_lsthelper *lh);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
+size_t						str_arr_len(const char **arr);
 #endif

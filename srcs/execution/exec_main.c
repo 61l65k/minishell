@@ -54,11 +54,11 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	if (check_pipedoc(s, h))
 	{
-		if (redirect(h, s, s->parsed_cmds[h->i]) == FAILURE)
+		if (handle_redirect(h, s) == FAILURE)
 			exit(EXIT_FAILURE);
 	}
 	dup_forward_fd(s, h);
-	if (!h->pipe_doc && redirect(h, s, s->parsed_cmds[h->i]) == FAILURE)
+	if (!h->pipe_doc && handle_redirect(h, s) == FAILURE)
 		exit(EXIT_FAILURE);
 	builtin_child(s, h);
 	ft_execvp(h->cmd_arr[0], h->cmd_arr, s->envp);
@@ -120,6 +120,7 @@ int	ft_executecmd(t_shellstate *state)
 	h = (t_exechelper){0};
 	while (h.i < state->cmd_count)
 	{
+		h.curr_cmd = state->parsed_cmds[h.i];
 		if (g_signal_flag)
 			break ;
 		if (is_pipeline(state, &h) == true)

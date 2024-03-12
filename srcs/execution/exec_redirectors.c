@@ -12,6 +12,7 @@
 
 #include "builtin.h"
 #include "ft_printf/ft_printf.h"
+#include "io_type.h"
 #include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
@@ -45,11 +46,6 @@ int	update_fds(char *filename, t_redirecthelper *rh, bool fd_out)
 	return (SUCCESS);
 }
 
-static void	shift_array_elements(char **c_arr, t_redirecthelper *rh)
-{
-	c_arr[rh->j++] = c_arr[rh->i];
-}
-
 static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s,
 		t_exechelper *h)
 {
@@ -59,19 +55,17 @@ static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s,
 		if (ft_strcmp(c_arr[rh->i], ">>") == 0)
 			rh->flags = (O_WRONLY | O_CREAT | O_APPEND);
 		rh->fd = open(c_arr[rh->i + 1], rh->flags, 0644);
-		if (update_fds(c_arr[rh->i++ + 1], rh, true) == FAILURE)
+		if (update_fds(c_arr[rh->i + 1], rh, true) == FAILURE)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<") == 0)
 	{
 		rh->fd = open(c_arr[rh->i + 1], O_RDONLY);
-		if (update_fds(c_arr[rh->i++ + 1], rh, false) == FAILURE)
+		if (update_fds(c_arr[rh->i + 1], rh, false) == FAILURE)
 			return (FAILURE);
 	}
 	else if (ft_strcmp(c_arr[rh->i], "<<") == 0)
-		handle_heredoc(rh, c_arr[rh->i++ + 1], s, h);
-	else
-		shift_array_elements(c_arr, rh);
+		handle_heredoc(rh, c_arr[rh->i + 1], s, h);
 	return (SUCCESS);
 }
 
@@ -100,26 +94,29 @@ static int	apply_fd_redirections(int last_out_fd, int last_in_fd)
 	return (SUCCESS);
 }
 
-int	redirect(t_exechelper *h, t_shellstate *s, const t_list *curr_cmd)
+int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 {
 	t_redirecthelper	rh;
+	t_command			command;
 
+	command = (t_command){0};
 	ft_memset(&rh, -1, sizeof(rh));
-	rh.j = 0;
 	rh.i = 0;
-	while (curr_cmd && h->cmd_arr[rh.i])
+	while (eh->curr_cmd && eh->cmd_arr[rh.i])
 	{
-		if (curr_cmd->next && curr_cmd->next->ambiguous_redirect == true)
+		if (eh->curr_cmd->next && eh->curr_cmd->next->ambiguous_redirect)
 		{
 			return (ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT,
-					curr_cmd->next->content), FAILURE);
+					eh->curr_cmd->next->content), FAILURE);
 		}
-		if (handle_redir(&rh, h->cmd_arr, s, h) == FAILURE)
+		if (eh->curr_cmd->type != IO_NONE && handle_redir(&rh, eh->cmd_arr, s,
+				eh) == FAILURE)
 			return (FAILURE);
-		curr_cmd = curr_cmd->next;
+		eh->curr_cmd = eh->curr_cmd->next;
 		rh.i++;
 	}
-	if (rh.j != 0)
-		h->cmd_arr[rh.j] = NULL;
+	if (get_command(s->parsed_cmds[eh->i], &command) == FAILURE)
+		exit(EXIT_FAILURE);
+	eh->cmd_arr = command.args;
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }
