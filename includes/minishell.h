@@ -74,7 +74,6 @@ int								ft_executecmd(t_shellstate *state);
 void							wait_remaining_children(t_shellstate *state);
 void							wait_child(t_shellstate *state, pid_t pid);
 void							ft_free_resets(t_shellstate *state);
-void							ft_displayhistory(void);
 int								init_signals(t_shellstate *s);
 void							setup_terminal(void);
 void							ft_execvp(const char *file, char *const argv[],
