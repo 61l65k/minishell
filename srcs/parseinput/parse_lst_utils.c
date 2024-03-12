@@ -12,6 +12,7 @@
 
 #include "minimessages.h"
 #include "minishell.h"
+#include "io_type.h"
 #include "miniutils.h"
 
 void	create_add_node_wcard(t_lsthelper *lh, char *data)
@@ -94,9 +95,7 @@ bool	is_prev_redirector(const t_list *prev)
 {
 	if (prev == NULL)
 		return (false);
-	if (!prev->is_quoted_redirector && (ft_strcmp(prev->content, ">") == 0
-			|| ft_strcmp(prev->content, "<") == 0 || ft_strcmp(prev->content,
-				">>") == 0))
+	if (!prev->is_quoted_redirector && get_io_type(prev->content))
 	{
 		return (true);
 	}
