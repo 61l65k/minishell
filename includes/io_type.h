@@ -15,22 +15,13 @@
 
 # include "libft.h"
 
-typedef enum e_io_type
-{
-	IO_NONE,
-	IO_OUT_TRUNC,
-	IO_OUT_APPEND,
-	IO_IN_TRUNC,
-	IO_IN_HEREDOC
-}		t_io_type;
-
 typedef struct s_io
 {
 	t_io_type	type;
 	bool		ambiguous_redirect;
 	char		*filename;
 	int			fd;
-}		t_io;
+}				t_io;
 
 typedef struct s_command
 {
@@ -38,14 +29,14 @@ typedef struct s_command
 	t_vec		io_vec;
 	int			fd_stdin_backup;
 	int			fd_stdout_backup;
-}		t_command;
+}				t_command;
 
-t_io_type	get_io_type(const char *str);
-int			store_redirections_in_vec(t_vec *io_vec, t_list *arg_list);
-void		remove_redirections_from_args(char **args, t_list *arg_list);
+t_io_type		get_io_type(const char *str);
+int				store_redirections_in_vec(t_vec *io_vec, t_list *arg_list);
+void			remove_redirections_from_args(char **args, t_list *arg_list);
 
-int			dup_fd(t_io *io);
-int			open_file(t_io *io);
-int			open_heredoc(const char *delimiter, int fd_out);
+int				dup_fd(t_io *io);
+int				open_file(t_io *io);
+int				open_heredoc(const char *delimiter, int fd_out);
 
 #endif

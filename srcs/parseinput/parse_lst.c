@@ -43,8 +43,7 @@ static int	handle_wildcard(t_lsthelper *lh)
 		ft_lstclear(&lh->wcard.prev->next, free);
 		lh->current = lh->wcard.prev;
 		create_add_node_wcard(lh, lh->arg);
-		lh->current->ambiguous_redirect = \
-		get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
+		lh->current->ambiguous_redirect = get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
 	}
 	if (lh->wcard.prev && !ft_strcmp(lh->wcard.prev->content, "rm")
 		&& !confirm_rm(lh))
@@ -69,14 +68,8 @@ static int	handle_non_quoted(t_lsthelper *lh)
 		}
 		else
 		{
-			lh->new_node = ft_lstnew(lh->arg);
-			if (!lh->new_node)
+			if (assign_io_type(lh, ft_lstnew(lh->arg)) == FAILURE)
 				return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
-			if (!lh->head)
-				lh->head = lh->new_node;
-			else
-				lh->current->next = lh->new_node;
-			lh->current = lh->new_node;
 		}
 	}
 	lh->arg_start = lh->i + 1;

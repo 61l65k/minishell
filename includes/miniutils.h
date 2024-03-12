@@ -171,4 +171,5 @@ bool						is_prev_redirector(const t_list *prev);
 void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);
 bool						confirm_rm(t_lsthelper *lh);
+int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 #endif

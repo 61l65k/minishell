@@ -37,6 +37,20 @@ void	create_add_node_wcard(t_lsthelper *lh, char *data)
 	}
 }
 
+int	assign_io_type(t_lsthelper *lh, t_list *new_node)
+{
+	if (!new_node)
+		return (FAILURE);
+	lh->new_node = new_node;
+	if (!lh->head)
+		lh->head = lh->new_node;
+	else
+		lh->current->next = lh->new_node;
+	lh->current = lh->new_node;
+	new_node->type = get_io_type(new_node->content);
+	return (SUCCESS);
+}
+
 /**
  * @brief Matches the pattern with the string.
  */

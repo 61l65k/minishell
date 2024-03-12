@@ -25,10 +25,20 @@
 # include <stdlib.h>
 # include <unistd.h>
 
+typedef enum e_io_type
+{
+	IO_NONE,
+	IO_OUT_TRUNC,
+	IO_OUT_APPEND,
+	IO_IN_TRUNC,
+	IO_IN_HEREDOC
+}					t_io_type;
+
 typedef struct s_list
 {
 	char			*content;
 	bool			ambiguous_redirect;
+	t_io_type		type;
 	struct s_list	*next;
 }					t_list;
 
