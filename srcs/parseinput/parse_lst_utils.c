@@ -37,25 +37,6 @@ void	create_add_node_wcard(t_lsthelper *lh, char *data)
 	}
 }
 
-bool	need_handling(t_lsthelper *t, bool check_quoted)
-{
-	const bool	is_quote = t->start[t->i] == '\'' || t->start[t->i] == '"';
-
-	if (check_quoted)
-	{
-		if (is_quote)
-		{
-			t->is_adjacent = true;
-			return (!t->is_adjacent);
-		}
-	}
-	else
-	{
-		return ((t->start[t->i] == ' ') || t->i == t->length || t->is_adjacent);
-	}
-	return (false);
-}
-
 /**
  * @brief Matches the pattern with the string.
  */

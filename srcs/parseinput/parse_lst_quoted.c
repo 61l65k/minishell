@@ -27,7 +27,7 @@ static int	expand_buffer_if_needed(t_adjacenthelper *ah)
 	return (SUCCESS);
 }
 
-static int	process_adjacent(t_lsthelper *t, t_adjacenthelper *ah)
+static int	process_quoted(t_lsthelper *t, t_adjacenthelper *ah)
 {
 	while (t->i <= t->length && (ah->current_quote || t->start[t->i] != ' '))
 	{
@@ -54,7 +54,7 @@ static int	process_adjacent(t_lsthelper *t, t_adjacenthelper *ah)
 	return (SUCCESS);
 }
 
-int	handle_adjacent(t_lsthelper *t)
+int	handle_quoted(t_lsthelper *t)
 {
 	t_adjacenthelper	ah;
 
@@ -65,7 +65,7 @@ int	handle_adjacent(t_lsthelper *t)
 	if (!ah.buff)
 		return (FAILURE);
 	ah.buffer_index = 0;
-	process_adjacent(t, &ah);
+	process_quoted(t, &ah);
 	t->arg = ah.buff;
 	t->new_node = ft_lstnew(t->arg);
 	if (!t->new_node)
@@ -76,7 +76,7 @@ int	handle_adjacent(t_lsthelper *t)
 		t->current->next = t->new_node;
 	t->current = t->new_node;
 	t->arg_start = t->i + 1;
-	t->is_adjacent = false;
+	t->in_quotes = false;
 	return (SUCCESS);
 }
 

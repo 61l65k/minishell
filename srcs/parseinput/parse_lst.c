@@ -87,16 +87,23 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 {
 	while (lh->i <= lh->length)
 	{
-		if (!need_handling(lh, true) && need_handling(lh, false))
+		if (lh->start[lh->i] == '\'' || lh->start[lh->i] == '"')
+		{
+			lh->in_quotes = true;
+			lh->i++;
+		}
+		if (((lh->start[lh->i] == ' ' || lh->i == lh->length)) || lh->in_quotes)
 		{
 			lh->arg_len = lh->i - lh->arg_start;
-			if (lh->is_adjacent)
+			if (lh->in_quotes)
 			{
-				if (handle_adjacent(lh) == FAILURE)
+				if (handle_quoted(lh) == FAILURE)
 					return (NULL);
 			}
 			else if (handle_non_quoted(lh))
+			{
 				return (NULL);
+			}
 		}
 		lh->i++;
 	}

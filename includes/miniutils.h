@@ -130,15 +130,13 @@ typedef struct s_lsthelper
 	const char				*end;
 	size_t					length;
 	size_t					i;
-	bool					in_quote;
 	t_list					*head;
 	t_list					*current;
 	size_t					arg_start;
 	char					*arg;
 	t_list					*new_node;
 	size_t					arg_len;
-	char					current_quote;
-	bool					is_adjacent;
+	bool					in_quotes;
 	t_parsehelper			*ph;
 }							t_lsthelper;
 
@@ -164,7 +162,7 @@ int							redirect(t_exechelper *h, t_shellstate *s,
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
-int							handle_adjacent(t_lsthelper *t);
+int							handle_quoted(t_lsthelper *t);
 t_operators					check_for_op(t_operatorhelper *op,
 								t_shellstate *state, int index);
 int							check_parentheses(t_operatorhelper *op,
