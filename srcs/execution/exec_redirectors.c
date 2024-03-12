@@ -117,6 +117,8 @@ int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 	}
 	if (get_command(s->parsed_cmds[eh->i], &command) == FAILURE)
 		exit(EXIT_FAILURE);
+	free(eh->cmd_arr);
+	vec_free(&command.io_vec);
 	eh->cmd_arr = command.args;
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }
