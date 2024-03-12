@@ -130,14 +130,12 @@ typedef struct s_lsthelper
 	const char				*end;
 	size_t					length;
 	size_t					i;
-	bool					in_quote;
 	t_list					*head;
 	t_list					*current;
 	size_t					arg_start;
 	char					*arg;
 	t_list					*new_node;
 	size_t					arg_len;
-	char					current_quote;
 	bool					is_adjacent;
 	t_parsehelper			*ph;
 }							t_lsthelper;
