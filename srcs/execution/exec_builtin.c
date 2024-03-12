@@ -18,8 +18,7 @@
  * @brief Handles built-in commands in the main process.
  * Parses the redirection and command args information from arg_list
  * and stores them to a local t_command struct.
- * Otherwise sets up possible redirections and runs the built-in command,
- * and cleans up after.
+ * Sets up possible redirections and runs the built-in command.
  * @return Returns 0 if the cmd found in arg_list is not a built-in.
  */
 int	builtin_main(t_shellstate *state, t_list *arg_list)

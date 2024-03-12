@@ -42,38 +42,41 @@ int	get_command(t_list *arg_list, t_command *command)
 	return (SUCCESS);
 }
 
-static void	init_io_node(t_io *io_node)
+static bool	found_io_node(t_io *io_node, t_list *curr, t_list *next)
 {
 	io_node->type = IO_NONE;
+	io_node->ambigious_redirect = false;
 	io_node->filename = NULL;
 	io_node->fd = -1;
+	if (curr && next)
+	{
+		if (curr->is_quoted_redirector)
+			return (false);
+		io_node->type = get_io_type(curr->content);
+		if (io_node->type == IO_NONE)
+			return (false);
+		io_node->filename = next->content;
+		io_node->ambigious_redirect = next->ambigious_redirect;
+		return (true);
+	}
+	return (false);
 }
 
 int	store_redirections_in_vec(t_vec *io_vec, t_list *arg_list)
 {
-	t_list	*current_node;
+	t_list	*curr;
 	t_io	io_node;
 
-	current_node = arg_list;
-	while (current_node)
+	curr = arg_list;
+	while (curr)
 	{
-		init_io_node(&io_node);
-		if (!current_node->is_quoted_redirector)
+		if (found_io_node(&io_node, curr, curr->next))
 		{
-			io_node.type = get_io_type(current_node->content);
-			if (io_node.type != IO_NONE)
-			{
-				if (current_node->next == NULL)
-					break ;
-				io_node.filename = current_node->next->content;
-				if (io_node.filename)
-				{
-					if (vec_push(io_vec, &io_node) == -1)
-						return (FAILURE);
-				}
-			}
+			if (vec_push(io_vec, &io_node) == -1)
+				return (FAILURE);
+			curr = curr->next;
 		}
-		current_node = current_node->next;
+		curr = curr->next;
 	}
 	return (SUCCESS);
 }

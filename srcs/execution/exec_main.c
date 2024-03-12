@@ -118,8 +118,6 @@ int	ft_executecmd(t_shellstate *state)
 	t_exechelper	h;
 
 	h = (t_exechelper){0};
-	if (state->cmd_count == 1 && ambigious_redirect(state))
-		return (EXIT_FAILURE);
 	while (h.i < state->cmd_count)
 	{
 		if (g_signal_flag)
