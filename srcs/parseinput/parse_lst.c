@@ -16,9 +16,8 @@
 #include "minishell.h"
 #include "miniutils.h"
 
-static int	handle_wildcard(t_lsthelper *lh)
+static void	process_wcard_dir_entries(t_lsthelper *lh)
 {
-	lh->wcard.prev = lh->current;
 	while (true)
 	{
 		lh->wcard.entry = readdir(lh->wcard.dir);
@@ -33,12 +32,19 @@ static int	handle_wildcard(t_lsthelper *lh)
 			create_add_node_wcard(lh, lh->wcard.entry->d_name);
 		}
 	}
+}
+
+static int	handle_wildcard(t_lsthelper *lh)
+{
+	lh->wcard.prev = lh->current;
+	process_wcard_dir_entries(lh);
 	if (lh->wcard.match_count > 1 && is_prev_redirector(lh->wcard.prev))
 	{
 		ft_lstclear(&lh->wcard.prev->next, free);
 		lh->current = lh->wcard.prev;
 		create_add_node_wcard(lh, lh->arg);
-		lh->current->ambiguous_redirect = get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
+		lh->current->ambiguous_redirect = \
+		get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
 	}
 	if (lh->wcard.prev && !ft_strcmp(lh->wcard.prev->content, "rm")
 		&& confirm_rm(lh))
@@ -50,7 +56,7 @@ static int	handle_wildcard(t_lsthelper *lh)
 
 static int	handle_non_quoted(t_lsthelper *lh)
 {
-	if (!lh->in_quote && lh->arg_len > 0)
+	if (lh->arg_len > 0)
 	{
 		lh->arg = ft_strndup(lh->start + lh->arg_start, lh->arg_len);
 		if (!lh->arg)
@@ -79,19 +85,11 @@ static int	handle_non_quoted(t_lsthelper *lh)
 
 static t_list	*allocate_lst(t_lsthelper *lh)
 {
-	bool	needs_handling_for_quoted;
-	bool	needs_handling_for_unquoted;
-
 	while (lh->i <= lh->length)
 	{
-		needs_handling_for_quoted = need_handling(lh, true);
-		needs_handling_for_unquoted = need_handling(lh, false);
-		if (!needs_handling_for_quoted && needs_handling_for_unquoted)
+		if (!need_handling(lh, true) && need_handling(lh, false))
 		{
-			if (!lh->in_quote)
-				lh->arg_len = lh->i - lh->arg_start;
-			else
-				lh->arg_len = lh->i - lh->arg_start + 1;
+			lh->arg_len = lh->i - lh->arg_start;
 			if (lh->is_adjacent)
 			{
 				if (handle_adjacent(lh) == FAILURE)

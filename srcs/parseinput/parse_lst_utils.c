@@ -40,22 +40,18 @@ void	create_add_node_wcard(t_lsthelper *lh, char *data)
 bool	need_handling(t_lsthelper *t, bool check_quoted)
 {
 	const bool	is_quote = t->start[t->i] == '\'' || t->start[t->i] == '"';
-	const bool	valid_quote_transition = !t->in_quote
-			|| (t->start[t->i] == t->current_quote && t->start[t->i + 1]
-				&& t->start[t->i + 1] != ' ');
 
 	if (check_quoted)
 	{
-		if (is_quote && (!t->in_quote || t->start[t->i] == t->current_quote))
+		if (is_quote)
 		{
-			t->is_adjacent = valid_quote_transition;
+			t->is_adjacent = true;
 			return (!t->is_adjacent);
 		}
 	}
 	else
 	{
-		return ((!t->in_quote && t->start[t->i] == ' ') || t->i == t->length
-			|| t->is_adjacent);
+		return ((t->start[t->i] == ' ') || t->i == t->length || t->is_adjacent);
 	}
 	return (false);
 }

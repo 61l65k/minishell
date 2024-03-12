@@ -46,3 +46,6 @@ mv minishell_bonus minishell
 
 echo "All tests completed."
 
+echo "Running Norminette"
+norminette
+
