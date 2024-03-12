@@ -70,7 +70,7 @@ static int	handle_wildcard(t_lsthelper *lh)
 	}
 	if (lh->wcard.prev && !ft_strcmp(lh->wcard.prev->content, "rm")
 		&& confirm_rm(lh))
-		return (ft_lstclear(&lh->head, free), FAILURE);
+		return (closedir(lh->wcard.dir), ft_lstclear(&lh->head, free), FAILURE);
 	if (!lh->wcard.match_count)
 		create_add_node_wcard(lh, lh->arg);
 	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);
