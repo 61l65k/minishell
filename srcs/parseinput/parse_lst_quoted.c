@@ -66,8 +66,7 @@ int	handle_quoted(t_lsthelper *t)
 		return (FAILURE);
 	ah.buffer_index = 0;
 	process_quoted(t, &ah);
-	t->arg = ah.buff;
-	t->new_node = ft_lstnew(t->arg);
+	t->new_node = ft_lstnew(ah.buff);
 	if (!t->new_node)
 		return (free(ah.buff), FAILURE);
 	if (!t->head)
