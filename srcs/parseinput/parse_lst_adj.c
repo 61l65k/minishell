@@ -106,10 +106,14 @@ bool	confirm_rm(t_lsthelper *lh)
 		if (!input)
 			return (FAILURE);
 		if (ft_strcmp(input, "y") == 0)
+		{
+			free(input);
 			return (true);
+		}
 		else if (ft_strcmp(input, "n") == 0)
 		{
 			lh->ph->lst_errno = RM_DENIED;
+			free(input);
 			return (false);
 		}
 		free(input);
