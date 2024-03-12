@@ -95,5 +95,5 @@ void	ft_isquotedredirector(t_list *node)
 
 	if (!ft_strcmp(c, ">>") || !ft_strcmp(c, ">") || !ft_strcmp(c, "<")
 		|| !ft_strcmp(c, "<<"))
-		node->is_quoted_redirector = true;
+		printf("unreachable code\n");
 }

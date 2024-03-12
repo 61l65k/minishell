@@ -20,7 +20,6 @@ t_list	*ft_lstnew(void *content)
 	if (!node)
 		return (NULL);
 	node->content = content;
-	node->is_quoted_redirector = false;
 	node->ambiguous_redirect = false;
 	node->next = NULL;
 	return (node);

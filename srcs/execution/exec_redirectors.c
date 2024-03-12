@@ -109,14 +109,13 @@ int	redirect(t_exechelper *h, t_shellstate *s, const t_list *curr_cmd)
 	rh.i = 0;
 	while (curr_cmd && h->cmd_arr[rh.i])
 	{
-		if (curr_cmd->is_quoted_redirector == false)
+		if (curr_cmd->next && curr_cmd->next->ambiguous_redirect == true)
 		{
-			if (curr_cmd->next && curr_cmd->next->ambiguous_redirect == true)
-				return (ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT,
-						curr_cmd->next->content), FAILURE);
-			if (handle_redir(&rh, h->cmd_arr, s, h) == FAILURE)
-				return (FAILURE);
+			return (ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT,
+					curr_cmd->next->content), FAILURE);
 		}
+		if (handle_redir(&rh, h->cmd_arr, s, h) == FAILURE)
+			return (FAILURE);
 		curr_cmd = curr_cmd->next;
 		rh.i++;
 	}

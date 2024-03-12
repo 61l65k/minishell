@@ -50,8 +50,6 @@ static bool	found_io_node(t_io *io_node, t_list *curr, t_list *next)
 	io_node->fd = -1;
 	if (curr && next)
 	{
-		if (curr->is_quoted_redirector)
-			return (false);
 		io_node->type = get_io_type(curr->content);
 		if (io_node->type == IO_NONE)
 			return (false);
@@ -92,8 +90,7 @@ void	remove_redirections_from_args(char **args, t_list *arg_list)
 	current_node = arg_list;
 	while (args[i] && current_node)
 	{
-		if (get_io_type(args[i]) != IO_NONE
-			&& !current_node->is_quoted_redirector)
+		if (get_io_type(args[i]) != IO_NONE)
 		{
 			current_node = current_node->next;
 			i++;

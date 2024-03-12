@@ -95,7 +95,7 @@ bool	is_prev_redirector(const t_list *prev)
 {
 	if (prev == NULL)
 		return (false);
-	if (!prev->is_quoted_redirector && get_io_type(prev->content))
+	if (get_io_type(prev->content))
 	{
 		return (true);
 	}

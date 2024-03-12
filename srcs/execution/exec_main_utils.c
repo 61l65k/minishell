@@ -44,7 +44,7 @@ bool	check_pipedoc(t_shellstate *s, t_exechelper *h)
 	{
 		while (l)
 		{
-			if (!l->is_quoted_redirector && ft_strcmp(l->content, "<<") == 0)
+			if (ft_strcmp(l->content, "<<") == 0)
 			{
 				h->pipe_doc = true;
 				return (true);
