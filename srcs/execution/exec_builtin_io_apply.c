@@ -85,9 +85,9 @@ int	dup_fd(t_io *io)
 
 int	open_file(t_io *io)
 {
-	if (io->ambigious_redirect == true)
+	if (io->ambiguous_redirect == true)
 	{
-		ft_fprintf(STDERR_FILENO, ERR_AMBIGIOUS_REDIRECT, io->filename);
+		ft_fprintf(STDERR_FILENO, ERR_AMBIGUOUS_REDIRECT, io->filename);
 		return (-1);
 	}
 	if (io->type == IO_OUT_TRUNC)

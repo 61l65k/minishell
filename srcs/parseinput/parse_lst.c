@@ -66,7 +66,7 @@ static int	handle_wildcard(t_lsthelper *lh)
 		ft_lstclear(&lh->wcard.prev->next, free);
 		lh->current = lh->wcard.prev;
 		create_add_node_wcard(lh, lh->arg);
-		lh->current->ambigious_redirect = get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
+		lh->current->ambiguous_redirect = get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
 	}
 	if (lh->wcard.prev && !ft_strcmp(lh->wcard.prev->content, "rm")
 		&& confirm_rm(lh))

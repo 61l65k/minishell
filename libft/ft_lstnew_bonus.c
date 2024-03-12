@@ -21,7 +21,7 @@ t_list	*ft_lstnew(void *content)
 		return (NULL);
 	node->content = content;
 	node->is_quoted_redirector = false;
-	node->ambigious_redirect = false;
+	node->ambiguous_redirect = false;
 	node->next = NULL;
 	return (node);
 }

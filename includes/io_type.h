@@ -27,7 +27,7 @@ typedef enum e_io_type
 typedef struct s_io
 {
 	t_io_type	type;
-	bool		ambigious_redirect;
+	bool		ambiguous_redirect;
 	char		*filename;
 	int			fd;
 }		t_io;

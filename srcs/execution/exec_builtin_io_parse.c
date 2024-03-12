@@ -45,7 +45,7 @@ int	get_command(t_list *arg_list, t_command *command)
 static bool	found_io_node(t_io *io_node, t_list *curr, t_list *next)
 {
 	io_node->type = IO_NONE;
-	io_node->ambigious_redirect = false;
+	io_node->ambiguous_redirect = false;
 	io_node->filename = NULL;
 	io_node->fd = -1;
 	if (curr && next)
@@ -56,7 +56,7 @@ static bool	found_io_node(t_io *io_node, t_list *curr, t_list *next)
 		if (io_node->type == IO_NONE)
 			return (false);
 		io_node->filename = next->content;
-		io_node->ambigious_redirect = next->ambigious_redirect;
+		io_node->ambiguous_redirect = next->ambiguous_redirect;
 		return (true);
 	}
 	return (false);

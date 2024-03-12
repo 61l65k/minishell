@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minimessages.h"
 #include "minishell.h"
 
 /**
@@ -54,15 +55,15 @@ bool	check_pipedoc(t_shellstate *s, t_exechelper *h)
 	return (false);
 }
 
-bool	ambigious_redirect(t_shellstate *s)
+bool	ambiguous_redirect(t_shellstate *s)
 {
 	const t_list	*cmd = s->parsed_cmds[0];
 
 	while (cmd)
 	{
-		if (cmd->ambigious_redirect == true)
+		if (cmd->ambiguous_redirect == true)
 		{
-			ft_fprintf(2, ERR_AMBIGIOUS_REDIRECT, cmd->content);
+			ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT, cmd->content);
 			return (true);
 		}
 		cmd = cmd->next;
