@@ -47,7 +47,7 @@ static int	handle_wildcard(t_lsthelper *lh)
 		get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
 	}
 	if (lh->wcard.prev && !ft_strcmp(lh->wcard.prev->content, "rm")
-		&& confirm_rm(lh))
+		&& !confirm_rm(lh))
 		return (closedir(lh->wcard.dir), ft_lstclear(&lh->head, free), FAILURE);
 	if (!lh->wcard.match_count)
 		create_add_node_wcard(lh, lh->arg);
