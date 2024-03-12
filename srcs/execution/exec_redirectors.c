@@ -111,6 +111,9 @@ int	redirect(t_exechelper *h, t_shellstate *s, const t_list *curr_cmd)
 	{
 		if (curr_cmd->is_quoted_redirector == false)
 		{
+			if (curr_cmd->next && curr_cmd->next->ambigious_redirect == true)
+				return (ft_fprintf(2, ERR_AMBIGIOUS_REDIRECT,
+						curr_cmd->next->content), FAILURE);
 			if (handle_redir(&rh, h->cmd_arr, s, h) == FAILURE)
 				return (FAILURE);
 		}
