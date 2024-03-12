@@ -90,7 +90,7 @@ bool	wildcard_match(const char *pattern, const char *str)
 	return (false);
 }
 
-bool	is_prev_redirector(const t_list *prev, t_parsehelper *ph)
+bool	is_prev_redirector(const t_list *prev)
 {
 	if (prev == NULL)
 		return (false);
@@ -98,7 +98,6 @@ bool	is_prev_redirector(const t_list *prev, t_parsehelper *ph)
 			|| ft_strcmp(prev->content, "<") == 0 || ft_strcmp(prev->content,
 				">>") == 0))
 	{
-		ph->ambigious_error = true;
 		return (true);
 	}
 	return (false);

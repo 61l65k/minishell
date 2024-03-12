@@ -40,6 +40,9 @@ delimited by end-of-file (wanted `%s')\n"
 # define ERR_HEREDOC_DELIMITER \
 	"minishell: syntax error near unexpected \
 token `newline'\n"
+# define RM_MESSAGE \
+	"Are you sure you want to\
+ remove all matched with wildcard? (y/n)\n"
 # define SIGINT_EXIT 130
 
 enum	e_errors
@@ -48,6 +51,7 @@ enum	e_errors
 	FALSE_INPUT,
 	QUOTE_ERROR = 1,
 	SYNTAX_ERROR = 2,
+	RM_DENIED = 10,
 };
 
 #endif

@@ -43,7 +43,7 @@ static int	handle_quoted(t_lsthelper *lh)
 	return (SUCCESS);
 }
 
-static int	handle_wildcard(t_lsthelper *lh, t_parsehelper *ph)
+static int	handle_wildcard(t_lsthelper *lh)
 {
 	lh->wcard.prev = lh->current;
 	while (true)
@@ -60,48 +60,51 @@ static int	handle_wildcard(t_lsthelper *lh, t_parsehelper *ph)
 			create_add_node_wcard(lh, lh->wcard.entry->d_name);
 		}
 	}
-	if (lh->wcard.match_count > 1 && is_prev_redirector(lh->wcard.prev, ph))
+	if (lh->wcard.match_count > 1 && is_prev_redirector(lh->wcard.prev))
 	{
 		ft_lstclear(&lh->wcard.prev->next, free);
 		lh->current = lh->wcard.prev;
 		create_add_node_wcard(lh, lh->arg);
 		lh->current->ambigious_redirect = true;
 	}
+	if (lh->wcard.prev && !ft_strcmp(lh->wcard.prev->content, "rm")
+		&& confirm_rm(lh))
+		return (ft_lstclear(&lh->head, free), FAILURE);
 	if (!lh->wcard.match_count)
 		create_add_node_wcard(lh, lh->arg);
 	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);
 }
 
-static int	handle_non_quoted(t_lsthelper *t, t_parsehelper *ph)
+static int	handle_non_quoted(t_lsthelper *lh)
 {
-	if (!t->in_quote && t->arg_len > 0)
+	if (!lh->in_quote && lh->arg_len > 0)
 	{
-		t->arg = ft_strndup(t->start + t->arg_start, t->arg_len);
-		if (!t->arg)
-			return (ft_lstclear(&t->head, free), FAILURE);
-		if (ft_strchr(t->arg, '*'))
+		lh->arg = ft_strndup(lh->start + lh->arg_start, lh->arg_len);
+		if (!lh->arg)
+			return (ft_lstclear(&lh->head, free), FAILURE);
+		if (ft_strchr(lh->arg, '*'))
 		{
-			t->wcard.dir = opendir(".");
-			if (!t->wcard.dir || handle_wildcard(t, ph) == FAILURE)
-				return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
+			lh->wcard.dir = opendir(".");
+			if (!lh->wcard.dir || handle_wildcard(lh) == FAILURE)
+				return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
 		}
 		else
 		{
-			t->new_node = ft_lstnew(t->arg);
-			if (!t->new_node)
-				return (free(t->arg), ft_lstclear(&t->head, free), FAILURE);
-			if (!t->head)
-				t->head = t->new_node;
+			lh->new_node = ft_lstnew(lh->arg);
+			if (!lh->new_node)
+				return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
+			if (!lh->head)
+				lh->head = lh->new_node;
 			else
-				t->current->next = t->new_node;
-			t->current = t->new_node;
+				lh->current->next = lh->new_node;
+			lh->current = lh->new_node;
 		}
 	}
-	t->arg_start = t->i + 1;
+	lh->arg_start = lh->i + 1;
 	return (SUCCESS);
 }
 
-static t_list	*allocate_lst(t_lsthelper *lh, t_parsehelper *ph)
+static t_list	*allocate_lst(t_lsthelper *lh)
 {
 	while (lh->i <= lh->length)
 	{
@@ -122,7 +125,7 @@ static t_list	*allocate_lst(t_lsthelper *lh, t_parsehelper *ph)
 				if (handle_adjacent(lh) == FAILURE)
 					return (NULL);
 			}
-			else if (handle_non_quoted(lh, ph))
+			else if (handle_non_quoted(lh))
 				return (NULL);
 		}
 		lh->i++;
@@ -134,11 +137,10 @@ t_list	*str_to_lst(const char *str, t_parsehelper *ph)
 {
 	t_lsthelper	lh;
 
-	ph->ambigious_error = false;
-	(void)ph;
 	if (str == NULL)
 		return (NULL);
 	lh = (t_lsthelper){0};
+	lh.ph = ph;
 	lh.start = str;
 	lh.end = str + ft_strlen(str) - 1;
 	while (*lh.start && (*lh.start == ' ' || *lh.start == '\t'))
@@ -146,5 +148,5 @@ t_list	*str_to_lst(const char *str, t_parsehelper *ph)
 	while (lh.end > lh.start && (*lh.end == ' ' || *lh.end == '\t'))
 		lh.end--;
 	lh.length = lh.end - lh.start + 1;
-	return (allocate_lst(&lh, ph));
+	return (allocate_lst(&lh));
 }

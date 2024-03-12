@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_printf/ft_printf.h"
 #include "minishell.h"
+#include "miniutils.h"
 
 static int	expand_buffer_if_needed(t_adjacenthelper *ah)
 {
@@ -91,4 +93,26 @@ bool	is_spaces(const char *str)
 		str++;
 	}
 	return (true);
+}
+
+bool	confirm_rm(t_lsthelper *lh)
+{
+	char	*input;
+
+	ft_printf(RM_MESSAGE);
+	while (true)
+	{
+		input = readline("> ");
+		if (!input)
+			return (FAILURE);
+		if (ft_strcmp(input, "y") == 0)
+			return (true);
+		else if (ft_strcmp(input, "n") == 0)
+		{
+			lh->ph->lst_errno = RM_DENIED;
+			return (false);
+		}
+		free(input);
+	}
+	return (false);
 }

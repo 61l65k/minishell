@@ -40,7 +40,7 @@ typedef struct s_parsehelper
 	size_t					j;
 	size_t					i;
 	size_t					alloc_size;
-	bool					ambigious_error;
+	int						lst_errno;
 }							t_parsehelper;
 
 typedef struct s_operatorhelper
@@ -139,6 +139,7 @@ typedef struct s_lsthelper
 	size_t					arg_len;
 	char					current_quote;
 	bool					is_adjacent;
+	t_parsehelper			*ph;
 }							t_lsthelper;
 
 char						**strarrjoin(const char **arr, const char *str);
@@ -169,8 +170,8 @@ t_operators					check_for_op(t_operatorhelper *op,
 int							check_parentheses(t_operatorhelper *op,
 								t_shellstate *s);
 void						create_add_node_wcard(t_lsthelper *t, char *data);
-bool						is_prev_redirector(const t_list *prev,
-								t_parsehelper *ph);
+bool						is_prev_redirector(const t_list *prev);
 void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);
+bool						confirm_rm(t_lsthelper *lh);
 #endif
