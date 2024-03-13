@@ -71,6 +71,7 @@ typedef struct s_envhelper
 	char					*var_value;
 	bool					free_var_value;
 	int						val_len;
+	int						flags;
 }							t_envhelper;
 
 typedef struct s_redirecthelper
@@ -140,7 +141,7 @@ void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);
 void						ensure_mem_for_cmd(t_parsehelper *h,
 								t_shellstate *state, size_t additional_length);
-void						init_char_flags(int *flags, char *c,
+void						init_char_flags(t_envhelper *eh, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);
@@ -159,4 +160,5 @@ void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
+void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 #endif

@@ -71,3 +71,16 @@ bool	is_valid_syntax(t_shellstate *state)
 	}
 	return (true);
 }
+
+void	handle_tilda(t_parsehelper *h, t_shellstate *state)
+{
+	const char	*tilda = ft_getenv("HOME", state->envp);
+	const int	til_len = ft_strlen(tilda);
+
+	if (tilda)
+	{
+		ensure_mem_for_cmd(h, state, ft_strlen(h->curr_cmd) + til_len + 1);
+		ft_strncat(h->curr_cmd, tilda, til_len);
+		h->j = ft_strlen(h->curr_cmd);
+	}
+}
