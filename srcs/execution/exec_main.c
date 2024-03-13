@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "builtin.h"
+#include "io_type.h"
 #include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
@@ -57,6 +58,9 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 	dup_forward_fd(s, h);
 	if (!h->pipe_doc && handle_redirect(h, s) == FAILURE)
 		exit(EXIT_FAILURE);
+	h->cmd_arr = lst_to_argv(s->parsed_cmds[h->i]);
+	if (!h->cmd_arr)
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	builtin_child(s, h);
 	ft_execvp(h->cmd_arr[0], h->cmd_arr, s->envp);
 }

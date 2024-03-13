@@ -98,9 +98,7 @@ static int	apply_fd_redirections(int last_out_fd, int last_in_fd)
 int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 {
 	t_redirecthelper	rh;
-	t_command			command;
 
-	command = (t_command){0};
 	ft_memset(&rh, -1, sizeof(rh));
 	rh.i = 0;
 	while (eh->curr_cmd)
@@ -115,9 +113,5 @@ int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 		eh->curr_cmd = eh->curr_cmd->next;
 		rh.i++;
 	}
-	if (get_command(s->parsed_cmds[eh->i], &command) == FAILURE)
-		exit(EXIT_FAILURE);
-	vec_free(&command.io_vec);
-	eh->cmd_arr = command.args;
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }
