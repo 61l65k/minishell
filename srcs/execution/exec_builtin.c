@@ -37,10 +37,7 @@ int	builtin_main(t_shellstate *state, t_list *arg_list)
 	state->last_exit_status = SUCCESS;
 	if (command.io_vec.len > 0)
 	{
-		if (apply_main_process_redirections(&command) == -1)
-		{
-			state->last_exit_status = 1;
-		}
+		state->last_exit_status = apply_main_process_redirections(&command);
 	}
 	if (func && state->last_exit_status == SUCCESS)
 		func(command.args, state);

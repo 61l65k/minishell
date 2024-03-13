@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 23:26:52 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/09 11:26:28 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/13 15:15:50 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include "builtin.h"
 #include "minimessages.h"
 #include "minishell.h"
+#include "miniutils.h"
 #include "vec/vec.h"
 
 int	back_up_main_process_fds(t_command *command)
@@ -39,26 +40,30 @@ int	back_up_main_process_fds(t_command *command)
 	return (0);
 }
 
+int	fork_heredoc(t_io *io);
+
 int	apply_main_process_redirections(t_command *command)
 {
 	t_io	*io_current;
 	size_t	i;
+	int		heredoc_status;
 
 	if (back_up_main_process_fds(command) == -1)
-		return (-1);
+		return (FAILURE);
 	i = 0;
 	while (i < command->io_vec.len)
 	{
 		io_current = (t_io *)vec_get(&command->io_vec, i);
 		io_current->fd = -1;
 		if (open_file(io_current) == -1)
-			return (-1);
+			return (FAILURE);
 		if (dup_fd(io_current) == -1)
-			return (-1);
+			return (FAILURE);
 		if (io_current->type == IO_IN_HEREDOC)
 		{
-			if (open_heredoc(io_current->filename, -1) == SIGINT_EXIT)
-				return (-1);
+			heredoc_status = fork_heredoc(io_current);
+			if (heredoc_status != 0)
+				return (heredoc_status);
 		}
 		i++;
 	}
@@ -103,32 +108,6 @@ int	open_file(t_io *io)
 		ft_fprintf(STDERR_FILENO,
 			"minishell: %s: %s\n", io->filename, strerror(errno));
 		return (-1);
-	}
-	return (0);
-}
-
-int	open_heredoc(const char *delimiter, int fd_out)
-{
-	char	*line;
-
-	while (1)
-	{
-		if (g_signal_flag == 130)
-			return (SIGINT_EXIT);
-		line = readline("heredoc> ");
-		if (line == NULL)
-		{
-			ft_fprintf(STDERR_FILENO, HDOC_DELIMMSG, delimiter);
-			break ;
-		}
-		if (ft_strcmp(line, delimiter) == 0)
-		{
-			free(line);
-			break ;
-		}
-		if (fd_out != -1)
-			ft_fprintf(fd_out, "%s\n", line);
-		free(line);
 	}
 	return (0);
 }
