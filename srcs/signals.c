@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
 #include "minishell.h"
-#include "miniutils.h"
 #include <signal.h>
 
 volatile sig_atomic_t	g_signal_flag = 0;
@@ -79,17 +77,19 @@ void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 /**
  * @brief Initializes all signal handlers & their callbacks.
  */
-int	init_signals(t_shellstate *s)
+int	init_signals(void)
 {
-	sigemptyset(&s->sigaction.sa_mask);
-	sigemptyset(&s->ignoreaction.sa_mask);
-	s->sigaction.sa_flags = SA_SIGINFO;
-	s->sigaction.sa_sigaction = ft_signal_handler;
-	s->ignoreaction.sa_handler = SIG_IGN;
-	s->ignoreaction.sa_flags = 0;
-	if (sigaction(SIGUSR1, &s->sigaction, NULL) == -1 || sigaction(SIGINT,
-			&s->sigaction, NULL) == -1 || sigaction(SIGQUIT, &s->ignoreaction,
-			NULL) == -1)
+	struct sigaction	action;
+	struct sigaction	ignoreaction;
+
+	sigemptyset(&action.sa_mask);
+	sigemptyset(&ignoreaction.sa_mask);
+	action.sa_flags = SA_SIGINFO;
+	action.sa_sigaction = ft_signal_handler;
+	ignoreaction.sa_handler = SIG_IGN;
+	ignoreaction.sa_flags = 0;
+	if (sigaction(SIGINT, &action, NULL) < 0 || sigaction(SIGQUIT,
+			&ignoreaction, NULL) < 0)
 	{
 		perror("Error: sigaction() failed");
 		exit(EXIT_FAILURE);

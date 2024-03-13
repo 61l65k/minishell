@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <signal.h>
 
 /**
  * @brief Waits for any remaining child processes to complete.
@@ -29,6 +30,7 @@ void	wait_remaining_children(t_shellstate *state)
 		waitpid(pid_current, &status, 0);
 		state->last_exit_status = WEXITSTATUS(status);
 	}
+	init_signals();
 }
 
 /**
@@ -42,4 +44,5 @@ void	wait_child(t_shellstate *state, pid_t pid)
 	status = 0;
 	waitpid(pid, &status, 0);
 	state->last_exit_status = WEXITSTATUS(status);
+	init_signals();
 }

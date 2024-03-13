@@ -58,8 +58,6 @@ typedef struct s_shellstate
 	bool						is_child_process;
 	char						**envp;
 	t_vec						pid;
-	struct sigaction			sigaction;
-	struct sigaction			ignoreaction;
 }								t_shellstate;
 
 extern volatile sig_atomic_t	g_signal_flag;
@@ -75,15 +73,14 @@ int								ft_executecmd(t_shellstate *state);
 void							wait_remaining_children(t_shellstate *state);
 void							wait_child(t_shellstate *state, pid_t pid);
 void							ft_free_resets(t_shellstate *state);
-int								init_signals(t_shellstate *s);
+int								init_signals(void);
 void							setup_terminal(void);
 void							ft_execvp(const char *file, char *const argv[],
 									char *const envp[]);
 char							*ft_getenv(const char *name,
 									char *const envp[]);
 void							handle_heredoc(t_redirecthelper *rh,
-									char *delimiter, t_shellstate *s,
-									t_exechelper *h);
+									char *delim, t_exechelper *eh);
 int								update_fds(char *filename, t_redirecthelper *rh,
 									bool fd_out);
 bool							check_pipedoc(t_shellstate *s, t_exechelper *h);
@@ -94,4 +91,7 @@ void							set_exit_status(t_shellstate *state,
 									int status);
 bool							is_spaces(const char *str);
 bool							ambiguous_redirect(t_shellstate *s);
+void							ft_signal_handler(int signo, siginfo_t *info,
+									void *context);
+;
 #endif

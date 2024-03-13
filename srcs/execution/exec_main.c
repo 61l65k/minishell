@@ -16,6 +16,7 @@
 #include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -71,6 +72,7 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
  */
 static void	handle_parent_process(t_shellstate *s, t_exechelper *h)
 {
+	signal(SIGINT, SIG_IGN);
 	if (h->fd_in != 0)
 	{
 		close(h->fd_in);

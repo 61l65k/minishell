@@ -38,28 +38,6 @@ static void	open_heredoc(const char *delimiter, int fd_out)
 		free(line);
 	}
 }
-void	ft_signal_handler(int signo, siginfo_t *info, void *context);
-
-int	reset_signals(void)
-{
-	struct sigaction	act;
-	struct sigaction	ignore;
-
-	sigemptyset(&act.sa_mask);
-	sigemptyset(&ignore.sa_mask);
-	act.sa_flags = SA_SIGINFO;
-	act.sa_sigaction = ft_signal_handler;
-	ignore.sa_handler = SIG_IGN;
-	ignore.sa_flags = 0;
-	if (sigaction(SIGUSR1, &act, NULL) == -1 || sigaction(SIGINT,
-			&act, NULL) == -1 || sigaction(SIGQUIT, &ignore,
-			NULL) == -1)
-	{
-		perror("Error: sigaction() failed");
-		exit(EXIT_FAILURE);
-	}
-	return (0);
-}
 
 static void	heredoc_signal_handler(int signo)
 {
@@ -93,7 +71,7 @@ int	fork_heredoc(t_io *io)
 	{
 		signal(SIGINT, SIG_IGN);
 		waitpid(pid, &status, 0);
-		reset_signals();
+		init_signals();
 	}
 	return (WEXITSTATUS(status));
 }

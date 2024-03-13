@@ -24,7 +24,8 @@ static void	heredoc_signal_handler(int signo)
 {
 	if (signo == SIGINT)
 	{
-		g_signal_flag = 130;
+		g_signal_flag = SIGINT_EXIT;
+		write(1, "\n", 1);
 		exit(SIGINT_EXIT);
 	}
 }
@@ -60,10 +61,9 @@ static void	handle_higher_process(t_hdochelper *hh, t_exechelper *h)
 {
 	int	status;
 
-	sigaction(SIGINT, &hh->s->ignoreaction, &hh->s->sigaction);
-	close(hh->pipe_fds[1]);
+	signal(SIGINT, SIG_IGN);
 	waitpid(hh->pid, &status, 0);
-	sigaction(SIGINT, &hh->s->sigaction, NULL);
+	init_signals();
 	if (WEXITSTATUS(status) == SIGINT_EXIT)
 		return (close(hh->pipe_fds[0]), close(h->pipefd[0]),
 			close(h->pipefd[1]), exit(SIGINT_EXIT));
@@ -71,16 +71,14 @@ static void	handle_higher_process(t_hdochelper *hh, t_exechelper *h)
 	update_fds(NULL, hh->rh, false);
 }
 
-void	handle_heredoc(t_redirecthelper *rh, char *delimiter, t_shellstate *s,
-		t_exechelper *eh)
+void	handle_heredoc(t_redirecthelper *rh, char *delim, t_exechelper *eh)
 {
 	t_hdochelper	hh;
 
 	hh = (t_hdochelper){0};
-	hh.s = s;
 	hh.rh = rh;
-	hh.delimiter = delimiter;
-	if (!delimiter)
+	hh.delimiter = delim;
+	if (!delim)
 		return (ft_putstr_fd(ERR_HEREDOC_DELIMITER, STDERR_FILENO));
 	if (pipe(hh.pipe_fds) == -1)
 		return (perror("pipe"), exit(EXIT_FAILURE));
