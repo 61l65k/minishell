@@ -40,7 +40,6 @@ typedef struct s_parsehelper
 	size_t					j;
 	size_t					i;
 	size_t					alloc_size;
-	int						lst_errno;
 }							t_parsehelper;
 
 typedef struct s_operatorhelper
@@ -156,7 +155,6 @@ void						create_add_node_wcard(t_lsthelper *t, char *data);
 bool						is_prev_redirector(const t_list *prev);
 void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);
-bool						confirm_rm(t_lsthelper *lh);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
 #endif

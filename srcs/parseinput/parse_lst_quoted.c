@@ -93,29 +93,3 @@ bool	is_spaces(const char *str)
 	}
 	return (true);
 }
-
-bool	confirm_rm(t_lsthelper *lh)
-{
-	char	*input;
-
-	ft_printf(RM_MESSAGE);
-	while (true)
-	{
-		input = readline("> ");
-		if (!input)
-			return (FAILURE);
-		if (ft_strcmp(input, "y") == 0)
-		{
-			free(input);
-			return (true);
-		}
-		else if (ft_strcmp(input, "n") == 0)
-		{
-			lh->ph->lst_errno = RM_DENIED;
-			free(input);
-			return (false);
-		}
-		free(input);
-	}
-	return (false);
-}
