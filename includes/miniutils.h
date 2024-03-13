@@ -129,6 +129,7 @@ typedef struct s_lsthelper
 }							t_lsthelper;
 
 char						**strarrjoin(const char **arr, const char *str);
+char						**lst_to_argv(t_list *arg_list);
 char						**lst_to_2darray(t_list *list);
 char						**ft_strdup_array(const char **arr);
 void						free_str_array(char **str_arr);

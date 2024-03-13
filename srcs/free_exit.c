@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "io_type.h"
 #include "libft.h"
 #include "minishell.h"
 #include "miniutils.h"
@@ -87,4 +88,20 @@ char	**lst_to_2darray(t_list *list)
 	}
 	array[i] = NULL;
 	return (array);
+}
+
+/**
+ * @brief Returns redirect-free argv from arg_list that can be passed to execve
+ * NOTE: Caller should only free the array, not the strings, as they are
+ * not copied but point to the same memory as the list.
+ */
+char	**lst_to_argv(t_list *arg_list)
+{
+	char	**argv;
+
+	argv = lst_to_2darray(arg_list);
+	if (!argv)
+		return (NULL);
+	remove_redirections_from_args(argv, arg_list);
+	return (argv);
 }
