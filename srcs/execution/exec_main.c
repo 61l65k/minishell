@@ -124,10 +124,11 @@ int	ft_executecmd(t_shellstate *state)
 	t_exechelper	eh;
 
 	eh = (t_exechelper){0};
+	state->last_exit_status = 0;
 	while (eh.i < state->cmd_count)
 	{
 		eh.curr_cmd = state->parsed_cmds[eh.i];
-		if (g_signal_flag)
+		if (g_signal_flag || state->last_exit_status)
 			break ;
 		if (is_pipeline(state, &eh) == true)
 			handle_fork(state, &eh);
