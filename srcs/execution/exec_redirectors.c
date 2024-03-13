@@ -50,23 +50,22 @@ static int	redir(t_redirecthelper *rh, t_shellstate *s, t_exechelper *eh)
 {
 	const t_list	*node = eh->curr_cmd;
 
-	if (ft_strcmp(node->content, ">") == 0 || ft_strcmp(node->content,
-			">>") == 0)
+	if (node->type == IO_OUT_TRUNC || node->type == IO_OUT_APPEND)
 	{
 		rh->flags = (O_WRONLY | O_CREAT | O_TRUNC);
-		if (ft_strcmp(node->content, ">>") == SUCCESS)
+		if (node->type == IO_OUT_APPEND)
 			rh->flags = (O_WRONLY | O_CREAT | O_APPEND);
 		rh->fd = open(node->next->content, rh->flags, 0644);
 		if (update_fds(node->next->content, rh, true) == FAILURE)
 			return (FAILURE);
 	}
-	else if (ft_strcmp(node->content, "<") == SUCCESS)
+	else if (node->type == IO_IN_TRUNC)
 	{
 		rh->fd = open(node->next->content, O_RDONLY);
 		if (update_fds(node->next->content, rh, false) == FAILURE)
 			return (FAILURE);
 	}
-	else if (ft_strcmp(node->content, "<<") == SUCCESS)
+	else if (node->type == IO_IN_HEREDOC)
 		handle_heredoc(rh, node->next->content, s, eh);
 	return (SUCCESS);
 }
