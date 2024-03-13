@@ -18,6 +18,7 @@
 #include "miniutils.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
 /**
  * @brief Duplicates the fd's forward if we are in a pipeline.
@@ -89,24 +90,26 @@ static void	handle_parent_process(t_shellstate *s, t_exechelper *h)
  */
 static void	handle_fork(t_shellstate *s, t_exechelper *h)
 {
+	pid_t	pid;
+
 	if (h->i < s->cmd_count - 1 && s->operators[h->i] == OP_PIPE)
 	{
 		if (pipe(h->pipefd) < 0)
 			ft_free_exit(s, ERR_PIPE, EXIT_FAILURE);
 	}
-	h->pid_current = fork();
-	if (h->pid_current < 0)
+	pid = fork();
+	if (pid < 0)
 		ft_free_exit(s, ERR_FORK, EXIT_FAILURE);
-	if (h->pid_current == 0)
+	if (pid == 0)
 		handle_child_process(s, h);
 	else
 	{
 		handle_parent_process(s, h);
 		if (s->operators[h->i] == OP_OR || s->operators[h->i] == OP_AND
 			|| check_pipedoc(s, h))
-			wait_child(s, h->pid_current);
+			wait_child(s, pid);
 		else
-			vec_insert(&s->pid, &h->pid_current, 0);
+			vec_insert(&s->pid, &pid, 0);
 	}
 }
 

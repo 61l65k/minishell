@@ -61,8 +61,6 @@ typedef struct s_exechelper
 	int						pipefd[2];
 	int						fd_in;
 	int						i;
-	int						status;
-	pid_t					pid_current;
 	bool					pipe_doc;
 	const t_list			*curr_cmd;
 }							t_exechelper;
