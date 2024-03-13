@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 19:29:23 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/08 17:55:29 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/13 15:15:42 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,5 @@ void			remove_redirections_from_args(char **args, t_list *arg_list);
 
 int				dup_fd(t_io *io);
 int				open_file(t_io *io);
-int				open_heredoc(const char *delimiter, int fd_out);
 
 #endif

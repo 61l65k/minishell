@@ -40,7 +40,6 @@ typedef struct s_parsehelper
 	size_t					j;
 	size_t					i;
 	size_t					alloc_size;
-	int						lst_errno;
 }							t_parsehelper;
 
 typedef struct s_operatorhelper
@@ -61,8 +60,6 @@ typedef struct s_exechelper
 	int						pipefd[2];
 	int						fd_in;
 	int						i;
-	int						status;
-	pid_t					pid_current;
 	bool					pipe_doc;
 	const t_list			*curr_cmd;
 }							t_exechelper;
@@ -74,7 +71,6 @@ typedef struct s_envhelper
 	char					*var_value;
 	bool					free_var_value;
 	int						val_len;
-	int						flags;
 }							t_envhelper;
 
 typedef struct s_redirecthelper
@@ -82,7 +78,6 @@ typedef struct s_redirecthelper
 	int						fd;
 	int						last_out_fd;
 	int						last_in_fd;
-	int						i;
 	int						flags;
 }							t_redirecthelper;
 
@@ -132,6 +127,7 @@ typedef struct s_lsthelper
 }							t_lsthelper;
 
 char						**strarrjoin(const char **arr, const char *str);
+char						**lst_to_argv(t_list *arg_list);
 char						**lst_to_2darray(t_list *list);
 char						**ft_strdup_array(const char **arr);
 void						free_str_array(char **str_arr);
@@ -144,7 +140,7 @@ void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);
 void						ensure_mem_for_cmd(t_parsehelper *h,
 								t_shellstate *state, size_t additional_length);
-void						init_char_flags(t_envhelper *eh, char *c,
+void						init_char_flags(int *flags, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);
@@ -161,8 +157,6 @@ void						create_add_node_wcard(t_lsthelper *t, char *data);
 bool						is_prev_redirector(const t_list *prev);
 void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);
-bool						confirm_rm(t_lsthelper *lh);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
-void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 #endif

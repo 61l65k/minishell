@@ -109,8 +109,6 @@ static int	process_str_to_lst(t_parsehelper *ph, t_shellstate *s)
 			set_exit_status(s, SYNTAX_ERROR);
 			return (free_and_null_str_array(&s->parsed_args), FAILURE);
 		}
-		if (ph->lst_errno == RM_DENIED)
-			return (free_and_null_str_array(&s->parsed_args), FAILURE);
 	}
 	free_and_null_str_array(&s->parsed_args);
 	if (!s->parsed_cmds[0])

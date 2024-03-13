@@ -50,23 +50,22 @@ static int	redir(t_redirecthelper *rh, t_shellstate *s, t_exechelper *eh)
 {
 	const t_list	*node = eh->curr_cmd;
 
-	if (ft_strcmp(node->content, ">") == 0 || ft_strcmp(node->content,
-			">>") == 0)
+	if (node->type == IO_OUT_TRUNC || node->type == IO_OUT_APPEND)
 	{
 		rh->flags = (O_WRONLY | O_CREAT | O_TRUNC);
-		if (ft_strcmp(node->content, ">>") == SUCCESS)
+		if (node->type == IO_OUT_APPEND)
 			rh->flags = (O_WRONLY | O_CREAT | O_APPEND);
 		rh->fd = open(node->next->content, rh->flags, 0644);
 		if (update_fds(node->next->content, rh, true) == FAILURE)
 			return (FAILURE);
 	}
-	else if (ft_strcmp(node->content, "<") == SUCCESS)
+	else if (node->type == IO_IN_TRUNC)
 	{
 		rh->fd = open(node->next->content, O_RDONLY);
 		if (update_fds(node->next->content, rh, false) == FAILURE)
 			return (FAILURE);
 	}
-	else if (ft_strcmp(node->content, "<<") == SUCCESS)
+	else if (node->type == IO_IN_HEREDOC)
 		handle_heredoc(rh, node->next->content, s, eh);
 	return (SUCCESS);
 }
@@ -99,11 +98,8 @@ static int	apply_fd_redirections(int last_out_fd, int last_in_fd)
 int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 {
 	t_redirecthelper	rh;
-	t_command			command;
 
-	command = (t_command){0};
 	ft_memset(&rh, -1, sizeof(rh));
-	rh.i = 0;
 	while (eh->curr_cmd)
 	{
 		if (eh->curr_cmd->next && eh->curr_cmd->next->ambiguous_redirect)
@@ -114,11 +110,6 @@ int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 		if (eh->curr_cmd->type != IO_NONE && redir(&rh, s, eh))
 			return (FAILURE);
 		eh->curr_cmd = eh->curr_cmd->next;
-		rh.i++;
 	}
-	if (get_command(s->parsed_cmds[eh->i], &command) == FAILURE)
-		exit(EXIT_FAILURE);
-	vec_free(&command.io_vec);
-	eh->cmd_arr = command.args;
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }

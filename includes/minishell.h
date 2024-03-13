@@ -55,7 +55,6 @@ typedef struct s_shellstate
 	int							cmd_count;
 	int							operator_count;
 	int							last_exit_status;
-	t_vec						group_exit_statusess;
 	bool						is_child_process;
 	char						**envp;
 	t_vec						pid;

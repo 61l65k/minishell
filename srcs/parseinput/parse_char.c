@@ -96,21 +96,21 @@ static void	separate_redir(t_parsehelper *h, t_shellstate *state)
  * @brief Checks if the current character is operator & puts the new command
  * in the commands array from the input string.
  */
-static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
+static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state, int flags,
 		t_envhelper *eh)
 {
-	if (eh->flags & (1 << REDIR_BIT))
+	if (flags & (1 << REDIR_BIT))
 		separate_redir(h, state);
-	else if ((eh->flags & (1 << PIPE_BIT)) || (eh->flags & (1 << AND_BIT))
-		|| (eh->flags & (1 << OR_BIT)))
+	else if ((flags & (1 << PIPE_BIT)) || (flags & (1 << AND_BIT))
+		|| (flags & (1 << OR_BIT)))
 	{
 		h->curr_cmd[h->j] = '\0';
 		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
 		h->j = 0;
-		if ((eh->flags & (1 << AND_BIT)) || (eh->flags & (1 << OR_BIT)))
+		if ((flags & (1 << AND_BIT)) || (flags & (1 << OR_BIT)))
 			h->i++;
 	}
-	else if (eh->flags & (1 << ENVVAR_BIT))
+	else if (flags & (1 << ENVVAR_BIT))
 	{
 		handle_env_variable(h, state, eh);
 		free(eh->var_name);
@@ -132,19 +132,19 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
  */
 void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 {
+	int			flags;
 	t_envhelper	eh;
 
-	init_char_flags(&eh, &state->input_string[h->i], h);
-	if (eh.flags & (1 << TILDA_BIT))
-		handle_tilda(h, state);
-	else if ((eh.flags & (1 << ENVVAR_BIT)) && ft_checkdollar(state, h))
-		eh.flags &= ~(1 << ENVVAR_BIT);
-	else if (!(eh.flags & (1 << QUOTE_BIT)) && (h->in_single_quote
+	eh = (t_envhelper){0};
+	init_char_flags(&flags, &state->input_string[h->i], h);
+	if ((flags & (1 << ENVVAR_BIT)) && ft_checkdollar(state, h))
+		flags &= ~(1 << ENVVAR_BIT);
+	else if (!(flags & (1 << QUOTE_BIT)) && (h->in_single_quote
 			|| h->in_double_quote))
 	{
-		if (eh.flags & (1 << ESCAPED_BIT))
+		if (flags & (1 << ESCAPED_BIT))
 			handle_escape_sequence(h, state->input_string);
-		else if (h->in_double_quote && (eh.flags & (1 << ENVVAR_BIT)))
+		else if (h->in_double_quote && (flags & (1 << ENVVAR_BIT)))
 		{
 			handle_env_variable(h, state, &eh);
 			free(eh.var_name);
@@ -155,6 +155,6 @@ void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 			h->curr_cmd[h->j++] = state->input_string[h->i];
 	}
 	else
-		check_for_new_cmd(h, state, &eh);
+		check_for_new_cmd(h, state, flags, &eh);
 	h->curr_cmd[h->j] = '\0';
 }
