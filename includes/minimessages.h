@@ -44,6 +44,7 @@ token `newline'\n"
 	"Are you sure you want to\
  remove all matched with wildcard? (y/n)\n"
 # define SIGINT_EXIT 130
+# define CTRLD_EXIT 69
 
 typedef enum e_charflag_bits
 {

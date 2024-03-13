@@ -30,6 +30,14 @@ static void	heredoc_signal_handler(int signo)
 	}
 }
 
+static void	close_all_exit(t_hdochelper *hh, t_exechelper *eh, int status)
+{
+	close(hh->pipe_fds[0]);
+	close(eh->pipefd[0]);
+	close(eh->pipefd[1]);
+	exit(status);
+}
+
 static void	heredoc_child_process(t_hdochelper *hh)
 {
 	char	*line;
@@ -42,6 +50,8 @@ static void	heredoc_child_process(t_hdochelper *hh)
 		if (line == NULL)
 		{
 			ft_fprintf(STDERR_FILENO, HDOC_DELIMMSG, hh->delimiter);
+			close(hh->pipe_fds[1]);
+			exit(CTRLD_EXIT);
 			break ;
 		}
 		if (ft_strcmp(line, hh->delimiter) == 0)
@@ -53,20 +63,21 @@ static void	heredoc_child_process(t_hdochelper *hh)
 		write(hh->pipe_fds[1], "\n", 1);
 		free(line);
 	}
-	close(hh->pipe_fds[1]);
 	exit(EXIT_SUCCESS);
 }
 
-static void	handle_higher_process(t_hdochelper *hh, t_exechelper *h)
+static void	handle_higher_process(t_hdochelper *hh, t_exechelper *eh)
 {
 	int	status;
 
 	signal(SIGINT, SIG_IGN);
 	waitpid(hh->pid, &status, 0);
 	init_signals();
-	if (WEXITSTATUS(status) == SIGINT_EXIT)
-		return (close(hh->pipe_fds[0]), close(h->pipefd[0]),
-			close(h->pipefd[1]), exit(SIGINT_EXIT));
+	status = WEXITSTATUS(status);
+	if (status == SIGINT_EXIT)
+		close_all_exit(hh, eh, SIGINT_EXIT);
+	else if (status == CTRLD_EXIT)
+		close_all_exit(hh, eh, CTRLD_EXIT);
 	hh->rh->fd = hh->pipe_fds[0];
 	update_fds(NULL, hh->rh, false);
 }
