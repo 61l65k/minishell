@@ -49,7 +49,7 @@ int	main(int argc, char **argv, const char **envp)
 	(void)argv;
 	setup_terminal();
 	state = (t_shellstate){0};
-	init_signals(&state);
+	init_signals();
 	state.envp = ft_strdup_array(envp);
 	vec_new(&state.pid, 10, sizeof(pid_t));
 	if (!state.envp || state.pid.memory == NULL)

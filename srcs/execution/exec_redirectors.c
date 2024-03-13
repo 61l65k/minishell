@@ -46,7 +46,7 @@ int	update_fds(char *filename, t_redirecthelper *rh, bool fd_out)
 	return (SUCCESS);
 }
 
-static int	redir(t_redirecthelper *rh, t_shellstate *s, t_exechelper *eh)
+static int	redir(t_redirecthelper *rh, t_exechelper *eh)
 {
 	const t_list	*node = eh->curr_cmd;
 
@@ -66,7 +66,7 @@ static int	redir(t_redirecthelper *rh, t_shellstate *s, t_exechelper *eh)
 			return (FAILURE);
 	}
 	else if (node->type == IO_IN_HEREDOC)
-		handle_heredoc(rh, node->next->content, s, eh);
+		handle_heredoc(rh, node->next->content, eh);
 	return (SUCCESS);
 }
 
@@ -95,7 +95,7 @@ static int	apply_fd_redirections(int last_out_fd, int last_in_fd)
 	return (SUCCESS);
 }
 
-int	handle_redirect(t_exechelper *eh, t_shellstate *s)
+int	handle_redirect(t_exechelper *eh)
 {
 	t_redirecthelper	rh;
 
@@ -107,7 +107,7 @@ int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 			return (ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT,
 					eh->curr_cmd->next->content), FAILURE);
 		}
-		if (eh->curr_cmd->type != IO_NONE && redir(&rh, s, eh))
+		if (eh->curr_cmd->type != IO_NONE && redir(&rh, eh))
 			return (FAILURE);
 		eh->curr_cmd = eh->curr_cmd->next;
 	}

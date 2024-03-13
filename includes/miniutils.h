@@ -144,7 +144,7 @@ void						init_char_flags(t_envhelper *eh, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);
-int							handle_redirect(t_exechelper *eh, t_shellstate *s);
+int							handle_redirect(t_exechelper *eh);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
