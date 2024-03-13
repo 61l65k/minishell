@@ -54,11 +54,11 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 	s->is_child_process = true;
 	if (check_pipedoc(s, h))
 	{
-		if (handle_redirect(h, s) == FAILURE)
+		if (handle_redirect(h) == FAILURE)
 			exit(EXIT_FAILURE);
 	}
 	dup_forward_fd(s, h);
-	if (!h->pipe_doc && handle_redirect(h, s) == FAILURE)
+	if (!h->pipe_doc && handle_redirect(h) == FAILURE)
 		exit(EXIT_FAILURE);
 	h->cmd_arr = lst_to_argv(s->parsed_cmds[h->i]);
 	if (!h->cmd_arr)
