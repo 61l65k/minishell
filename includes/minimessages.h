@@ -45,6 +45,18 @@ token `newline'\n"
  remove all matched with wildcard? (y/n)\n"
 # define SIGINT_EXIT 130
 
+typedef enum e_charflag_bits
+{
+	ESCAPED_BIT,
+	ENVVAR_BIT,
+	PIPE_BIT,
+	AND_BIT,
+	OR_BIT,
+	QUOTE_BIT,
+	REDIR_BIT,
+	TILDA_BIT
+}		t_charflag_bits;
+
 enum	e_errors
 {
 	NO_ERROR,

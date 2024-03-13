@@ -96,20 +96,21 @@ static void	separate_redir(t_parsehelper *h, t_shellstate *state)
  * @brief Checks if the current character is operator & puts the new command
  * in the commands array from the input string.
  */
-static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
-		t_charflags *flags, t_envhelper *eh)
+static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state, int flags,
+		t_envhelper *eh)
 {
-	if (flags->is_redir)
+	if (flags & (1 << REDIR_BIT))
 		separate_redir(h, state);
-	else if (flags->is_pipe || flags->is_and || flags->is_or)
+	else if ((flags & (1 << PIPE_BIT)) || (flags & (1 << AND_BIT))
+		|| (flags & (1 << OR_BIT)))
 	{
 		h->curr_cmd[h->j] = '\0';
 		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
 		h->j = 0;
-		if (flags->is_and || flags->is_or)
+		if ((flags & (1 << AND_BIT)) || (flags & (1 << OR_BIT)))
 			h->i++;
 	}
-	else if (flags->is_env_var)
+	else if (flags & (1 << ENVVAR_BIT))
 	{
 		handle_env_variable(h, state, eh);
 		free(eh->var_name);
@@ -131,18 +132,19 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state,
  */
 void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 {
-	t_charflags	flags;
+	int			flags;
 	t_envhelper	eh;
 
 	eh = (t_envhelper){0};
 	init_char_flags(&flags, &state->input_string[h->i], h);
-	if (flags.is_env_var && ft_checkdollar(state, h))
-		flags.is_env_var = false;
-	else if (!flags.is_quote && (h->in_single_quote || h->in_double_quote))
+	if ((flags & (1 << ENVVAR_BIT)) && ft_checkdollar(state, h))
+		flags &= ~(1 << ENVVAR_BIT);
+	else if (!(flags & (1 << QUOTE_BIT)) && (h->in_single_quote
+			|| h->in_double_quote))
 	{
-		if (flags.is_escaped)
+		if (flags & (1 << ESCAPED_BIT))
 			handle_escape_sequence(h, state->input_string);
-		else if (h->in_double_quote && flags.is_env_var)
+		else if (h->in_double_quote && (flags & (1 << ENVVAR_BIT)))
 		{
 			handle_env_variable(h, state, &eh);
 			free(eh.var_name);
@@ -153,6 +155,6 @@ void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 			h->curr_cmd[h->j++] = state->input_string[h->i];
 	}
 	else
-		check_for_new_cmd(h, state, &flags, &eh);
+		check_for_new_cmd(h, state, flags, &eh);
 	h->curr_cmd[h->j] = '\0';
 }

@@ -76,17 +76,6 @@ typedef struct s_envhelper
 	int						val_len;
 }							t_envhelper;
 
-typedef struct s_charflags
-{
-	bool					is_escaped;
-	bool					is_env_var;
-	bool					is_pipe;
-	bool					is_and;
-	bool					is_or;
-	bool					is_quote;
-	bool					is_redir;
-}							t_charflags;
-
 typedef struct s_redirecthelper
 {
 	int						fd;
@@ -152,7 +141,7 @@ void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);
 void						ensure_mem_for_cmd(t_parsehelper *h,
 								t_shellstate *state, size_t additional_length);
-void						init_char_flags(t_charflags *flags, char *c,
+void						init_char_flags(int *flags, char *c,
 								t_parsehelper *h);
 bool						wildcard_match(const char *pattern,
 								const char *str);

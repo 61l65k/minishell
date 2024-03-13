@@ -88,25 +88,28 @@ void	ensure_mem_for_cmd(t_parsehelper *h, t_shellstate *state,
  * @brief Initializes the flags for the current character.
  * The flags are used to determine the state of the current character.
  */
-void	init_char_flags(t_charflags *flags, char *c, t_parsehelper *h)
+void	init_char_flags(int *flags, char *c, t_parsehelper *h)
 {
-	*flags = (t_charflags){0};
+	*flags = 0;
 	if ((*c == '\'' && !h->in_double_quote) || (*c == '"'
 			&& !h->in_single_quote))
 	{
 		h->in_single_quote ^= (*c == '\'');
 		h->in_double_quote ^= (*c == '"');
-		flags->is_quote = true;
+		*flags |= (1 << QUOTE_BIT);
 	}
-	flags->is_escaped = (*c == '\\');
-	flags->is_env_var = (*c == '$');
+	*flags |= (*c == '\\') << ESCAPED_BIT;
+	*flags |= (*c == '$') << ENVVAR_BIT;
 	if (!h->in_single_quote && !h->in_double_quote)
 	{
-		flags->is_pipe = (*c == '|' && *(c + 1) != '|');
-		flags->is_and = (*c == '&' && *(c + 1) == '&');
-		flags->is_or = (*c == '|' && *(c + 1) == '|');
-		flags->is_redir = (*c == '>' || *c == '<' || (*c == '>' && *(c
-						+ 1) == '>') || (*c == '<' && *(c + 1) == '<'));
+		*flags |= (*c == '~' && (*(c + 1) == ' ' || *(c + 1) == '\0' || *(c
+						+ 1) == '/')) << TILDA_BIT;
+		*flags |= (*c == '|' && *(c + 1) != '|') << PIPE_BIT;
+		*flags |= (*c == '&' && *(c + 1) == '&') << AND_BIT;
+		*flags |= (*c == '|' && *(c + 1) == '|') << OR_BIT;
+		*flags |= ((*c == '>' && (*(c + 1) != '>')) || (*c == '<' && (*(c
+							+ 1) != '<')) || (*c == '>' && *(c + 1) == '>')
+				|| (*c == '<' && *(c + 1) == '<')) << REDIR_BIT;
 	}
 }
 

@@ -17,6 +17,7 @@
 # include "libft.h"
 # include "minimessages.h"
 # include "miniutils.h"
+# include "vec/vec.h"
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -54,6 +55,7 @@ typedef struct s_shellstate
 	int							cmd_count;
 	int							operator_count;
 	int							last_exit_status;
+	t_vec						group_exit_statusess;
 	bool						is_child_process;
 	char						**envp;
 	t_vec						pid;
