@@ -127,6 +127,8 @@ typedef struct s_lsthelper
 	size_t					arg_len;
 	bool					in_quotes;
 	t_parsehelper			*ph;
+	t_list					*current_parent;
+	int						parenthesis_level;
 }							t_lsthelper;
 
 char						**strarrjoin(const char **arr, const char *str);
