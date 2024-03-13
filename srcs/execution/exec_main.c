@@ -49,9 +49,6 @@ static void	dup_forward_fd(t_shellstate *s, t_exechelper *h)
 static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 {
 	s->is_child_process = true;
-	h->cmd_arr = lst_to_2darray(s->parsed_cmds[h->i]);
-	if (!h->cmd_arr)
-		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	if (check_pipedoc(s, h))
 	{
 		if (handle_redirect(h, s) == FAILURE)
@@ -115,21 +112,22 @@ static void	handle_fork(t_shellstate *s, t_exechelper *h)
  */
 int	ft_executecmd(t_shellstate *state)
 {
-	t_exechelper	h;
+	t_exechelper	eh;
 
-	h = (t_exechelper){0};
-	while (h.i < state->cmd_count)
+	eh = (t_exechelper){0};
+	while (eh.i < state->cmd_count)
 	{
-		h.curr_cmd = state->parsed_cmds[h.i];
+		eh.curr_cmd = state->parsed_cmds[eh.i];
 		if (g_signal_flag)
 			break ;
-		if (is_pipeline(state, &h) == true)
-			handle_fork(state, &h);
-		else if (builtin_main(state, state->parsed_cmds[h.i]) == BI_NOT_BUILTIN)
-			handle_fork(state, &h);
-		check_operators(&h, state);
-		h.pipe_doc = 0;
-		h.i++;
+		if (is_pipeline(state, &eh) == true)
+			handle_fork(state, &eh);
+		else if (builtin_main(state,
+				state->parsed_cmds[eh.i]) == BI_NOT_BUILTIN)
+			handle_fork(state, &eh);
+		check_operators(&eh, state);
+		eh.pipe_doc = 0;
+		eh.i++;
 	}
 	wait_remaining_children(state);
 	return (state->last_exit_status);

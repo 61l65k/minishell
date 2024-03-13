@@ -46,26 +46,28 @@ int	update_fds(char *filename, t_redirecthelper *rh, bool fd_out)
 	return (SUCCESS);
 }
 
-static int	handle_redir(t_redirecthelper *rh, char **c_arr, t_shellstate *s,
-		t_exechelper *h)
+static int	redir(t_redirecthelper *rh, t_shellstate *s, t_exechelper *eh)
 {
-	if (ft_strcmp(c_arr[rh->i], ">") == 0 || ft_strcmp(c_arr[rh->i], ">>") == 0)
+	const t_list	*node = eh->curr_cmd;
+
+	if (ft_strcmp(node->content, ">") == 0 || ft_strcmp(node->content,
+			">>") == 0)
 	{
 		rh->flags = (O_WRONLY | O_CREAT | O_TRUNC);
-		if (ft_strcmp(c_arr[rh->i], ">>") == 0)
+		if (ft_strcmp(node->content, ">>") == SUCCESS)
 			rh->flags = (O_WRONLY | O_CREAT | O_APPEND);
-		rh->fd = open(c_arr[rh->i + 1], rh->flags, 0644);
-		if (update_fds(c_arr[rh->i + 1], rh, true) == FAILURE)
+		rh->fd = open(node->next->content, rh->flags, 0644);
+		if (update_fds(node->next->content, rh, true) == FAILURE)
 			return (FAILURE);
 	}
-	else if (ft_strcmp(c_arr[rh->i], "<") == 0)
+	else if (ft_strcmp(node->content, "<") == SUCCESS)
 	{
-		rh->fd = open(c_arr[rh->i + 1], O_RDONLY);
-		if (update_fds(c_arr[rh->i + 1], rh, false) == FAILURE)
+		rh->fd = open(node->next->content, O_RDONLY);
+		if (update_fds(node->next->content, rh, false) == FAILURE)
 			return (FAILURE);
 	}
-	else if (ft_strcmp(c_arr[rh->i], "<<") == 0)
-		handle_heredoc(rh, c_arr[rh->i + 1], s, h);
+	else if (ft_strcmp(node->content, "<<") == SUCCESS)
+		handle_heredoc(rh, node->next->content, s, eh);
 	return (SUCCESS);
 }
 
@@ -102,22 +104,20 @@ int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 	command = (t_command){0};
 	ft_memset(&rh, -1, sizeof(rh));
 	rh.i = 0;
-	while (eh->curr_cmd && eh->cmd_arr[rh.i])
+	while (eh->curr_cmd)
 	{
 		if (eh->curr_cmd->next && eh->curr_cmd->next->ambiguous_redirect)
 		{
 			return (ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT,
 					eh->curr_cmd->next->content), FAILURE);
 		}
-		if (eh->curr_cmd->type != IO_NONE && handle_redir(&rh, eh->cmd_arr, s,
-				eh) == FAILURE)
+		if (eh->curr_cmd->type != IO_NONE && redir(&rh, s, eh))
 			return (FAILURE);
 		eh->curr_cmd = eh->curr_cmd->next;
 		rh.i++;
 	}
 	if (get_command(s->parsed_cmds[eh->i], &command) == FAILURE)
 		exit(EXIT_FAILURE);
-	free(eh->cmd_arr);
 	vec_free(&command.io_vec);
 	eh->cmd_arr = command.args;
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
