@@ -100,7 +100,6 @@ int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 	t_redirecthelper	rh;
 
 	ft_memset(&rh, -1, sizeof(rh));
-	rh.i = 0;
 	while (eh->curr_cmd)
 	{
 		if (eh->curr_cmd->next && eh->curr_cmd->next->ambiguous_redirect)
@@ -111,7 +110,6 @@ int	handle_redirect(t_exechelper *eh, t_shellstate *s)
 		if (eh->curr_cmd->type != IO_NONE && redir(&rh, s, eh))
 			return (FAILURE);
 		eh->curr_cmd = eh->curr_cmd->next;
-		rh.i++;
 	}
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }

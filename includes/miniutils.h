@@ -81,7 +81,6 @@ typedef struct s_redirecthelper
 	int						fd;
 	int						last_out_fd;
 	int						last_in_fd;
-	int						i;
 	int						flags;
 }							t_redirecthelper;
 
