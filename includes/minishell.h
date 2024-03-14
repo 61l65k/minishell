@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 04:54:51 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/09 14:36:33 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/14 15:55:35 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
-# include <readline/history.h>
-# include <readline/readline.h>
 # include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -34,6 +32,8 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include "env_utils.h"
 
 typedef struct s_shellstate
