@@ -40,7 +40,7 @@ void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 	(void)info;
 	if (signo == SIGINT)
 	{
-		g_signal_flag = 130;
+		g_signal_flag = SIGINT_EXIT;
 		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();
