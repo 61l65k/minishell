@@ -16,12 +16,12 @@ int	adjust_index_for_parentheses_check(const char *str, int i, bool adjust_next)
 {
 	if (adjust_next)
 	{
-		while (str[i] && isspace(str[i]))
+		while (str[i] && str[i] == ' ')
 			i++;
 	}
 	else
 	{
-		while (i >= 0 && isspace(str[i]))
+		while (i >= 0 && str[i] == ' ')
 			i--;
 		if (i > 0 && (str[i] == '&' || (str[i] == '|' && str[i - 1] == '|')))
 			i--;
