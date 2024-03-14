@@ -49,6 +49,11 @@ static int	count_op_cmds(t_shellstate *s, int *cmd_count)
 		return (free(op.ops), FAILURE);
 	s->operators = ft_realloc(s->operators, s->operator_count
 			* sizeof(t_operators), op.cmd_count * sizeof(t_operators));
+	if (!s->operators)
+	{
+		free(op.ops);
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	}
 	ft_memcpy(s->operators, op.ops, op.cmd_count * sizeof(t_operators));
 	s->operator_count = op.cmd_count - 1;
 	*cmd_count = op.cmd_count;
