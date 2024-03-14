@@ -91,7 +91,7 @@ static int	process_str_to_lst(t_shellstate *s)
 	i = -1;
 	while (++i < s->cmd_count)
 	{
-		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i]);
+		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i], s);
 		if (s->parsed_cmds[i] == NULL)
 		{
 			if ((i == 0 && is_spaces(s->parsed_args[i])))

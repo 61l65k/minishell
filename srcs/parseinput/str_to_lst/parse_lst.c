@@ -10,7 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin.h"
+#include "minimessages.h"
 #include "minishell.h"
+#include <stdlib.h>
 
 static int	handle_non_quoted(t_lsthelper *lh)
 {
@@ -35,7 +38,7 @@ static int	handle_non_quoted(t_lsthelper *lh)
 	return (SUCCESS);
 }
 
-static t_list	*allocate_lst(t_lsthelper *lh)
+static t_list	*allocate_lst(t_lsthelper *lh, t_shellstate *state)
 {
 	while (lh->i <= lh->length)
 	{
@@ -50,11 +53,11 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 			if (lh->in_quotes)
 			{
 				if (handle_quoted(lh) == FAILURE)
-					return (NULL);
+					ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 			}
-			else if (handle_non_quoted(lh))
+			else if (handle_non_quoted(lh) == FAILURE)
 			{
-				return (NULL);
+				ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 			}
 		}
 		lh->i++;
@@ -62,7 +65,7 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 	return (lh->head);
 }
 
-t_list	*str_to_lst(const char *str)
+t_list	*str_to_lst(const char *str, t_shellstate *s)
 {
 	t_lsthelper	lh;
 
@@ -76,5 +79,5 @@ t_list	*str_to_lst(const char *str)
 	while (lh.end > lh.start && (*lh.end == ' ' || *lh.end == '\t'))
 		lh.end--;
 	lh.length = lh.end - lh.start + 1;
-	return (allocate_lst(&lh));
+	return (allocate_lst(&lh, s));
 }

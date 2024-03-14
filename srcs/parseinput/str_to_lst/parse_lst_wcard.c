@@ -11,27 +11,25 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "miniutils.h"
 
-static void	create_add_node_wcard(t_lsthelper *lh, char *data)
+static int	create_add_node_wcard(t_lsthelper *lh, char *data)
 {
 	char	*node_data;
 	t_list	*new_node;
 
 	node_data = ft_strdup(data);
-	if (node_data != NULL)
-	{
-		new_node = ft_lstnew(node_data);
-		if (new_node != NULL)
-		{
-			if (!lh->head)
-				lh->head = new_node;
-			else
-				lh->current->next = new_node;
-			lh->current = new_node;
-		}
-		else
-			free(node_data);
-	}
+	if (node_data == NULL)
+		return (FAILURE);
+	new_node = ft_lstnew(node_data);
+	if (new_node == NULL)
+		return (free(node_data), FAILURE);
+	if (!lh->head)
+		lh->head = new_node;
+	else
+		lh->current->next = new_node;
+	lh->current = new_node;
+	return (SUCCESS);
 }
 
 static bool	wildcard_match(const char *pattern, const char *str)
@@ -52,7 +50,7 @@ static bool	wildcard_match(const char *pattern, const char *str)
 	return (false);
 }
 
-static void	process_wcard_dir_entries(t_lsthelper *lh)
+static int	process_wcard_dir_entries(t_lsthelper *lh)
 {
 	while (true)
 	{
@@ -65,24 +63,28 @@ static void	process_wcard_dir_entries(t_lsthelper *lh)
 		if (wildcard_match(lh->arg, lh->wcard.entry->d_name))
 		{
 			lh->wcard.match_count++;
-			create_add_node_wcard(lh, lh->wcard.entry->d_name);
+			if (create_add_node_wcard(lh, lh->wcard.entry->d_name) != SUCCESS)
+				return (FAILURE);
 		}
 	}
+	return (SUCCESS);
 }
 
 int	handle_wildcard(t_lsthelper *lh)
 {
 	lh->wcard.prev = lh->current;
-	process_wcard_dir_entries(lh);
+	if (process_wcard_dir_entries(lh) != SUCCESS)
+		return (closedir(lh->wcard.dir), free(lh->arg), FAILURE);
 	if (lh->wcard.match_count > 1 && is_prev_redirector(lh->wcard.prev))
 	{
 		ft_lstclear(&lh->wcard.prev->next, free);
 		lh->current = lh->wcard.prev;
-		create_add_node_wcard(lh, lh->arg);
+		if (create_add_node_wcard(lh, lh->arg) != SUCCESS)
+			return (closedir(lh->wcard.dir), free(lh->arg), FAILURE);
 		lh->current->ambiguous_redirect = \
 		get_io_type(lh->wcard.prev->content) != IO_HEREDOC;
 	}
-	if (!lh->wcard.match_count)
-		create_add_node_wcard(lh, lh->arg);
+	if (!lh->wcard.match_count && create_add_node_wcard(lh, lh->arg) != SUCCESS)
+		return (closedir(lh->wcard.dir), free(lh->arg), FAILURE);
 	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);
 }
