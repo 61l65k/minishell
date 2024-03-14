@@ -21,6 +21,8 @@ void	ft_free_exit(t_shellstate *state, const char *msg, int exit_code)
 		perror(msg);
 	else if (msg)
 		printf("%s\n", msg);
+	if (state->pid.len > 0)
+		wait_remaining_children(state);
 	ft_free_resets(state);
 	free_str_array(state->envp);
 	state->envp = NULL;
