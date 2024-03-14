@@ -59,13 +59,13 @@ static int	redir(t_redirecthelper *rh, t_exechelper *eh)
 		if (update_fds(node->next->content, rh, true) == FAILURE)
 			return (FAILURE);
 	}
-	else if (node->type == IO_IN_TRUNC)
+	else if (node->type == IO_INPUT)
 	{
 		rh->fd = open(node->next->content, O_RDONLY);
 		if (update_fds(node->next->content, rh, false) == FAILURE)
 			return (FAILURE);
 	}
-	else if (node->type == IO_IN_HEREDOC)
+	else if (node->type == IO_HEREDOC)
 		handle_heredoc(rh, node->next->content, eh);
 	return (SUCCESS);
 }

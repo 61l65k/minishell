@@ -80,7 +80,7 @@ int	handle_wildcard(t_lsthelper *lh)
 		lh->current = lh->wcard.prev;
 		create_add_node_wcard(lh, lh->arg);
 		lh->current->ambiguous_redirect = \
-		get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
+		get_io_type(lh->wcard.prev->content) != IO_HEREDOC;
 	}
 	if (!lh->wcard.match_count)
 		create_add_node_wcard(lh, lh->arg);

@@ -114,8 +114,8 @@ t_io_type	get_io_type(const char *str)
 	else if (ft_strcmp(str, ">>") == 0)
 		return (IO_OUT_APPEND);
 	else if (ft_strcmp(str, "<") == 0)
-		return (IO_IN_TRUNC);
+		return (IO_INPUT);
 	else if (ft_strcmp(str, "<<") == 0)
-		return (IO_IN_HEREDOC);
+		return (IO_HEREDOC);
 	return (IO_NONE);
 }

@@ -30,8 +30,8 @@ typedef enum e_io_type
 	IO_NONE,
 	IO_OUT_TRUNC,
 	IO_OUT_APPEND,
-	IO_IN_TRUNC,
-	IO_IN_HEREDOC
+	IO_INPUT,
+	IO_HEREDOC
 }					t_io_type;
 
 typedef struct s_list

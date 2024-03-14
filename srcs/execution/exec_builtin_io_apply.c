@@ -59,7 +59,7 @@ int	apply_main_process_redirections(t_command *command)
 			return (FAILURE);
 		if (dup_fd(io_current) == -1)
 			return (FAILURE);
-		if (io_current->type == IO_IN_HEREDOC)
+		if (io_current->type == IO_HEREDOC)
 		{
 			heredoc_status = fork_heredoc(io_current);
 			if (heredoc_status != 0)
@@ -76,7 +76,7 @@ int	dup_fd(t_io *io)
 
 	if (io->type == IO_OUT_TRUNC || io->type == IO_OUT_APPEND)
 		fd_to_dup = STDOUT_FILENO;
-	else if (io->type == IO_IN_TRUNC)
+	else if (io->type == IO_INPUT)
 		fd_to_dup = STDIN_FILENO;
 	else
 		return (0);
@@ -99,7 +99,7 @@ int	open_file(t_io *io)
 		io->fd = open(io->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (io->type == IO_OUT_APPEND)
 		io->fd = open(io->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else if (io->type == IO_IN_TRUNC)
+	else if (io->type == IO_INPUT)
 		io->fd = open(io->filename, O_RDONLY);
 	else
 		return (0);
