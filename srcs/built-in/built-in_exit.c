@@ -41,7 +41,7 @@ void	builtin_exit(char **args, t_shellstate *state)
 			ft_fprintf(STDERR_FILENO,
 				"minishell: exit: %s: numeric argument required\n", args[1]);
 			free(args);
-			ft_free_exit(state, NULL, 2);
+			ft_free_exit(state, NULL, EXIT_INVALID_ARG);
 		}
 		if (args[2])
 		{

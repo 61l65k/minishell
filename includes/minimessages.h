@@ -28,6 +28,13 @@ delimited by end-of-file (wanted `%s')\n"
 	"minishell: syntax error near unexpected \
 token `newline'\n"
 # define SIGINT_EXIT 130
+# ifdef __APPLE__
+#  define EXIT_INVALID_ARG 255
+#  define MAC_OS 1
+# else
+#  define EXIT_INVALID_ARG 2
+#  define MAC_OS 0
+# endif
 
 typedef enum e_charflag_bits
 {

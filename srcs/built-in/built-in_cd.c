@@ -112,7 +112,7 @@ static void	change_dir(const char *path, t_shellstate *state)
 
 void	builtin_cd(char **argv, t_shellstate *state)
 {
-	if (argv[1] && argv[2])
+	if (argv[1] && argv[2] && MAC_OS == 0)
 	{
 		state->last_exit_status = 1;
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
