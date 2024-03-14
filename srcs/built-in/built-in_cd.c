@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "env_utils.h"
 #include "minishell.h"
-#include <unistd.h>
 
 static void	handle_home(t_shellstate *state, char *cwd)
 {

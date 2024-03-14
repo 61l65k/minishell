@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <signal.h>
 
 /**
  * @brief Waits for any remaining child processes to complete.

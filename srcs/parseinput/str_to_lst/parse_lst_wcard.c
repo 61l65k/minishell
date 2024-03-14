@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "miniutils.h"
 
 static int	create_add_node_wcard(t_lsthelper *lh, char *data)
 {

@@ -10,15 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
-#include "libft.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 static void	heredoc_signal_handler(int signo)
 {

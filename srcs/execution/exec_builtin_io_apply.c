@@ -10,18 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <fcntl.h>
-#include <string.h>
-#include <errno.h>
-#include <unistd.h>
-#include <readline/readline.h>
-#include "io_type.h"
-#include "builtin.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
-#include "vec/vec.h"
 
 int	back_up_main_process_fds(t_command *command)
 {

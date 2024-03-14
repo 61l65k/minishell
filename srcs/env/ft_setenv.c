@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "env_utils.h"
 #include "minishell.h"
 
 static bool	existing_entry_handled(const char *entry, t_shellstate *s)

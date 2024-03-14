@@ -10,11 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "io_type.h"
 #include "minishell.h"
-#include "miniutils.h"
-#include <signal.h>
-#include <stdlib.h>
 
 static void	open_heredoc(const char *delimiter, int fd_out)
 {

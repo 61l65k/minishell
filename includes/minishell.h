@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include "builtin.h"
+# include "io_type.h"
 # include "libft.h"
 # include "minimessages.h"
 # include "miniutils.h"
@@ -28,11 +29,12 @@
 # include <stdlib.h>
 # include <string.h>
 # include <sys/ioctl.h>
+# include <sys/stat.h>
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-# include "io_type.h"
+# include "env_utils.h"
 
 typedef struct s_shellstate
 {

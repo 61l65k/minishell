@@ -10,17 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
-#include "ft_printf/ft_printf.h"
-#include "io_type.h"
-#include "libft.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
-#include <readline/readline.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
 
 int	update_fds(char *filename, t_redirecthelper *rh, bool fd_out)
 {

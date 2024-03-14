@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "miniutils.h"
 
 static void	remove_env_var(char *var_key, t_shellstate *s)
 {

@@ -10,11 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <unistd.h>
-#include "io_type.h"
-#include "builtin.h"
-#include "vec/vec.h"
+#include "minishell.h"
 
 int	restore_main_process_fds(t_command *command)
 {

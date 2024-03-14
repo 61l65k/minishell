@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-#include "miniutils.h"
-#include "io_type.h"
+#include "minishell.h"
 
 /**
  * @brief Parses the commands and redirections from arg_list

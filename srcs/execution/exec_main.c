@@ -10,16 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
-#include "io_type.h"
-#include "libft.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
 
 /**
  * @brief Duplicates the fd's forward if we are in a pipeline.

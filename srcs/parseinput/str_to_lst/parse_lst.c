@@ -10,10 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include <stdlib.h>
 
 static int	handle_non_quoted(t_lsthelper *lh)
 {

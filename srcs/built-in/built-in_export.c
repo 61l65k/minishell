@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "env_utils.h"
 #include "minishell.h"
 
 static void	print_env_declare(const char **envp)
