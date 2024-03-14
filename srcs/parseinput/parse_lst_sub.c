@@ -34,6 +34,7 @@ int	start_sublist(t_lsthelper *lh)
 	const char	*trimmed_content = ft_strndup(lh->arg + 1, lh->arg_len - 1);
 	t_list		*new_node;
 
+	lh->sub_depth++;
 	new_node = ft_lstnew((char *)trimmed_content);
 	free(lh->arg);
 	if (!new_node)
@@ -55,6 +56,7 @@ int	end_sublist(t_lsthelper *lh)
 	const char	*trimmed_content = ft_strndup(lh->arg, lh->arg_len - 1);
 	t_list		*new_node;
 
+	lh->sub_depth--;
 	new_node = ft_lstnew((char *)trimmed_content);
 	free(lh->arg);
 	if (!new_node)
@@ -62,6 +64,13 @@ int	end_sublist(t_lsthelper *lh)
 	new_node->type = get_io_type(new_node->content);
 	lh->current->next = new_node;
 	new_node->parent = lh->current_parent;
+	if (ft_strchr(trimmed_content, '*'))
+	{
+		lh->arg = ft_strdup(trimmed_content);
+		lh->wcard.dir = opendir(".");
+		if (!lh->wcard.dir || handle_wildcard(lh) == FAILURE)
+			return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
+	}
 	lh->current = lh->current_parent;
 	return (0);
 }

@@ -60,7 +60,7 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 	dup_forward_fd(s, h);
 	if (!h->pipe_doc && handle_redirect(h) == FAILURE)
 		exit(EXIT_FAILURE);
-	h->cmd_arr = lst_to_argv(s->parsed_cmds[h->i]);
+	h->cmd_arr = lst_to_argv(s->cmd_arrs[h->i]);
 	if (!h->cmd_arr)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	builtin_child(s, h);
@@ -127,13 +127,12 @@ int	ft_executecmd(t_shellstate *state)
 	state->last_exit_status = 0;
 	while (eh.i < state->cmd_count)
 	{
-		eh.curr_cmd = state->parsed_cmds[eh.i];
+		eh.curr_cmd = state->cmd_arrs[eh.i];
 		if (g_signal_flag || state->last_exit_status == 130)
 			break ;
 		if (is_pipeline(state, &eh) == true)
 			handle_fork(state, &eh);
-		else if (builtin_main(state,
-				state->parsed_cmds[eh.i]) == BI_NOT_BUILTIN)
+		else if (builtin_main(state, state->cmd_arrs[eh.i]) == BI_NOT_BUILTIN)
 			handle_fork(state, &eh);
 		check_operators(&eh, state);
 		eh.pipe_doc = 0;

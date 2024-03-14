@@ -50,7 +50,7 @@ typedef struct s_shellstate
 {
 	char						*input_string;
 	char						**parsed_args;
-	t_list						**parsed_cmds;
+	t_list						**cmd_arrs;
 	t_operators					*operators;
 	int							cmd_count;
 	int							operator_count;

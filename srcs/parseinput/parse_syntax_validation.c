@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "io_type.h"
 #include "minishell.h"
 #include "miniutils.h"
-#include "io_type.h"
 
 void	print_syntax_err(const char *token, const char *backup)
 {
@@ -28,7 +28,7 @@ void	print_syntax_err(const char *token, const char *backup)
 
 static bool	is_valid_redirect_syntax(t_list *arg_list, t_operators op)
 {
-	t_list		*curr;
+	t_list	*curr;
 
 	curr = arg_list;
 	while (curr)
@@ -57,12 +57,10 @@ bool	is_valid_syntax(t_shellstate *state)
 	int	i;
 
 	i = 0;
-	while (state->parsed_cmds[i])
+	while (state->cmd_head[i])
 	{
-		if (is_valid_redirect_syntax(
-				state->parsed_cmds[i],
-				state->operators[i])
-			== false)
+		if (is_valid_redirect_syntax(state->cmd_head[i],
+				state->operators[i]) == false)
 		{
 			state->last_exit_status = 2;
 			return (false);

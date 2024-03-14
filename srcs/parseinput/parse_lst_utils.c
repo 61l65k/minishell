@@ -31,6 +31,8 @@ void	create_add_node_wcard(t_lsthelper *lh, char *data)
 			else
 				lh->current->next = new_node;
 			lh->current = new_node;
+			new_node->type = get_io_type(new_node->content);
+			new_node->parent = lh->current_parent;
 		}
 		else
 			free(node_data);

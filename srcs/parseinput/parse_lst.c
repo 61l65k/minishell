@@ -35,7 +35,7 @@ static void	process_wcard_dir_entries(t_lsthelper *lh)
 	}
 }
 
-static int	handle_wildcard(t_lsthelper *lh)
+int	handle_wildcard(t_lsthelper *lh)
 {
 	lh->wcard.prev = lh->current;
 	process_wcard_dir_entries(lh);
@@ -80,7 +80,6 @@ static int	handle_non_quoted(t_lsthelper *lh)
 
 static t_list	*allocate_lst(t_lsthelper *lh)
 {
-	printf("START lh->start %s\n", lh->start);
 	while (lh->i <= lh->length)
 	{
 		if (lh->start[lh->i] == '\'' || lh->start[lh->i - lh->arg_len] == '"')
@@ -91,7 +90,6 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 		if (((lh->start[lh->i] == ' ' || lh->i == lh->length)) || lh->in_quotes)
 		{
 			lh->arg_len = lh->i - lh->arg_start;
-			printf("arg start pos %s\n", &lh->start[lh->i - lh->arg_len]);
 			if (lh->in_quotes)
 			{
 				if (handle_quoted(lh) == FAILURE)
@@ -108,7 +106,6 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 		}
 		lh->i++;
 	}
-	printf("EXITING HEAD CONTENT: %s\n", lh->head->content);
 	return (lh->head);
 }
 
@@ -130,8 +127,8 @@ int	str_to_lst(const char *str, t_lsthelper *lh, t_shellstate *s, int i)
 	lh->length = lh->end - lh->start + 1;
 	temp = allocate_lst(lh);
 	if (lh->head_assigned)
-		s->parsed_cmds[i] = temp;
+		s->cmd_arrs[i] = temp;
 	else
-		s->parsed_cmds[i] = NULL;
+		s->cmd_arrs[i] = NULL;
 	return (SUCCESS);
 }

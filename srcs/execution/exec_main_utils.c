@@ -38,7 +38,7 @@ void	check_operators(t_exechelper *h, t_shellstate *s)
  */
 bool	check_pipedoc(t_shellstate *s, t_exechelper *h)
 {
-	const t_list	*l = s->parsed_cmds[h->i];
+	const t_list	*l = s->cmd_arrs[h->i];
 
 	if (h->i < s->cmd_count - 1 && s->operators[h->i] == OP_PIPE)
 	{
@@ -57,7 +57,7 @@ bool	check_pipedoc(t_shellstate *s, t_exechelper *h)
 
 bool	ambiguous_redirect(t_shellstate *s)
 {
-	const t_list	*cmd = s->parsed_cmds[0];
+	const t_list	*cmd = s->cmd_arrs[0];
 
 	while (cmd)
 	{

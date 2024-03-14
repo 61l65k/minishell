@@ -122,6 +122,7 @@ typedef struct s_lsthelper
 	bool					in_quotes;
 	t_list					*current_parent;
 	bool					head_assigned;
+	int						sub_depth;
 }							t_lsthelper;
 
 char						**strarrjoin(const char **arr, const char *str);
@@ -162,4 +163,5 @@ void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 void						print_list(t_list *node, int depth);
 int							start_sublist(t_lsthelper *lh);
 int							end_sublist(t_lsthelper *lh);
+int							handle_wildcard(t_lsthelper *lh);
 #endif

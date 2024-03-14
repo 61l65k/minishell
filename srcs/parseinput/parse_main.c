@@ -96,6 +96,7 @@ static int	process_str_to_lst(t_shellstate *s)
 {
 	int			i;
 	t_lsthelper	lh;
+	int			ssi;
 
 	lh = (t_lsthelper){0};
 	i = -1;
@@ -106,7 +107,7 @@ static int	process_str_to_lst(t_shellstate *s)
 	while (++i < s->cmd_count)
 	{
 		str_to_lst(s->parsed_args[i], &lh, s, i);
-		if (lh.head_assigned && s->parsed_cmds[i] == NULL)
+		if (lh.head_assigned && s->cmd_arrs[i] == NULL)
 		{
 			if ((i == 0 && is_spaces(s->parsed_args[i])))
 				return (free_and_null_str_array(&s->parsed_args),
@@ -117,10 +118,12 @@ static int	process_str_to_lst(t_shellstate *s)
 		}
 	}
 	free_and_null_str_array(&s->parsed_args);
-	if (!s->parsed_cmds[0])
+	if (!s->cmd_arrs[0])
 		return (set_exit_status(s, SUCCESS), FAILURE);
-	for (t_list **lst = s->parsed_cmds; *lst; lst++)
+	ssi = 0;
+	for (t_list **lst = s->cmd_arrs; *lst; lst++)
 	{
+		printf("PRINTING LIST %d \n", ssi++);
 		print_list(*lst, 0);
 	}
 	printf("AFTER ALL LISTS PRINTED\n");
@@ -142,8 +145,8 @@ int	ft_parseinput(t_shellstate *s)
 	while (s->parsed_args[s->cmd_count])
 		s->cmd_count++;
 	s->operator_count = s->cmd_count - 1;
-	s->parsed_cmds = ft_calloc(s->cmd_count + 1, sizeof(t_list *));
-	if (!s->parsed_cmds)
+	s->cmd_arrs = ft_calloc(s->cmd_count + 1, sizeof(t_list *));
+	if (!s->cmd_arrs)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	return (process_str_to_lst(s));
 }
