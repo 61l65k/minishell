@@ -70,3 +70,8 @@ bool	is_valid_syntax(t_shellstate *state)
 	state->last_exit_status = 0;
 	return (true);
 }
+
+void	set_exit_status(t_shellstate *state, int status)
+{
+	state->last_exit_status = status;
+}

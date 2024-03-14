@@ -14,16 +14,8 @@
 #include "minishell.h"
 
 /**
- * @brief Set exit status
- */
-void	set_exit_status(t_shellstate *state, int status)
-{
-	state->last_exit_status = status;
-}
-
-/**
  * @brief Takes input from the user and stores it in state->input_string.
- * & Exits if calls to getcwd fail or if readline returns NULL (=eof).
+ * & Exits if getcwd() fail or if readline() returns NULL (=EOF).
  */
 static void	ft_takeinput(t_shellstate *state)
 {
