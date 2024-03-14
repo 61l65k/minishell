@@ -68,7 +68,7 @@ t_list	*str_to_lst(const char *str, t_shellstate *s)
 
 	if (str == NULL)
 		return (NULL);
-	lh = (t_lsthelper){0};
+	ft_memset(&lh, 0, sizeof(t_lsthelper));
 	lh.start = str;
 	lh.end = str + ft_strlen(str) - 1;
 	while (*lh.start && (*lh.start == ' ' || *lh.start == '\t'))
