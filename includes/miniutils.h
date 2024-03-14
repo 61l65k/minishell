@@ -160,4 +160,6 @@ int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
 void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 void						print_list(t_list *node, int depth);
+int							start_sublist(t_lsthelper *lh);
+int							end_sublist(t_lsthelper *lh);
 #endif

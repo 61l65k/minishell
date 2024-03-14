@@ -44,7 +44,6 @@ int	assign_io_type(t_lsthelper *lh, t_list *new_node)
 	if (!lh->head)
 	{
 		lh->head_assigned = true;
-		printf("assign_io_type head\n");
 		lh->head = new_node;
 	}
 	else

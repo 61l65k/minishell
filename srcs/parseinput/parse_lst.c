@@ -51,54 +51,6 @@ static int	handle_wildcard(t_lsthelper *lh)
 	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);
 }
 
-void	start_sublist(t_lsthelper *lh)
-{
-	char	*trimmed_content;
-	t_list	*new_node;
-	t_list	*head_node;
-
-	trimmed_content = ft_strndup(lh->arg + 1, lh->arg_len - 1);
-	new_node = ft_lstnew(trimmed_content);
-	free(lh->arg);
-	if (!new_node)
-		return ;
-	if (!lh->head)
-	{
-		lh->head_assigned = true;
-		head_node = ft_lstnew(NULL);
-		if (!head_node)
-		{
-			free(new_node);
-			return ;
-		}
-		lh->head = head_node;
-		lh->current = head_node;
-	}
-	if (lh->current)
-	{
-		lh->current->subshell = new_node;
-		new_node->parent = lh->current;
-	}
-	new_node->type = get_io_type(new_node->content);
-	lh->current_parent = new_node->parent;
-	lh->current = new_node;
-}
-
-void	end_sublist(t_lsthelper *lh)
-{
-	char	*trimmed_content;
-	t_list	*new_node;
-
-	trimmed_content = ft_strndup(lh->arg, lh->arg_len - 1);
-	new_node = ft_lstnew(trimmed_content);
-	free(lh->arg);
-	if (!new_node)
-		return ;
-	lh->current->next = new_node;
-	new_node->parent = lh->current_parent;
-	lh->current = lh->current_parent;
-}
-
 static int	handle_non_quoted(t_lsthelper *lh)
 {
 	if (lh->arg_len > 0)
