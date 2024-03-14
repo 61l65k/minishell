@@ -32,19 +32,7 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-
-typedef enum e_operators
-{
-	OP_NONE,
-	OP_AND,
-	OP_OR,
-	OP_HEREDOC,
-	OP_APPEND,
-	OP_PIPE,
-	OP_REDIRECT_OUT,
-	OP_REDIRECT_IN,
-	OP_OPERATOR_COUNT
-}								t_operators;
+# include "io_type.h"
 
 typedef struct s_shellstate
 {

@@ -10,45 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "io_type.h"
-#include "libft.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
-
-static void	process_wcard_dir_entries(t_lsthelper *lh)
-{
-	while (true)
-	{
-		lh->wcard.entry = readdir(lh->wcard.dir);
-		if (!lh->wcard.entry)
-			break ;
-		if (lh->wcard.entry->d_name[0] == '.' && (lh->arg[0] != '.'
-				&& lh->arg[1] != '*'))
-			continue ;
-		if (wildcard_match(lh->arg, lh->wcard.entry->d_name))
-		{
-			lh->wcard.match_count++;
-			create_add_node_wcard(lh, lh->wcard.entry->d_name);
-		}
-	}
-}
-
-static int	handle_wildcard(t_lsthelper *lh)
-{
-	lh->wcard.prev = lh->current;
-	process_wcard_dir_entries(lh);
-	if (lh->wcard.match_count > 1 && is_prev_redirector(lh->wcard.prev))
-	{
-		ft_lstclear(&lh->wcard.prev->next, free);
-		lh->current = lh->wcard.prev;
-		create_add_node_wcard(lh, lh->arg);
-		lh->current->ambiguous_redirect = get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
-	}
-	if (!lh->wcard.match_count)
-		create_add_node_wcard(lh, lh->arg);
-	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);
-}
 
 static int	handle_non_quoted(t_lsthelper *lh)
 {

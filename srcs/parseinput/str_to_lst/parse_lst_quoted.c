@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf/ft_printf.h"
 #include "minishell.h"
-#include "miniutils.h"
 
 static int	expand_buffer_if_needed(t_adjacenthelper *ah)
 {
@@ -77,19 +75,4 @@ int	handle_quoted(t_lsthelper *t)
 	t->arg_start = t->i + 1;
 	t->in_quotes = false;
 	return (SUCCESS);
-}
-
-bool	is_spaces(const char *str)
-{
-	if (!str || !*str)
-		return (false);
-	while (*str)
-	{
-		if (!isspace((unsigned char)*str))
-		{
-			return (false);
-		}
-		str++;
-	}
-	return (true);
 }

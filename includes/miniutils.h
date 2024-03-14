@@ -133,14 +133,12 @@ int							ft_parseinput(t_shellstate *state);
 char						*trim_spaces(const char *str);
 t_list						*str_to_lst(const char *str);
 int							ft_isenv_var(int c);
-void						parse_cmd_char(t_parsehelper *h,
+void						parse_character(t_parsehelper *h,
 								t_shellstate *state);
-void						ensure_mem_for_cmd(t_parsehelper *h,
+void						ensure_mem_for_buff(t_parsehelper *h,
 								t_shellstate *state, size_t additional_length);
 void						init_char_flags(t_envhelper *eh, char *c,
 								t_parsehelper *h);
-bool						wildcard_match(const char *pattern,
-								const char *str);
 int							handle_redirect(t_exechelper *eh);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
@@ -150,11 +148,11 @@ t_operators					check_for_op(t_operatorhelper *op,
 								t_shellstate *state, int index);
 int							check_parentheses(t_operatorhelper *op,
 								t_shellstate *s);
-void						create_add_node_wcard(t_lsthelper *t, char *data);
 bool						is_prev_redirector(const t_list *prev);
 void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
 void						handle_tilda(t_parsehelper *h, t_shellstate *state);
+int							handle_wildcard(t_lsthelper *lh);
 #endif

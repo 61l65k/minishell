@@ -10,14 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
-#include "miniutils.h"
 
-/**
- * @brief Handles the escape sequence in quoted strings.
- * h->i += 1 to skip the escape character.
- */
 static void	handle_escape_sequence(t_parsehelper *h, const char *input_string)
 {
 	h->i++;
@@ -38,10 +32,10 @@ static void	handle_escape_sequence(t_parsehelper *h, const char *input_string)
 }
 
 /**
- * @brief Turns The env variables to their values. Reallocates new memory
- * if needed for the command. h->i += 1 to skip the $ character.
+ * @brief Expands the corresponding environment variable and adds it to the
+ * current command.
  */
-static void	handle_env_variable(t_parsehelper *h, t_shellstate *state,
+static void	expand_env_variable(t_parsehelper *h, t_shellstate *state,
 		t_envhelper *eh)
 {
 	h->i += 1;
@@ -64,13 +58,13 @@ static void	handle_env_variable(t_parsehelper *h, t_shellstate *state,
 	if (eh->var_value)
 	{
 		eh->val_len = ft_strlen(eh->var_value);
-		ensure_mem_for_cmd(h, state, ft_strlen(h->curr_cmd) + eh->val_len + 1);
+		ensure_mem_for_buff(h, state, ft_strlen(h->curr_cmd) + eh->val_len + 1);
 		ft_strncat(h->curr_cmd, eh->var_value, eh->val_len);
 		h->j = ft_strlen(h->curr_cmd);
 	}
 }
 
-static void	separate_redir(t_parsehelper *h, t_shellstate *state)
+static void	separate_redir_with_spaces(t_parsehelper *h, t_shellstate *state)
 {
 	const char	*c = &state->input_string[h->i];
 	const bool	space_before = (h->i > 0) && (*(c - 1) != ' ' && *(c
@@ -79,7 +73,7 @@ static void	separate_redir(t_parsehelper *h, t_shellstate *state)
 				+ 1) != '\0');
 	const bool	is_double_redir = (*(c + 1) == *c);
 
-	ensure_mem_for_cmd(h, state, 5);
+	ensure_mem_for_buff(h, state, 5);
 	if (space_before)
 		h->curr_cmd[h->j++] = ' ';
 	h->curr_cmd[h->j++] = *c;
@@ -96,11 +90,11 @@ static void	separate_redir(t_parsehelper *h, t_shellstate *state)
  * @brief Checks if the current character is operator & puts the new command
  * in the commands array from the input string.
  */
-static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state, int flags,
-		t_envhelper *eh)
+static void	handle_non_quoted_char(t_parsehelper *h, t_shellstate *state,
+		int flags, t_envhelper *eh)
 {
 	if (flags & (1 << REDIR_BIT))
-		separate_redir(h, state);
+		separate_redir_with_spaces(h, state);
 	else if ((flags & (1 << PIPE_BIT)) || (flags & (1 << AND_BIT))
 		|| (flags & (1 << OR_BIT)))
 	{
@@ -112,14 +106,14 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state, int flags,
 	}
 	else if (flags & (1 << ENVVAR_BIT))
 	{
-		handle_env_variable(h, state, eh);
+		expand_env_variable(h, state, eh);
 		free(eh->var_name);
 		if (eh->free_var_value)
 			free(eh->var_value);
 	}
 	else
 	{
-		ensure_mem_for_cmd(h, state, 1);
+		ensure_mem_for_buff(h, state, 1);
 		h->curr_cmd[h->j++] = state->input_string[h->i];
 	}
 }
@@ -127,10 +121,10 @@ static void	check_for_new_cmd(t_parsehelper *h, t_shellstate *state, int flags,
 /**
  * @brief Parses the characer from input string.
  * & Handles single and double quotes,
-	escape sequences and environment variables.
+	escape sequences and environment variables. And turns the the
  *
  */
-void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
+void	parse_character(t_parsehelper *h, t_shellstate *state)
 {
 	t_envhelper	eh;
 
@@ -146,7 +140,7 @@ void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 			handle_escape_sequence(h, state->input_string);
 		else if (h->in_double_quote && (eh.flags & (1 << ENVVAR_BIT)))
 		{
-			handle_env_variable(h, state, &eh);
+			expand_env_variable(h, state, &eh);
 			free(eh.var_name);
 			if (eh.free_var_value)
 				free(eh.var_value);
@@ -155,6 +149,6 @@ void	parse_cmd_char(t_parsehelper *h, t_shellstate *state)
 			h->curr_cmd[h->j++] = state->input_string[h->i];
 	}
 	else
-		check_for_new_cmd(h, state, eh.flags, &eh);
+		handle_non_quoted_char(h, state, eh.flags, &eh);
 	h->curr_cmd[h->j] = '\0';
 }

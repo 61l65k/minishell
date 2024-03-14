@@ -1,21 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_lst_utils.c                                  :+:      :+:    :+:   */
+/*   parse_lst_wcard.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/09 03:38:52 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/09 03:38:54 by apyykone         ###   ########.fr       */
+/*   Created: 2024/03/14 11:11:19 by apyykone          #+#    #+#             */
+/*   Updated: 2024/03/14 11:11:20 by apyykone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "io_type.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
 
-void	create_add_node_wcard(t_lsthelper *lh, char *data)
+static void	create_add_node_wcard(t_lsthelper *lh, char *data)
 {
 	char	*node_data;
 	t_list	*new_node;
@@ -37,24 +34,7 @@ void	create_add_node_wcard(t_lsthelper *lh, char *data)
 	}
 }
 
-int	assign_io_type(t_lsthelper *lh, t_list *new_node)
-{
-	if (!new_node)
-		return (FAILURE);
-	lh->new_node = new_node;
-	if (!lh->head)
-		lh->head = lh->new_node;
-	else
-		lh->current->next = lh->new_node;
-	lh->current = lh->new_node;
-	new_node->type = get_io_type(new_node->content);
-	return (SUCCESS);
-}
-
-/**
- * @brief Matches the pattern with the string.
- */
-bool	wildcard_match(const char *pattern, const char *str)
+static bool	wildcard_match(const char *pattern, const char *str)
 {
 	if (!*pattern)
 		return (!*str);
@@ -72,13 +52,37 @@ bool	wildcard_match(const char *pattern, const char *str)
 	return (false);
 }
 
-bool	is_prev_redirector(const t_list *prev)
+static void	process_wcard_dir_entries(t_lsthelper *lh)
 {
-	if (prev == NULL)
-		return (false);
-	if (get_io_type(prev->content))
+	while (true)
 	{
-		return (true);
+		lh->wcard.entry = readdir(lh->wcard.dir);
+		if (!lh->wcard.entry)
+			break ;
+		if (lh->wcard.entry->d_name[0] == '.' && (lh->arg[0] != '.'
+				&& lh->arg[1] != '*'))
+			continue ;
+		if (wildcard_match(lh->arg, lh->wcard.entry->d_name))
+		{
+			lh->wcard.match_count++;
+			create_add_node_wcard(lh, lh->wcard.entry->d_name);
+		}
 	}
-	return (false);
+}
+
+int	handle_wildcard(t_lsthelper *lh)
+{
+	lh->wcard.prev = lh->current;
+	process_wcard_dir_entries(lh);
+	if (lh->wcard.match_count > 1 && is_prev_redirector(lh->wcard.prev))
+	{
+		ft_lstclear(&lh->wcard.prev->next, free);
+		lh->current = lh->wcard.prev;
+		create_add_node_wcard(lh, lh->arg);
+		lh->current->ambiguous_redirect = \
+		get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
+	}
+	if (!lh->wcard.match_count)
+		create_add_node_wcard(lh, lh->arg);
+	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);
 }

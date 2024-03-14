@@ -10,15 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
-#include "miniutils.h"
 
-/**
- * @brief ensures that there is enough memory for the operators array.
- */
 void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
-		t_shellstate *state)
+		t_shellstate *s)
 {
 	size_t		new_capacity;
 	t_operators	*new_operators;
@@ -34,7 +29,7 @@ void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
 		new_operators = ft_realloc(op->ops, op->operators_capacity
 				* sizeof(t_operators), new_capacity * sizeof(t_operators));
 		if (!new_operators)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 		op->ops = new_operators;
 		op->operators_capacity = new_capacity;
 	}
@@ -42,9 +37,6 @@ void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
 	op->cmd_count++;
 }
 
-/**
- * @brief Check if the the current character is operator.
- */
 t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state, int index)
 {
 	int	i;
@@ -61,11 +53,7 @@ t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state, int index)
 	return (OP_NONE);
 }
 
-/**
- * @brief Ensures that there is enough memory for the command.
- * If not, reallocates double the size of the current memory.
- */
-void	ensure_mem_for_cmd(t_parsehelper *h, t_shellstate *state,
+void	ensure_mem_for_buff(t_parsehelper *h, t_shellstate *state,
 		size_t additional_length)
 {
 	size_t	required_size;
@@ -84,10 +72,6 @@ void	ensure_mem_for_cmd(t_parsehelper *h, t_shellstate *state,
 	}
 }
 
-/**
- * @brief Initializes the flags for the current character.
- * The flags are used to determine the state of the current character.
- */
 void	init_char_flags(t_envhelper *eh, char *c, t_parsehelper *h)
 {
 	*eh = (t_envhelper){0};
@@ -111,25 +95,4 @@ void	init_char_flags(t_envhelper *eh, char *c, t_parsehelper *h)
 							+ 1) != '<')) || (*c == '>' && *(c + 1) == '>')
 				|| (*c == '<' && *(c + 1) == '<')) << REDIR_BIT;
 	}
-}
-
-int	ft_checkdollar(t_shellstate *s, t_parsehelper *h)
-{
-	const char	*c = &s->input_string[h->i];
-
-	if (!h->in_single_quote && !h->in_double_quote && (*(c + 1) == ' ' || *(c
-				+ 1) == '\0'))
-	{
-		ensure_mem_for_cmd(h, s, 1);
-		h->curr_cmd[h->j++] = *c;
-		return (1);
-	}
-	else if ((h->in_single_quote || h->in_double_quote) && (*(c + 1) == '\''
-			|| *(c + 1) == '"' || *(c + 1) == ' ' || *(c + 1) == '$'))
-	{
-		ensure_mem_for_cmd(h, s, 1);
-		h->curr_cmd[h->j++] = *c;
-		return (1);
-	}
-	return (0);
 }

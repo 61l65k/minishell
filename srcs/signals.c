@@ -24,38 +24,16 @@ void	check_g_signal_flag(t_shellstate *s)
 	}
 }
 
-/**
- * @brief Sets the terminal to no echo mode.
- * & Executes the .minishellrc file.
- */
 void	setup_terminal(void)
 {
-	int				fd;
-	char			*line;
 	struct termios	term;
 
-	fd = open(".minishellrc", O_RDONLY);
-	if (fd != -1)
-	{
-		while (true)
-		{
-			line = get_next_line(fd);
-			if (!line)
-				break ;
-			system(line);
-			free(line);
-		}
-		close(fd);
-	}
 	tcgetattr(STDIN_FILENO, &term);
 	term.c_lflag &= ~ECHOCTL;
 	term.c_lflag |= (ICANON | ISIG);
 	tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
-/**
- * @brief Callback handler for signals received
- */
 void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 {
 	(void)context;
@@ -74,9 +52,6 @@ void	ft_signal_handler(int signo, siginfo_t *info, void *context)
 		printf("Unknown signal\n");
 }
 
-/**
- * @brief Initializes all signal handlers & their callbacks.
- */
 int	init_signals(void)
 {
 	struct sigaction	action;

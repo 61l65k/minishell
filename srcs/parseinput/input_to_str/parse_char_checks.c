@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_parentheses.c                                :+:      :+:    :+:   */
+/*   parse_char_checks.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: apyykone <apyykone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/10 19:36:39 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/10 19:36:40 by apyykone         ###   ########.fr       */
+/*   Created: 2024/03/14 11:29:24 by apyykone          #+#    #+#             */
+/*   Updated: 2024/03/14 11:29:26 by apyykone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	adjust_index(const char *str, int i, bool adjust_next)
+int	adjust_index_for_parentheses_check(const char *str, int i, bool adjust_next)
 {
 	if (adjust_next)
 	{
@@ -32,8 +32,10 @@ int	adjust_index(const char *str, int i, bool adjust_next)
 int	check_parentheses(t_operatorhelper *op, t_shellstate *s)
 {
 	const char	*current_char = &s->input_string[op->i];
-	const int	prev_index = adjust_index(s->input_string, op->i - 1, false);
-	const int	next_index = adjust_index(s->input_string, op->i + 1, true);
+	const int	prev_index = adjust_index_for_parentheses_check(s->input_string,
+			op->i - 1, false);
+	const int	next_index = adjust_index_for_parentheses_check(s->input_string,
+			op->i + 1, true);
 
 	if (*current_char == '(')
 	{
@@ -52,4 +54,38 @@ int	check_parentheses(t_operatorhelper *op, t_shellstate *s)
 		op->paren_depth--;
 	}
 	return (SUCCESS);
+}
+
+void	handle_tilda(t_parsehelper *h, t_shellstate *state)
+{
+	const char	*tilda = ft_getenv("HOME", state->envp);
+	const int	til_len = ft_strlen(tilda);
+
+	if (tilda)
+	{
+		ensure_mem_for_buff(h, state, ft_strlen(h->curr_cmd) + til_len + 1);
+		ft_strncat(h->curr_cmd, tilda, til_len);
+		h->j = ft_strlen(h->curr_cmd);
+	}
+}
+
+int	ft_checkdollar(t_shellstate *s, t_parsehelper *h)
+{
+	const char	*c = &s->input_string[h->i];
+
+	if (!h->in_single_quote && !h->in_double_quote && (*(c + 1) == ' ' || *(c
+				+ 1) == '\0'))
+	{
+		ensure_mem_for_buff(h, s, 1);
+		h->curr_cmd[h->j++] = *c;
+		return (1);
+	}
+	else if ((h->in_single_quote || h->in_double_quote) && (*(c + 1) == '\''
+			|| *(c + 1) == '"' || *(c + 1) == ' ' || *(c + 1) == '$'))
+	{
+		ensure_mem_for_buff(h, s, 1);
+		h->curr_cmd[h->j++] = *c;
+		return (1);
+	}
+	return (0);
 }

@@ -10,10 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "io_type.h"
-#include "libft.h"
 #include "minishell.h"
-#include "miniutils.h"
 
 /**
  * @brief Frees all & Exit the shell. Prints msg with perror if exit_code != 0.

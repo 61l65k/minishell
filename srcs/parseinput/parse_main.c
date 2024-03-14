@@ -10,12 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
-#include "libft.h"
-#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
-#include <stdlib.h>
 
 static int	validation_loop(t_shellstate *s, t_operatorhelper *op)
 {
@@ -40,10 +35,6 @@ static int	validation_loop(t_shellstate *s, t_operatorhelper *op)
 	return (SUCCESS);
 }
 
-/**
- * @brief Counts the amount of commands in the input string.
- * & Returns the amount of commands.
- */
 static int	count_op_cmds(t_shellstate *s, int *cmd_count)
 {
 	t_operatorhelper	op;
@@ -64,10 +55,6 @@ static int	count_op_cmds(t_shellstate *s, int *cmd_count)
 	return (free(op.ops), SUCCESS);
 }
 
-/**
- * @brief Splits the input string into commands delimeted by operators.
- * & Returns a NULL-terminated array of strings.
- */
 static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
 {
 	h->i = -1;
@@ -79,7 +66,7 @@ static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
 	if (!h->commands || !h->curr_cmd)
 		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	while (state->input_string[++h->i] != '\0')
-		parse_cmd_char(h, state);
+		parse_character(h, state);
 	h->curr_cmd[h->j] = '\0';
 	if (h->j > 0 && h->command_index < h->command_count)
 	{
@@ -116,10 +103,6 @@ static int	process_str_to_lst(t_shellstate *s)
 	return (SUCCESS);
 }
 
-/**
- * @brief Top function for starting parsing the input string.
- * & Returns 0 if successful, returns non zero on errors.
- */
 int	ft_parseinput(t_shellstate *s)
 {
 	t_parsehelper	ph;
