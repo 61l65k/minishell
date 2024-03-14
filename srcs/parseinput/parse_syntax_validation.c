@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minimessages.h"
 #include "minishell.h"
+#include "miniutils.h"
 
 void	print_syntax_err(const char *token, const char *backup)
 {
@@ -62,7 +64,7 @@ bool	is_valid_syntax(t_shellstate *state)
 				state->operators[i])
 			== false)
 		{
-			state->last_exit_status = 2;
+			state->last_exit_status = SYNTAX_ERROR;
 			return (false);
 		}
 		i++;
