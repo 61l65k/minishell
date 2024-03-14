@@ -32,9 +32,6 @@ void	check_operators(t_exechelper *h, t_shellstate *s)
 	}
 }
 
-/***
- * @brief Checks if we need to
- */
 bool	check_pipedoc(t_shellstate *s, t_exechelper *h)
 {
 	const t_list	*l = s->parsed_cmds[h->i];
