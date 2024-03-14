@@ -57,9 +57,9 @@ bool	is_valid_syntax(t_shellstate *state)
 	int	i;
 
 	i = 0;
-	while (state->cmd_head[i])
+	while (state->cmd_arrs[i])
 	{
-		if (is_valid_redirect_syntax(state->cmd_head[i],
+		if (is_valid_redirect_syntax(state->cmd_arrs[i],
 				state->operators[i]) == false)
 		{
 			state->last_exit_status = 2;
