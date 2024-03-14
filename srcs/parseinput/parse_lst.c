@@ -58,13 +58,13 @@ void	start_sublist(t_lsthelper *lh)
 	t_list	*head_node;
 
 	trimmed_content = ft_strndup(lh->arg + 1, lh->arg_len - 1);
-	printf("trimmed start lh arg %s\n", trimmed_content);
 	new_node = ft_lstnew(trimmed_content);
 	free(lh->arg);
 	if (!new_node)
 		return ;
 	if (!lh->head)
 	{
+		lh->head_assigned = true;
 		head_node = ft_lstnew(NULL);
 		if (!head_node)
 		{
@@ -79,6 +79,7 @@ void	start_sublist(t_lsthelper *lh)
 		lh->current->subshell = new_node;
 		new_node->parent = lh->current;
 	}
+	new_node->type = get_io_type(new_node->content);
 	lh->current_parent = new_node->parent;
 	lh->current = new_node;
 }
@@ -88,18 +89,13 @@ void	end_sublist(t_lsthelper *lh)
 	char	*trimmed_content;
 	t_list	*new_node;
 
-	// printf("end sub lh arg %s\n", lh->arg);
 	trimmed_content = ft_strndup(lh->arg, lh->arg_len - 1);
-	printf("trimmed end lh arg %s\n", trimmed_content);
 	new_node = ft_lstnew(trimmed_content);
 	free(lh->arg);
 	if (!new_node)
 		return ;
-	if (lh->current)
-	{
-		lh->current->next = new_node;
-		new_node->parent = lh->current_parent;
-	}
+	lh->current->next = new_node;
+	new_node->parent = lh->current_parent;
 	lh->current = lh->current_parent;
 }
 
@@ -122,13 +118,9 @@ static int	handle_non_quoted(t_lsthelper *lh)
 		}
 		else
 		{
-			// printf("assignin start lh arg %s\n", lh->arg);
 			if (assign_io_type(lh, ft_lstnew(lh->arg)) == FAILURE)
 				return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
 		}
-		// printf("current content: %s\n", lh->current->content);
-		// if (lh->current_parent)
-		//		printf("parent content: %s\n", lh->current_parent->content);
 	}
 	lh->arg_start = lh->i + 1;
 	return (SUCCESS);
@@ -136,9 +128,10 @@ static int	handle_non_quoted(t_lsthelper *lh)
 
 static t_list	*allocate_lst(t_lsthelper *lh)
 {
+	printf("START lh->start %s\n", lh->start);
 	while (lh->i <= lh->length)
 	{
-		if (lh->start[lh->i] == '\'' || lh->start[lh->i] == '"')
+		if (lh->start[lh->i] == '\'' || lh->start[lh->i - lh->arg_len] == '"')
 		{
 			lh->in_quotes = true;
 			lh->i++;
@@ -146,6 +139,7 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 		if (((lh->start[lh->i] == ' ' || lh->i == lh->length)) || lh->in_quotes)
 		{
 			lh->arg_len = lh->i - lh->arg_start;
+			printf("arg start pos %s\n", &lh->start[lh->i - lh->arg_len]);
 			if (lh->in_quotes)
 			{
 				if (handle_quoted(lh) == FAILURE)
@@ -162,19 +156,30 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 		}
 		lh->i++;
 	}
+	printf("EXITING HEAD CONTENT: %s\n", lh->head->content);
 	return (lh->head);
 }
 
-t_list	*str_to_lst(const char *str, t_lsthelper *lh)
+int	str_to_lst(const char *str, t_lsthelper *lh, t_shellstate *s, int i)
 {
+	t_list	*temp;
+
 	if (!str)
-		return (NULL);
+		return (FAILURE);
+	lh->i = 0;
 	lh->start = str;
 	lh->end = str + ft_strlen(str) - 1;
+	lh->arg_start = 0;
+	lh->head_assigned = false;
 	while (*lh->start && (*lh->start == ' ' || *lh->start == '\t'))
 		lh->start++;
 	while (lh->end > lh->start && (*lh->end == ' ' || *lh->end == '\t'))
 		lh->end--;
 	lh->length = lh->end - lh->start + 1;
-	return (allocate_lst(lh));
+	temp = allocate_lst(lh);
+	if (lh->head_assigned)
+		s->parsed_cmds[i] = temp;
+	else
+		s->parsed_cmds[i] = NULL;
+	return (SUCCESS);
 }

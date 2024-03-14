@@ -99,10 +99,14 @@ static int	process_str_to_lst(t_shellstate *s)
 
 	lh = (t_lsthelper){0};
 	i = -1;
+	for (int i = 0; i < s->cmd_count; i++)
+	{
+		printf("cmd %d: %s\n", i, s->parsed_args[i]);
+	}
 	while (++i < s->cmd_count)
 	{
-		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i], &lh);
-		if (s->parsed_cmds[i] == NULL)
+		str_to_lst(s->parsed_args[i], &lh, s, i);
+		if (lh.head_assigned && s->parsed_cmds[i] == NULL)
 		{
 			if ((i == 0 && is_spaces(s->parsed_args[i])))
 				return (free_and_null_str_array(&s->parsed_args),
@@ -119,6 +123,7 @@ static int	process_str_to_lst(t_shellstate *s)
 	{
 		print_list(*lst, 0);
 	}
+	printf("AFTER ALL LISTS PRINTED\n");
 	return (SUCCESS);
 }
 

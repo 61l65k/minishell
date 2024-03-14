@@ -34,7 +34,7 @@ static int	process_quoted(t_lsthelper *t, t_adjacenthelper *ah)
 		if (expand_buffer_if_needed(ah) == FAILURE)
 			return (FAILURE);
 		if ((t->start[t->i] == '\'' || t->start[t->i] == '"')
-			&& !ah->current_quote)
+				&& !ah->current_quote)
 		{
 			ah->current_quote = t->start[t->i++];
 			continue ;
@@ -54,28 +54,32 @@ static int	process_quoted(t_lsthelper *t, t_adjacenthelper *ah)
 	return (SUCCESS);
 }
 
-int	handle_quoted(t_lsthelper *t)
+int	handle_quoted(t_lsthelper *lh)
 {
 	t_adjacenthelper	ah;
+	t_list				*new_node;
 
 	ah = (t_adjacenthelper){0};
 	ah.buff_size = 256;
-	t->i -= t->arg_len;
+	lh->i -= lh->arg_len;
 	ah.buff = malloc(ah.buff_size);
 	if (!ah.buff)
 		return (FAILURE);
 	ah.buffer_index = 0;
-	process_quoted(t, &ah);
-	t->new_node = ft_lstnew(ah.buff);
-	if (!t->new_node)
+	process_quoted(lh, &ah);
+	new_node = ft_lstnew(ah.buff);
+	if (!new_node)
 		return (free(ah.buff), FAILURE);
-	if (!t->head)
-		t->head = t->new_node;
+	if (!lh->head)
+	{
+		lh->head_assigned = true;
+		lh->head = new_node;
+	}
 	else
-		t->current->next = t->new_node;
-	t->current = t->new_node;
-	t->arg_start = t->i + 1;
-	t->in_quotes = false;
+		lh->current->next = new_node;
+	lh->current = new_node;
+	lh->arg_start = lh->i + 1;
+	lh->in_quotes = false;
 	return (SUCCESS);
 }
 

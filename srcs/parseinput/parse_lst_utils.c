@@ -41,16 +41,17 @@ int	assign_io_type(t_lsthelper *lh, t_list *new_node)
 {
 	if (!new_node)
 		return (FAILURE);
-	lh->new_node = new_node;
 	if (!lh->head)
 	{
+		lh->head_assigned = true;
 		printf("assign_io_type head\n");
-		lh->head = lh->new_node;
+		lh->head = new_node;
 	}
 	else
-		lh->current->next = lh->new_node;
-	lh->current = lh->new_node;
+		lh->current->next = new_node;
+	lh->current = new_node;
 	new_node->type = get_io_type(new_node->content);
+	new_node->parent = lh->current_parent;
 	return (SUCCESS);
 }
 
