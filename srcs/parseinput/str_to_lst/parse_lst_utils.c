@@ -37,13 +37,21 @@ bool	is_prev_redirector(const t_list *prev)
 	return (false);
 }
 
+int	ft_isspace(char c)
+{
+	if (c == ' ' || c == '\t' || c == '\n'
+		|| c == '\v' || c == '\f' || c == '\r')
+		return (1);
+	return (0);
+}
+
 bool	is_spaces(const char *str)
 {
 	if (!str || !*str)
 		return (false);
 	while (*str)
 	{
-		if (!isspace((unsigned char)*str))
+		if (!ft_isspace(*str))
 		{
 			return (false);
 		}
