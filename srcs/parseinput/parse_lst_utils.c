@@ -43,7 +43,10 @@ int	assign_io_type(t_lsthelper *lh, t_list *new_node)
 		return (FAILURE);
 	lh->new_node = new_node;
 	if (!lh->head)
+	{
+		printf("assign_io_type head\n");
 		lh->head = lh->new_node;
+	}
 	else
 		lh->current->next = lh->new_node;
 	lh->current = lh->new_node;
@@ -81,4 +84,19 @@ bool	is_prev_redirector(const t_list *prev)
 		return (true);
 	}
 	return (false);
+}
+
+void	print_list(t_list *node, int depth)
+{
+	while (node)
+	{
+		printf("%*scontent: %s, parent: %p, subshell: %p\n", depth * 4, "",
+			node->content ? node->content : "NULL", node->parent,
+			node->subshell);
+		if (node->subshell)
+		{
+			print_list(node->subshell, depth + 1);
+		}
+		node = node->next;
+	}
 }

@@ -15,6 +15,7 @@
 #include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
+#include <readline/history.h>
 
 static void	process_wcard_dir_entries(t_lsthelper *lh)
 {
@@ -43,12 +44,64 @@ static int	handle_wildcard(t_lsthelper *lh)
 		ft_lstclear(&lh->wcard.prev->next, free);
 		lh->current = lh->wcard.prev;
 		create_add_node_wcard(lh, lh->arg);
-		lh->current->ambiguous_redirect = \
-		get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
+		lh->current->ambiguous_redirect = get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
 	}
 	if (!lh->wcard.match_count)
 		create_add_node_wcard(lh, lh->arg);
 	return (closedir(lh->wcard.dir), free(lh->arg), SUCCESS);
+}
+
+void	start_sublist(t_lsthelper *lh)
+{
+	char	*trimmed_content;
+	t_list	*new_node;
+	t_list	*head_node;
+
+	//	printf("start lh arg %s\n", lh->arg);
+	trimmed_content = ft_strndup(lh->arg + 1, lh->arg_len - 1);
+	printf("trimmed start lh arg %s\n", trimmed_content);
+	new_node = ft_lstnew(trimmed_content);
+	free(lh->arg);
+	if (!new_node)
+		return ;
+	if (!lh->head)
+	{
+		head_node = ft_lstnew(NULL);
+		if (!head_node)
+		{
+			free(new_node);
+			return ;
+		}
+		lh->head = head_node;
+		lh->current = head_node;
+	}
+	if (lh->current)
+	{
+		lh->current->subshell = new_node;
+		new_node->parent = lh->current;
+	}
+	lh->current_parent = new_node->parent;
+	lh->current = new_node;
+}
+
+void	end_sublist(t_lsthelper *lh)
+{
+	char	*trimmed_content;
+	t_list	*new_node;
+
+	// printf("end sub lh arg %s\n", lh->arg);
+	trimmed_content = ft_strndup(lh->arg, lh->arg_len - 1);
+	printf("trimmed end lh arg %s\n", trimmed_content);
+	new_node = ft_lstnew(trimmed_content);
+	free(lh->arg);
+	if (!new_node)
+		return ;
+	if (lh->current)
+	{
+		lh->current->next = new_node;
+		new_node->parent = lh->current_parent;
+	}
+	lh->current = lh->current_parent;
 }
 
 static int	handle_non_quoted(t_lsthelper *lh)
@@ -58,7 +111,11 @@ static int	handle_non_quoted(t_lsthelper *lh)
 		lh->arg = ft_strndup(lh->start + lh->arg_start, lh->arg_len);
 		if (!lh->arg)
 			return (ft_lstclear(&lh->head, free), FAILURE);
-		if (ft_strchr(lh->arg, '*'))
+		if (lh->arg[0] == '(')
+			start_sublist(lh);
+		else if (lh->arg[ft_strlen(lh->arg) - 1] == ')')
+			end_sublist(lh);
+		else if (ft_strchr(lh->arg, '*'))
 		{
 			lh->wcard.dir = opendir(".");
 			if (!lh->wcard.dir || handle_wildcard(lh) == FAILURE)
@@ -66,9 +123,13 @@ static int	handle_non_quoted(t_lsthelper *lh)
 		}
 		else
 		{
+			// printf("assignin start lh arg %s\n", lh->arg);
 			if (assign_io_type(lh, ft_lstnew(lh->arg)) == FAILURE)
 				return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
 		}
+		// printf("current content: %s\n", lh->current->content);
+		// if (lh->current_parent)
+		//		printf("parent content: %s\n", lh->current_parent->content);
 	}
 	lh->arg_start = lh->i + 1;
 	return (SUCCESS);
@@ -89,10 +150,14 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 			if (lh->in_quotes)
 			{
 				if (handle_quoted(lh) == FAILURE)
+				{
+					printf("failed to handle quoted\n");
 					return (NULL);
+				}
 			}
 			else if (handle_non_quoted(lh))
 			{
+				printf("failed to handle non quoted\n");
 				return (NULL);
 			}
 		}

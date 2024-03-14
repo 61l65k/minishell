@@ -113,6 +113,10 @@ static int	process_str_to_lst(t_parsehelper *ph, t_shellstate *s)
 	free_and_null_str_array(&s->parsed_args);
 	if (!s->parsed_cmds[0])
 		return (set_exit_status(s, SUCCESS), FAILURE);
+	for (t_list **lst = s->parsed_cmds; *lst; lst++)
+	{
+		print_list(*lst, 0);
+	}
 	return (SUCCESS);
 }
 
