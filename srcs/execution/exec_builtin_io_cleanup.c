@@ -43,7 +43,7 @@ int	restore_main_process_fds(t_command *command)
 
 void	free_command(t_command *command)
 {
-	free(command->args);
-	command->args = NULL;
+	free(command->argv);
+	command->argv = NULL;
 	vec_free(&command->io_vec);
 }

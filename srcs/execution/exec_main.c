@@ -60,11 +60,11 @@ static void	handle_child_process(t_shellstate *s, t_exechelper *h)
 	dup_forward_fd(s, h);
 	if (!h->pipe_doc && handle_redirect(h) == FAILURE)
 		exit(EXIT_FAILURE);
-	h->cmd_arr = lst_to_argv(s->parsed_cmds[h->i]);
-	if (!h->cmd_arr)
+	h->cmd_argv = lst_to_argv(s->parsed_cmds[h->i]);
+	if (!h->cmd_argv)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	builtin_child(s, h);
-	ft_execvp(h->cmd_arr[0], h->cmd_arr, s->envp);
+	ft_execvp(h->cmd_argv[0], h->cmd_argv, s->envp);
 }
 
 /**

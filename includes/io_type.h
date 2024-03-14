@@ -25,7 +25,7 @@ typedef struct s_io
 
 typedef struct s_command
 {
-	char		**args;
+	char		**argv;
 	t_vec		io_vec;
 	int			fd_stdin_backup;
 	int			fd_stdout_backup;

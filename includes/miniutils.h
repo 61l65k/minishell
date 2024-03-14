@@ -56,7 +56,7 @@ typedef struct s_operatorhelper
 
 typedef struct s_exechelper
 {
-	char					**cmd_arr;
+	char					**cmd_argv;
 	int						pipefd[2];
 	int						fd_in;
 	int						i;

@@ -16,7 +16,7 @@
 
 /**
  * @brief Handles built-in commands in the main process.
- * Parses the redirection and command args information from arg_list
+ * Parses redirects and argv from arg_list.
  * and stores them to a local t_command struct.
  * Sets up possible redirections and runs the built-in command.
  * @return Returns 0 if the cmd found in arg_list is not a built-in.
@@ -30,7 +30,7 @@ int	builtin_main(t_shellstate *state, t_list *arg_list)
 	command = (t_command){0};
 	if (get_command(arg_list, &command) == FAILURE)
 		ft_free_exit(state, ERR_MALLOC, 1);
-	builtin_type = get_builtin_type(command.args[0]);
+	builtin_type = get_builtin_type(command.argv[0]);
 	if (builtin_type == BI_NOT_BUILTIN)
 		return (free_command(&command), BI_NOT_BUILTIN);
 	func = get_builtin_func(builtin_type);
@@ -40,7 +40,7 @@ int	builtin_main(t_shellstate *state, t_list *arg_list)
 		state->last_exit_status = apply_main_process_redirections(&command);
 	}
 	if (func && state->last_exit_status == SUCCESS)
-		func(command.args, state);
+		func(command.argv, state);
 	if (command.io_vec.len > 0)
 		restore_main_process_fds(&command);
 	return (free_command(&command), builtin_type);
@@ -53,7 +53,7 @@ int	builtin_main(t_shellstate *state, t_list *arg_list)
  */
 int	builtin_child(t_shellstate *state, t_exechelper *exechelper)
 {
-	const char				*cmd = exechelper->cmd_arr[0];
+	const char				*cmd = exechelper->cmd_argv[0];
 	const t_builtin_type	builtin_type = get_builtin_type(cmd);
 	const t_builtin_func	func = get_builtin_func(builtin_type);
 
@@ -62,7 +62,7 @@ int	builtin_child(t_shellstate *state, t_exechelper *exechelper)
 	state->last_exit_status = SUCCESS;
 	if (func)
 	{
-		func(exechelper->cmd_arr, state);
+		func(exechelper->cmd_argv, state);
 	}
 	exit(state->last_exit_status);
 	return (builtin_type);

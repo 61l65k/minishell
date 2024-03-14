@@ -30,13 +30,13 @@ int	get_command(t_list *arg_list, t_command *command)
 		vec_free(&command->io_vec);
 		return (FAILURE);
 	}
-	command->args = lst_to_2darray(arg_list);
-	if (command->args == NULL)
+	command->argv = lst_to_2darray(arg_list);
+	if (command->argv == NULL)
 	{
 		vec_free(&command->io_vec);
 		return (FAILURE);
 	}
-	remove_redirections_from_args(command->args, arg_list);
+	remove_redirections_from_args(command->argv, arg_list);
 	command->fd_stdin_backup = -1;
 	command->fd_stdout_backup = -1;
 	return (SUCCESS);
