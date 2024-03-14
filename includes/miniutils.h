@@ -121,7 +121,6 @@ typedef struct s_lsthelper
 	t_list					*new_node;
 	size_t					arg_len;
 	bool					in_quotes;
-	t_parsehelper			*ph;
 	t_list					*current_parent;
 	int						parenthesis_level;
 }							t_lsthelper;
@@ -134,7 +133,7 @@ void						free_str_array(char **str_arr);
 void						free_and_null_str_array(char ***str_arr_ptr);
 int							ft_parseinput(t_shellstate *state);
 char						*trim_spaces(const char *str);
-t_list						*str_to_lst(const char *str, t_parsehelper *ph);
+t_list						*str_to_lst(const char *str, t_lsthelper *lh);
 int							ft_isenv_var(int c);
 void						parse_cmd_char(t_parsehelper *h,
 								t_shellstate *state);

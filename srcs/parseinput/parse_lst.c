@@ -57,7 +57,6 @@ void	start_sublist(t_lsthelper *lh)
 	t_list	*new_node;
 	t_list	*head_node;
 
-	//	printf("start lh arg %s\n", lh->arg);
 	trimmed_content = ft_strndup(lh->arg + 1, lh->arg_len - 1);
 	printf("trimmed start lh arg %s\n", trimmed_content);
 	new_node = ft_lstnew(trimmed_content);
@@ -166,20 +165,16 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 	return (lh->head);
 }
 
-t_list	*str_to_lst(const char *str, t_parsehelper *ph)
+t_list	*str_to_lst(const char *str, t_lsthelper *lh)
 {
-	t_lsthelper	lh;
-
-	if (str == NULL)
+	if (!str)
 		return (NULL);
-	lh = (t_lsthelper){0};
-	lh.ph = ph;
-	lh.start = str;
-	lh.end = str + ft_strlen(str) - 1;
-	while (*lh.start && (*lh.start == ' ' || *lh.start == '\t'))
-		lh.start++;
-	while (lh.end > lh.start && (*lh.end == ' ' || *lh.end == '\t'))
-		lh.end--;
-	lh.length = lh.end - lh.start + 1;
-	return (allocate_lst(&lh));
+	lh->start = str;
+	lh->end = str + ft_strlen(str) - 1;
+	while (*lh->start && (*lh->start == ' ' || *lh->start == '\t'))
+		lh->start++;
+	while (lh->end > lh->start && (*lh->end == ' ' || *lh->end == '\t'))
+		lh->end--;
+	lh->length = lh->end - lh->start + 1;
+	return (allocate_lst(lh));
 }
