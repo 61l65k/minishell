@@ -23,6 +23,5 @@ t_list	*ft_lstnew(void *content)
 	node->ambiguous_redirect = false;
 	node->type = IO_NONE;
 	node->next = NULL;
-	node->subshell = NULL;
 	return (node);
 }

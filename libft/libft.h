@@ -40,8 +40,6 @@ typedef struct s_list
 	bool			ambiguous_redirect;
 	t_io_type		type;
 	struct s_list	*next;
-	struct s_list	*subshell;
-	struct s_list	*parent;
 }					t_list;
 
 int					ft_isupper(int c);

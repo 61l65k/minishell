@@ -43,8 +43,7 @@ static int	handle_wildcard(t_lsthelper *lh)
 		ft_lstclear(&lh->wcard.prev->next, free);
 		lh->current = lh->wcard.prev;
 		create_add_node_wcard(lh, lh->arg);
-		lh->current->ambiguous_redirect = \
-		get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
+		lh->current->ambiguous_redirect = get_io_type(lh->wcard.prev->content) != IO_IN_HEREDOC;
 	}
 	if (!lh->wcard.match_count)
 		create_add_node_wcard(lh, lh->arg);
@@ -101,14 +100,13 @@ static t_list	*allocate_lst(t_lsthelper *lh)
 	return (lh->head);
 }
 
-t_list	*str_to_lst(const char *str, t_parsehelper *ph)
+t_list	*str_to_lst(const char *str)
 {
 	t_lsthelper	lh;
 
 	if (str == NULL)
 		return (NULL);
 	lh = (t_lsthelper){0};
-	lh.ph = ph;
 	lh.start = str;
 	lh.end = str + ft_strlen(str) - 1;
 	while (*lh.start && (*lh.start == ' ' || *lh.start == '\t'))

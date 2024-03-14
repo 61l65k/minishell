@@ -92,14 +92,14 @@ static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
 	return (free(h->curr_cmd), h->commands);
 }
 
-static int	process_str_to_lst(t_parsehelper *ph, t_shellstate *s)
+static int	process_str_to_lst(t_shellstate *s)
 {
 	int	i;
 
 	i = -1;
 	while (++i < s->cmd_count)
 	{
-		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i], ph);
+		s->parsed_cmds[i] = str_to_lst(s->parsed_args[i]);
 		if (s->parsed_cmds[i] == NULL)
 		{
 			if ((i == 0 && is_spaces(s->parsed_args[i])))
@@ -134,5 +134,5 @@ int	ft_parseinput(t_shellstate *s)
 	s->parsed_cmds = ft_calloc(s->cmd_count + 1, sizeof(t_list *));
 	if (!s->parsed_cmds)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	return (process_str_to_lst(&ph, s));
+	return (process_str_to_lst(s));
 }
