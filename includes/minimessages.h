@@ -29,11 +29,13 @@ delimited by end-of-file (wanted `%s')\n"
 token `newline'\n"
 # define SIGINT_EXIT 130
 # ifdef __APPLE__
-#  define EXIT_INVALID_ARG 255
 #  define MAC_OS 1
+#  define EXIT_INVALID_ARG 255
+#  define FD_EXIT_MSG STDERR_FILENO
 # else
-#  define EXIT_INVALID_ARG 2
 #  define MAC_OS 0
+#  define EXIT_INVALID_ARG 2
+#  define FD_EXIT_MSG STDOUT_FILENO
 # endif
 
 typedef enum e_charflag_bits

@@ -99,7 +99,7 @@ void	ft_execvp(const char *file, char *const argv[], char *const envp[])
 	else if (ft_strchr(cmd_path, '/') == NULL)
 		exec_error_exit(cmd_path, "command not found", 127);
 	else if (is_directory(cmd_path))
-		exec_error_exit(cmd_path, "Is a directory", 126);
+		exec_error_exit(cmd_path, "is a directory", 126);
 	else if (access(cmd_path, F_OK) != 0)
 		exec_error_exit(cmd_path, "No such file or directory", 127);
 	else if (access(cmd_path, X_OK) != 0)
