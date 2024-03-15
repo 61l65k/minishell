@@ -12,6 +12,7 @@
 
 #include "builtin.h"
 #include "minishell.h"
+#include <unistd.h>
 
 /**
  * @brief Takes input from the user and stores it in state->input_string.
@@ -27,7 +28,11 @@ static void	ft_takeinput(t_shellstate *state)
 	ft_strncat(prompt, RESET_E "$ ", sizeof(prompt));
 	state->input_string = readline(prompt);
 	if (state->input_string == NULL)
-		ft_free_exit(state, "exit", EXIT_SUCCESS);
+	{
+		if (isatty(STDIN_FILENO))
+			ft_fprintf(STDERR_FILENO, "exit\n");
+		ft_free_exit(state, NULL, EXIT_SUCCESS);
+	}
 	if (ft_strlen(state->input_string))
 		add_history(state->input_string);
 	check_g_signal_flag(state);

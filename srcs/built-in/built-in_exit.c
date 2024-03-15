@@ -12,12 +12,15 @@
 
 #include "minishell.h"
 
-long	str_to_long(const char *str)
+long	str_to_long(const char *str, int *overflow)
 {
 	long	result;
 	long	sign;
 	long	tmp;
 
+	*overflow = 0;
+	if (ft_strcmp(str, "-9223372036854775808") == 0)
+		return (LONG_MIN);
 	sign = 1;
 	if (*str == '-' || *str == '+')
 	{
@@ -31,9 +34,9 @@ long	str_to_long(const char *str)
 		tmp = result;
 		result = result * 10 + (*str++ - '0');
 		if (tmp > result && sign == 1)
-			return (LONG_MAX);
+			return (*overflow = 1, (LONG_MAX));
 		else if (tmp > result && sign == -1)
-			return (LONG_MIN);
+			return (*overflow = -1, (LONG_MIN));
 	}
 	return (result * sign);
 }
@@ -59,14 +62,15 @@ static int	is_numeric(const char *str)
 void	builtin_exit(char **args, t_shellstate *state)
 {
 	long	exit_code;
+	int		overflow;
 
 	exit_code = 0;
-	if (state->is_child_process == false)
+	if (state->is_child_process == false && isatty(STDIN_FILENO))
 		ft_fprintf(STDERR_FILENO, "exit\n");
 	if (args[1])
 	{
-		exit_code = str_to_long(args[1]);
-		if (!is_numeric(args[1]) || exit_code < INT_MIN || exit_code > INT_MAX)
+		exit_code = str_to_long(args[1], &overflow);
+		if (overflow != 0 || !is_numeric(args[1]))
 		{
 			ft_fprintf(STDERR_FILENO,
 				"minishell: exit: %s: numeric argument required\n", args[1]);
