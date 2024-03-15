@@ -48,6 +48,12 @@ void	builtin_unset(char **args, t_shellstate *state)
 	i = 0;
 	while (args[++i])
 	{
+		if (MAC_OS && !env_name_is_valid(args[i]))
+		{
+			state->last_exit_status = 1;
+			ft_fprintf(STDERR_FILENO,
+				"minishell: export: `%s': not a valid identifier\n", args[i]);
+		}
 		ptr_to_value = ft_getenv(args[i], state->envp);
 		if (ptr_to_value)
 			remove_env_var(args[i], state);
