@@ -11,31 +11,36 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "miniutils.h"
 
-static int	validation_loop(t_shellstate *s, t_operatorhelper *op)
+static int	validation_loop(t_shellstate *s, t_operatorhelper *op,
+							t_parsehelper *ph)
 {
-	while (s->input_string[op->i])
+	int		paren_depth;
+
+	paren_depth = 0;
+	while (s->input_string[ph->i])
 	{
-		if (s->input_string[op->i] == '\'' && !op->in_double_quote)
-			op->in_single_quote = !op->in_single_quote;
-		else if (s->input_string[op->i] == '"' && !op->in_single_quote)
-			op->in_double_quote = !op->in_double_quote;
-		if (!op->in_single_quote && !op->in_double_quote)
+		if (s->input_string[ph->i] == '\'' && !ph->in_double_quote)
+			ph->in_single_quote = !ph->in_single_quote;
+		else if (s->input_string[ph->i] == '"' && !ph->in_single_quote)
+			ph->in_double_quote = !ph->in_double_quote;
+		if (!ph->in_single_quote && !ph->in_double_quote)
 		{
-			if (check_parentheses(op, s) == FAILURE)
+			if (check_parentheses(&paren_depth, s, ph) == FAILURE)
 				return (FAILURE);
-			ensure_mem_cpy_op(op, check_for_op(op, s, -1), s);
+			ensure_mem_cpy_op(op, check_for_op(ph, s, -1), s);
 		}
-		op->i++;
+		ph->i++;
 	}
-	if (op->in_single_quote || op->in_double_quote)
+	if (ph->in_single_quote || ph->in_double_quote)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), FAILURE);
-	if (op->paren_depth != 0)
+	if (paren_depth != 0)
 		return (ft_putstr_fd(ERR_PARENTHESES, STDERR_FILENO), FAILURE);
 	return (SUCCESS);
 }
 
-static int	count_op_cmds(t_shellstate *s, int *cmd_count)
+static int	count_op_cmds(t_shellstate *s, t_parsehelper *ph)
 {
 	t_operatorhelper	op;
 
@@ -45,7 +50,7 @@ static int	count_op_cmds(t_shellstate *s, int *cmd_count)
 	op.ops = ft_calloc(op.operators_capacity, sizeof(t_operators));
 	if (!op.ops)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	if (validation_loop(s, &op) == FAILURE)
+	if (validation_loop(s, &op, ph) == FAILURE)
 		return (free(op.ops), FAILURE);
 	s->operators = ft_realloc(s->operators, (op.cmd_count - 1)
 			* sizeof(t_operators), op.cmd_count * sizeof(t_operators));
@@ -55,32 +60,35 @@ static int	count_op_cmds(t_shellstate *s, int *cmd_count)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	}
 	ft_memcpy(s->operators, op.ops, op.cmd_count * sizeof(t_operators));
-	*cmd_count = op.cmd_count;
+	ph->command_count = op.cmd_count;
 	return (free(op.ops), SUCCESS);
 }
 
-static char	**split_cmds(t_shellstate *state, t_parsehelper *h)
+static char	**split_cmds(t_shellstate *state, t_parsehelper *ph)
 {
-	h->i = -1;
-	h->alloc_size = ft_strlen(state->input_string) + 1;
-	if (count_op_cmds(state, &h->command_count) != SUCCESS)
+	if (count_op_cmds(state, ph) != SUCCESS)
 		return (NULL);
-	h->commands = ft_calloc(h->command_count + 1, sizeof(char *));
-	h->curr_cmd = ft_calloc(h->alloc_size, 1);
-	if (!h->commands || !h->curr_cmd)
+	ph->in_double_quote = false;
+	ph->in_double_quote = false;
+	ph->j = 0;
+	ph->i = -1;
+	ph->alloc_size = ft_strlen(state->input_string) + 1;
+	ph->commands = ft_calloc(ph->command_count + 1, sizeof(char *));
+	ph->curr_cmd = ft_calloc(ph->alloc_size, 1);
+	if (!ph->commands || !ph->curr_cmd)
 		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-	while (state->input_string[++h->i] != '\0')
-		parse_character(h, state);
-	h->curr_cmd[h->j] = '\0';
-	if (h->j > 0 && h->command_index < h->command_count)
+	while (state->input_string[++ph->i] != '\0')
+		parse_character(ph, state);
+	ph->curr_cmd[ph->j] = '\0';
+	if (ph->j > 0 && ph->command_index < ph->command_count)
 	{
-		h->commands[h->command_index++] = ft_strdup(h->curr_cmd);
-		if (!h->commands[h->command_index - 1])
+		ph->commands[ph->command_index++] = ft_strdup(ph->curr_cmd);
+		if (!ph->commands[ph->command_index - 1])
 			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
 	}
-	if (h->command_index < h->command_count)
-		h->commands[h->command_index] = NULL;
-	return (free(h->curr_cmd), h->commands);
+	if (ph->command_index < ph->command_count)
+		ph->commands[ph->command_index] = NULL;
+	return (free(ph->curr_cmd), ph->commands);
 }
 
 static int	process_str_to_lst(t_shellstate *s)

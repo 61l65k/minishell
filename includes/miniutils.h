@@ -136,7 +136,8 @@ int							ft_isenv_var(int c);
 void						parse_character(t_parsehelper *h,
 								t_shellstate *state);
 void						ensure_mem_for_buff(t_parsehelper *h,
-								t_shellstate *state, size_t additional_length);
+								t_shellstate *s,
+								size_t additional_length, bool op_buff);
 void						init_char_flags(t_envhelper *eh, char *c,
 								t_parsehelper *h);
 int							handle_redirect(t_exechelper *eh);
@@ -144,10 +145,10 @@ int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
 int							handle_quoted(t_lsthelper *t);
-t_operators					check_for_op(t_operatorhelper *op,
+t_operators					check_for_op(t_parsehelper *op,
 								t_shellstate *state, int index);
-int							check_parentheses(t_operatorhelper *op,
-								t_shellstate *s);
+int							check_parentheses(int *paren_depth, t_shellstate *s,
+								t_parsehelper *ph);
 bool						is_prev_redirector(const t_list *prev);
 void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);

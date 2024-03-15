@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "miniutils.h"
 
 void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
 		t_shellstate *s)
@@ -37,11 +38,11 @@ void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
 	op->cmd_count++;
 }
 
-t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state, int index)
+t_operators	check_for_op(t_parsehelper *ph, t_shellstate *state, int index)
 {
 	int	i;
 
-	i = op->i;
+	i = ph->i;
 	if (index != -1)
 		i = index;
 	if (ft_strncmp(state->input_string + i, "&&", 2) == 0)
@@ -53,20 +54,24 @@ t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state, int index)
 	return (OP_NONE);
 }
 
-void	ensure_mem_for_buff(t_parsehelper *h, t_shellstate *state,
-		size_t additional_length)
+void	ensure_mem_for_buff(t_parsehelper *h, t_shellstate *s,
+		size_t additional_length, bool op_buff)
 {
 	size_t	required_size;
 	size_t	new_size;
-	char	*new_command;
+	void	*new_command;
+	void	*buff;
 
+	buff = h->curr_cmd;
+	if (op_buff)
+		buff = s->operators;
 	required_size = h->j + additional_length + 1;
 	if (required_size > h->alloc_size)
 	{
 		new_size = required_size * 2;
-		new_command = ft_realloc(h->curr_cmd, h->alloc_size, new_size);
+		new_command = ft_realloc(buff, h->alloc_size, new_size);
 		if (!new_command)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 		h->curr_cmd = new_command;
 		h->alloc_size = new_size;
 	}

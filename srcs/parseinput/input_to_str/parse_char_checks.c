@@ -29,29 +29,29 @@ int	adjust_index_for_parentheses_check(const char *str, int i, bool adjust_next)
 	return (i);
 }
 
-int	check_parentheses(t_operatorhelper *op, t_shellstate *s)
+int	check_parentheses(int *paren_depth, t_shellstate *s, t_parsehelper *ph)
 {
-	const char	*current_char = &s->input_string[op->i];
+	const char	*current_char = &s->input_string[ph->i];
 	const int	prev_index = adjust_index_for_parentheses_check(s->input_string,
-			op->i - 1, false);
+			ph->i - 1, false);
 	const int	next_index = adjust_index_for_parentheses_check(s->input_string,
-			op->i + 1, true);
+			ph->i + 1, true);
 
 	if (*current_char == '(')
 	{
-		if (op->i != 0 && prev_index >= 0 && check_for_op(op, s,
+		if (ph->i != 0 && prev_index >= 0 && check_for_op(ph, s,
 				prev_index) == OP_NONE && *(current_char - 1) != '(')
 			return (print_syntax_err("(", NULL), FAILURE);
-		op->paren_depth++;
+		*paren_depth += 1;
 	}
 	else if (*current_char == ')')
 	{
-		if (op->paren_depth <= 0)
+		if (*paren_depth <= 0)
 			return (print_syntax_err(")", NULL), FAILURE);
-		if (s->input_string[next_index] != '\0' && check_for_op(op, s,
+		if (s->input_string[next_index] != '\0' && check_for_op(ph, s,
 				next_index) == OP_NONE && *(current_char + 1) != ')')
 			return (print_syntax_err(")", NULL), FAILURE);
-		op->paren_depth--;
+		*paren_depth -= 1;
 	}
 	return (SUCCESS);
 }
@@ -63,7 +63,8 @@ void	handle_tilda(t_parsehelper *h, t_shellstate *state)
 
 	if (tilda)
 	{
-		ensure_mem_for_buff(h, state, ft_strlen(h->curr_cmd) + til_len + 1);
+		ensure_mem_for_buff(h, state, ft_strlen(h->curr_cmd) \
+							+ til_len + 1, false);
 		ft_strncat(h->curr_cmd, tilda, til_len);
 		h->j = ft_strlen(h->curr_cmd);
 	}
@@ -76,14 +77,14 @@ int	ft_checkdollar(t_shellstate *s, t_parsehelper *h)
 	if (!h->in_single_quote && !h->in_double_quote && (*(c + 1) == ' ' || *(c
 				+ 1) == '\0'))
 	{
-		ensure_mem_for_buff(h, s, 1);
+		ensure_mem_for_buff(h, s, 1, false);
 		h->curr_cmd[h->j++] = *c;
 		return (1);
 	}
 	else if ((h->in_single_quote || h->in_double_quote) && (*(c + 1) == '\''
 			|| *(c + 1) == '"' || *(c + 1) == ' ' || *(c + 1) == '$'))
 	{
-		ensure_mem_for_buff(h, s, 1);
+		ensure_mem_for_buff(h, s, 1, false);
 		h->curr_cmd[h->j++] = *c;
 		return (1);
 	}
