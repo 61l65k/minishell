@@ -65,7 +65,7 @@ void	builtin_exit(char **args, t_shellstate *state)
 	int		overflow;
 
 	exit_code = 0;
-	if (state->is_child_process == false)
+	if (state->is_child_process == false && isatty(STDIN_FILENO))
 		ft_fprintf(STDERR_FILENO, "exit\n");
 	if (args[1])
 	{
