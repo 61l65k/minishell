@@ -31,11 +31,9 @@ token `newline'\n"
 # ifdef __APPLE__
 #  define MAC_OS 1
 #  define EXIT_INVALID_ARG 255
-#  define FD_EXIT_MSG STDERR_FILENO
 # else
 #  define MAC_OS 0
 #  define EXIT_INVALID_ARG 2
-#  define FD_EXIT_MSG STDOUT_FILENO
 # endif
 
 typedef enum e_charflag_bits

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 12:33:49 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/09 00:02:48 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/15 22:31:48 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	builtin_exit(char **args, t_shellstate *state)
 
 	exit_code = 0;
 	if (state->is_child_process == false)
-		ft_fprintf(FD_EXIT_MSG, "exit\n");
+		ft_fprintf(STDERR_FILENO, "exit\n");
 	if (args[1])
 	{
 		exit_code = str_to_long(args[1]);
@@ -75,7 +75,7 @@ void	builtin_exit(char **args, t_shellstate *state)
 		}
 		if (args[2])
 		{
-			ft_putendl_fd("minishell: exit: too many arguments", STDERR_FILENO);
+			ft_fprintf(STDERR_FILENO, "minishell: exit: too many arguments\n");
 			state->last_exit_status = 1;
 			return ;
 		}

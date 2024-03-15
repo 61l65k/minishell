@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/08 16:34:27 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/15 22:24:23 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,7 @@ int	main(int argc, char **argv, const char **envp)
 	vec_new(&state.pid, 10, sizeof(pid_t));
 	if (!state.envp || state.pid.memory == NULL)
 		ft_free_exit(&state, ERR_MALLOC, EXIT_FAILURE);
-	if (MAC_OS)
-		remove_env_var("OLDPWD", &state);
+	remove_env_var("OLDPWD", &state);
 	while (1)
 	{
 		ft_free_resets(&state);
