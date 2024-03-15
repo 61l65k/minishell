@@ -16,7 +16,8 @@ int	update_fds(char *filename, t_redirecthelper *rh, bool fd_out)
 {
 	if (rh->fd == -1 && filename)
 	{
-		perror(filename);
+		ft_fprintf(STDERR_FILENO,
+			"minishell: %s: %s\n", filename, strerror(errno));
 		if (rh->last_out_fd != -1)
 			close(rh->last_out_fd);
 		return (FAILURE);

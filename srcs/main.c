@@ -46,6 +46,8 @@ int	main(int argc, char **argv, const char **envp)
 	vec_new(&state.pid, 10, sizeof(pid_t));
 	if (!state.envp || state.pid.memory == NULL)
 		ft_free_exit(&state, ERR_MALLOC, EXIT_FAILURE);
+	if (MAC_OS)
+		remove_env_var("OLDPWD", &state);
 	while (1)
 	{
 		ft_free_resets(&state);
