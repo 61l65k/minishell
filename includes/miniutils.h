@@ -136,7 +136,8 @@ int							ft_isenv_var(int c);
 void						parse_character(t_parsehelper *h,
 								t_shellstate *state);
 void						ensure_mem_for_buff(t_parsehelper *h,
-								t_shellstate *state, size_t additional_length);
+								t_shellstate *s,
+								size_t additional_length, bool op_buff);
 void						init_char_flags(t_envhelper *eh, char *c,
 								t_parsehelper *h);
 int							handle_redirect(t_exechelper *eh);
