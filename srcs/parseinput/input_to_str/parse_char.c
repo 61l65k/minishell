@@ -58,7 +58,8 @@ static void	expand_env_variable(t_parsehelper *h, t_shellstate *state,
 	if (eh->var_value)
 	{
 		eh->val_len = ft_strlen(eh->var_value);
-		ensure_mem_for_buff(h, state, ft_strlen(h->curr_cmd) + eh->val_len + 1, false);
+		ensure_mem_for_buff(h, state, ft_strlen(h->curr_cmd) \
+							+ eh->val_len + 1, false);
 		ft_strncat(h->curr_cmd, eh->var_value, eh->val_len);
 		h->j = ft_strlen(h->curr_cmd);
 	}

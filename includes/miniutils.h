@@ -145,10 +145,10 @@ int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
 int							handle_quoted(t_lsthelper *t);
-t_operators					check_for_op(t_operatorhelper *op,
+t_operators					check_for_op(t_parsehelper *op,
 								t_shellstate *state, int index);
-int							check_parentheses(t_operatorhelper *op,
-								t_shellstate *s);
+int							check_parentheses(int *paren_depth, t_shellstate *s,
+								t_parsehelper *ph);
 bool						is_prev_redirector(const t_list *prev);
 void						ensure_mem_cpy_op(t_operatorhelper *op,
 								t_operators operator_type, t_shellstate *state);

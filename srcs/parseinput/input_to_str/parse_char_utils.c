@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "miniutils.h"
 
 void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
 		t_shellstate *s)
@@ -37,11 +38,11 @@ void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
 	op->cmd_count++;
 }
 
-t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state, int index)
+t_operators	check_for_op(t_parsehelper *ph, t_shellstate *state, int index)
 {
 	int	i;
 
-	i = op->i;
+	i = ph->i;
 	if (index != -1)
 		i = index;
 	if (ft_strncmp(state->input_string + i, "&&", 2) == 0)
