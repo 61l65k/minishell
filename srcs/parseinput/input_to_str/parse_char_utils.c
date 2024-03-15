@@ -14,13 +14,13 @@
 #include "miniutils.h"
 #include <stdbool.h>
 
-void	append_operators(t_operators operator_type, t_shellstate *s,
+void	append_operator(t_operators operator_type, t_shellstate *s,
 		t_parsehelper *ph)
 {
 	if (operator_type != OP_NONE)
 	{
 		ph->i += (operator_type == OP_OR || operator_type == OP_AND);
-		ensure_mem_for_buff(ph, s, 1, true);
+		ensure_mem_for_buff(ph, s, 1, s->operators);
 		s->operators[ph->j++] = operator_type;
 		ph->command_count++;
 	}
@@ -43,16 +43,12 @@ t_operators	check_for_op(t_parsehelper *ph, t_shellstate *s, int index)
 }
 
 void	ensure_mem_for_buff(t_parsehelper *ph, t_shellstate *s,
-		size_t additional_length, bool op_buff)
+		size_t additional_length, void *buff)
 {
 	size_t	required_size;
 	size_t	new_size;
 	void	*new_command;
-	void	*buff;
 
-	buff = ph->curr_cmd;
-	if (op_buff)
-		buff = s->operators;
 	required_size = ph->j + additional_length + 1;
 	if (required_size > ph->alloc_size)
 	{

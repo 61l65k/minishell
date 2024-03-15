@@ -64,7 +64,7 @@ void	handle_tilda(t_parsehelper *h, t_shellstate *state)
 	if (tilda)
 	{
 		ensure_mem_for_buff(h, state, ft_strlen(h->curr_cmd) + til_len + 1,
-			false);
+			h->curr_cmd);
 		ft_strncat(h->curr_cmd, tilda, til_len);
 		h->j = ft_strlen(h->curr_cmd);
 	}
@@ -77,14 +77,14 @@ int	ft_checkdollar(t_shellstate *s, t_parsehelper *h)
 	if (!h->in_single_quote && !h->in_double_quote && (*(c + 1) == ' ' || *(c
 				+ 1) == '\0'))
 	{
-		ensure_mem_for_buff(h, s, 1, false);
+		ensure_mem_for_buff(h, s, 1, h->curr_cmd);
 		h->curr_cmd[h->j++] = *c;
 		return (1);
 	}
 	else if ((h->in_single_quote || h->in_double_quote) && (*(c + 1) == '\''
 			|| *(c + 1) == '"' || *(c + 1) == ' ' || *(c + 1) == '$'))
 	{
-		ensure_mem_for_buff(h, s, 1, false);
+		ensure_mem_for_buff(h, s, 1, h->curr_cmd);
 		h->curr_cmd[h->j++] = *c;
 		return (1);
 	}

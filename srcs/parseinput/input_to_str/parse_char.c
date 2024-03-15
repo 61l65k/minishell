@@ -59,7 +59,7 @@ static void	expand_env_variable(t_parsehelper *h, t_shellstate *state,
 	{
 		eh->val_len = ft_strlen(eh->var_value);
 		ensure_mem_for_buff(h, state, ft_strlen(h->curr_cmd) \
-							+ eh->val_len + 1, false);
+							+ eh->val_len + 1, h->curr_cmd);
 		ft_strncat(h->curr_cmd, eh->var_value, eh->val_len);
 		h->j = ft_strlen(h->curr_cmd);
 	}
@@ -74,7 +74,7 @@ static void	separate_redir_with_spaces(t_parsehelper *h, t_shellstate *state)
 				+ 1) != '\0');
 	const bool	is_double_redir = (*(c + 1) == *c);
 
-	ensure_mem_for_buff(h, state, 5, false);
+	ensure_mem_for_buff(h, state, 5, h->curr_cmd);
 	if (space_before)
 		h->curr_cmd[h->j++] = ' ';
 	h->curr_cmd[h->j++] = *c;
@@ -114,7 +114,7 @@ static void	handle_non_quoted_char(t_parsehelper *h, t_shellstate *state,
 	}
 	else
 	{
-		ensure_mem_for_buff(h, state, 1, false);
+		ensure_mem_for_buff(h, state, 1, h->curr_cmd);
 		h->curr_cmd[h->j++] = state->input_string[h->i];
 	}
 }

@@ -123,9 +123,9 @@ t_list						*str_to_lst(const char *str, t_shellstate *s);
 int							ft_isenv_var(int c);
 void						parse_character(t_parsehelper *h,
 								t_shellstate *state);
-void						ensure_mem_for_buff(t_parsehelper *h,
+void						ensure_mem_for_buff(t_parsehelper *ph,
 								t_shellstate *s, size_t additional_length,
-								bool op_buff);
+								void *buff);
 void						init_char_flags(t_envhelper *eh, char *c,
 								t_parsehelper *h);
 int							handle_redirect(t_exechelper *eh);
@@ -138,7 +138,7 @@ t_operators					check_for_op(t_parsehelper *op, t_shellstate *state,
 int							check_parentheses(int *paren_depth, t_shellstate *s,
 								t_parsehelper *ph);
 bool						is_prev_redirector(const t_list *prev);
-void						append_operators(t_operators operator_type,
+void						append_operator(t_operators operator_type,
 								t_shellstate *s, t_parsehelper *ph);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);

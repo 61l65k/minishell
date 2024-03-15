@@ -29,7 +29,7 @@ static int	validation_loop(t_shellstate *s, t_parsehelper *ph)
 		{
 			if (check_parentheses(&parentheses_depth, s, ph) == FAILURE)
 				return (FAILURE);
-			append_operators(check_for_op(ph, s, -1), s, ph);
+			append_operator(check_for_op(ph, s, -1), s, ph);
 		}
 		ph->i++;
 	}
