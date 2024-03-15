@@ -12,49 +12,37 @@
 
 #include "minishell.h"
 #include "miniutils.h"
+#include <stdbool.h>
 
-void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
-		t_shellstate *s)
+void	append_operators(t_operators operator_type, t_shellstate *s,
+		t_parsehelper *ph)
 {
-	size_t		new_capacity;
-	t_operators	*new_operators;
-
-	if (operator_type == OP_NONE)
-		return ;
-	if (operator_type == OP_HEREDOC || operator_type == OP_APPEND
-		|| operator_type == OP_OR || operator_type == OP_AND)
-		op->i++;
-	if ((size_t)op->cmd_count >= op->operators_capacity)
+	if (operator_type != OP_NONE)
 	{
-		new_capacity = op->operators_capacity * 2;
-		new_operators = ft_realloc(op->ops, op->operators_capacity
-				* sizeof(t_operators), new_capacity * sizeof(t_operators));
-		if (!new_operators)
-			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-		op->ops = new_operators;
-		op->operators_capacity = new_capacity;
+		ph->i += (operator_type == OP_OR || operator_type == OP_AND);
+		ensure_mem_for_buff(ph, s, 1, true);
+		s->operators[ph->j++] = operator_type;
+		ph->command_count++;
 	}
-	op->ops[op->ops_i++] = operator_type;
-	op->cmd_count++;
 }
 
-t_operators	check_for_op(t_parsehelper *ph, t_shellstate *state, int index)
+t_operators	check_for_op(t_parsehelper *ph, t_shellstate *s, int index)
 {
 	int	i;
 
 	i = ph->i;
 	if (index != -1)
 		i = index;
-	if (ft_strncmp(state->input_string + i, "&&", 2) == 0)
+	if (ft_strncmp(s->input_string + i, "&&", 2) == 0)
 		return (OP_AND);
-	if (ft_strncmp(state->input_string + i, "||", 2) == 0)
+	if (ft_strncmp(s->input_string + i, "||", 2) == 0)
 		return (OP_OR);
-	if (state->input_string[i] == '|')
+	if (s->input_string[i] == '|')
 		return (OP_PIPE);
 	return (OP_NONE);
 }
 
-void	ensure_mem_for_buff(t_parsehelper *h, t_shellstate *s,
+void	ensure_mem_for_buff(t_parsehelper *ph, t_shellstate *s,
 		size_t additional_length, bool op_buff)
 {
 	size_t	required_size;
@@ -62,18 +50,18 @@ void	ensure_mem_for_buff(t_parsehelper *h, t_shellstate *s,
 	void	*new_command;
 	void	*buff;
 
-	buff = h->curr_cmd;
+	buff = ph->curr_cmd;
 	if (op_buff)
 		buff = s->operators;
-	required_size = h->j + additional_length + 1;
-	if (required_size > h->alloc_size)
+	required_size = ph->j + additional_length + 1;
+	if (required_size > ph->alloc_size)
 	{
 		new_size = required_size * 2;
-		new_command = ft_realloc(buff, h->alloc_size, new_size);
+		new_command = ft_realloc(buff, ph->alloc_size, new_size);
 		if (!new_command)
-			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-		h->curr_cmd = new_command;
-		h->alloc_size = new_size;
+			return (ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE));
+		ph->curr_cmd = new_command;
+		ph->alloc_size = new_size;
 	}
 }
 

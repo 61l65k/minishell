@@ -10,15 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 #include "miniutils.h"
 
-static int	validation_loop(t_shellstate *s, t_operatorhelper *op,
-							t_parsehelper *ph)
+static int	validation_loop(t_shellstate *s, t_parsehelper *ph)
 {
-	int		paren_depth;
+	int	parentheses_depth;
 
-	paren_depth = 0;
+	parentheses_depth = 0;
 	while (s->input_string[ph->i])
 	{
 		if (s->input_string[ph->i] == '\'' && !ph->in_double_quote)
@@ -27,46 +27,34 @@ static int	validation_loop(t_shellstate *s, t_operatorhelper *op,
 			ph->in_double_quote = !ph->in_double_quote;
 		if (!ph->in_single_quote && !ph->in_double_quote)
 		{
-			if (check_parentheses(&paren_depth, s, ph) == FAILURE)
+			if (check_parentheses(&parentheses_depth, s, ph) == FAILURE)
 				return (FAILURE);
-			ensure_mem_cpy_op(op, check_for_op(ph, s, -1), s);
+			append_operators(check_for_op(ph, s, -1), s, ph);
 		}
 		ph->i++;
 	}
 	if (ph->in_single_quote || ph->in_double_quote)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), FAILURE);
-	if (paren_depth != 0)
+	if (parentheses_depth != 0)
 		return (ft_putstr_fd(ERR_PARENTHESES, STDERR_FILENO), FAILURE);
 	return (SUCCESS);
 }
 
-static int	count_op_cmds(t_shellstate *s, t_parsehelper *ph)
+static int	validate_input(t_shellstate *s, t_parsehelper *ph)
 {
-	t_operatorhelper	op;
-
-	op = (t_operatorhelper){0};
-	op.operators_capacity = 100;
-	op.cmd_count = 1;
-	op.ops = ft_calloc(op.operators_capacity, sizeof(t_operators));
-	if (!op.ops)
-		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	if (validation_loop(s, &op, ph) == FAILURE)
-		return (free(op.ops), FAILURE);
-	s->operators = ft_realloc(s->operators, (op.cmd_count - 1)
-			* sizeof(t_operators), op.cmd_count * sizeof(t_operators));
+	ph->alloc_size = 100;
+	ph->command_count = 1;
+	s->operators = malloc(ph->alloc_size * sizeof(t_operators));
 	if (!s->operators)
-	{
-		free(op.ops);
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-	}
-	ft_memcpy(s->operators, op.ops, op.cmd_count * sizeof(t_operators));
-	ph->command_count = op.cmd_count;
-	return (free(op.ops), SUCCESS);
+	if (validation_loop(s, ph) == FAILURE)
+		return (free(s->operators), FAILURE);
+	return (SUCCESS);
 }
 
-static char	**split_cmds(t_shellstate *state, t_parsehelper *ph)
+static char	**split_input(t_shellstate *state, t_parsehelper *ph)
 {
-	if (count_op_cmds(state, ph) != SUCCESS)
+	if (validate_input(state, ph) != SUCCESS)
 		return (NULL);
 	ph->in_double_quote = false;
 	ph->in_double_quote = false;
@@ -120,7 +108,7 @@ int	ft_parseinput(t_shellstate *s)
 	t_parsehelper	ph;
 
 	ph = (t_parsehelper){0};
-	s->parsed_args = split_cmds(s, &ph);
+	s->parsed_args = split_input(s, &ph);
 	if (!s->parsed_args)
 		return (set_exit_status(s, SYNTAX_ERROR), FAILURE);
 	while (s->parsed_args[s->cmd_count])

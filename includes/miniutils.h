@@ -42,18 +42,6 @@ typedef struct s_parsehelper
 	size_t					alloc_size;
 }							t_parsehelper;
 
-typedef struct s_operatorhelper
-{
-	bool					in_single_quote;
-	bool					in_double_quote;
-	size_t					i;
-	size_t					ops_i;
-	int						cmd_count;
-	t_operators				*ops;
-	size_t					operators_capacity;
-	int						paren_depth;
-}							t_operatorhelper;
-
 typedef struct s_exechelper
 {
 	char					**cmd_argv;
@@ -136,8 +124,8 @@ int							ft_isenv_var(int c);
 void						parse_character(t_parsehelper *h,
 								t_shellstate *state);
 void						ensure_mem_for_buff(t_parsehelper *h,
-								t_shellstate *s,
-								size_t additional_length, bool op_buff);
+								t_shellstate *s, size_t additional_length,
+								bool op_buff);
 void						init_char_flags(t_envhelper *eh, char *c,
 								t_parsehelper *h);
 int							handle_redirect(t_exechelper *eh);
@@ -145,13 +133,13 @@ int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
 int							handle_quoted(t_lsthelper *t);
-t_operators					check_for_op(t_parsehelper *op,
-								t_shellstate *state, int index);
+t_operators					check_for_op(t_parsehelper *op, t_shellstate *state,
+								int index);
 int							check_parentheses(int *paren_depth, t_shellstate *s,
 								t_parsehelper *ph);
 bool						is_prev_redirector(const t_list *prev);
-void						ensure_mem_cpy_op(t_operatorhelper *op,
-								t_operators operator_type, t_shellstate *state);
+void						append_operators(t_operators operator_type,
+								t_shellstate *s, t_parsehelper *ph);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
 void						handle_tilda(t_parsehelper *h, t_shellstate *state);
