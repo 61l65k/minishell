@@ -126,7 +126,7 @@ void						parse_character(t_parsehelper *h,
 void						ensure_mem_for_buff(t_parsehelper *ph,
 								t_shellstate *s, size_t additional_length,
 								void *buff);
-void						init_char_flags(t_envhelper *eh, char *c,
+void						init_char_flags(int *flags, char *c,
 								t_parsehelper *h);
 int							handle_redirect(t_exechelper *eh);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);

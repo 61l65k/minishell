@@ -61,26 +61,26 @@ void	ensure_mem_for_buff(t_parsehelper *ph, t_shellstate *s,
 	}
 }
 
-void	init_char_flags(t_envhelper *eh, char *c, t_parsehelper *h)
+void	init_char_flags(int *flags, char *c, t_parsehelper *h)
 {
-	*eh = (t_envhelper){0};
+	*flags = 0;
 	if ((*c == '\'' && !h->in_double_quote) || (*c == '"'
 			&& !h->in_single_quote))
 	{
 		h->in_single_quote ^= (*c == '\'');
 		h->in_double_quote ^= (*c == '"');
-		eh->flags |= (1 << QUOTE_BIT);
+		*flags |= (1 << QUOTE_BIT);
 	}
-	eh->flags |= (*c == '\\') << ESCAPED_BIT;
-	eh->flags |= (*c == '$') << ENVVAR_BIT;
+	*flags |= (*c == '\\') << ESCAPED_BIT;
+	*flags |= (*c == '$') << ENVVAR_BIT;
 	if (!h->in_single_quote && !h->in_double_quote)
 	{
-		eh->flags |= (*c == '~' && *(c - 1) == ' ' && (*(c + 1) == ' ' || *(c
+		*flags |= (*c == '~' && *(c - 1) == ' ' && (*(c + 1) == ' ' || *(c
 						+ 1) == '\0' || *(c + 1) == '/')) << TILDA_BIT;
-		eh->flags |= (*c == '|' && *(c + 1) != '|') << PIPE_BIT;
-		eh->flags |= (*c == '&' && *(c + 1) == '&') << AND_BIT;
-		eh->flags |= (*c == '|' && *(c + 1) == '|') << OR_BIT;
-		eh->flags |= ((*c == '>' && (*(c + 1) != '>')) || (*c == '<' && (*(c
+		*flags |= (*c == '|' && *(c + 1) != '|') << PIPE_BIT;
+		*flags |= (*c == '&' && *(c + 1) == '&') << AND_BIT;
+		*flags |= (*c == '|' && *(c + 1) == '|') << OR_BIT;
+		*flags |= ((*c == '>' && (*(c + 1) != '>')) || (*c == '<' && (*(c
 							+ 1) != '<')) || (*c == '>' && *(c + 1) == '>')
 				|| (*c == '<' && *(c + 1) == '<')) << REDIR_BIT;
 	}
