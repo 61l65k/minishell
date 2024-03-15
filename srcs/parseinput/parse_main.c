@@ -47,7 +47,7 @@ static int	count_op_cmds(t_shellstate *s, int *cmd_count)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	if (validation_loop(s, &op) == FAILURE)
 		return (free(op.ops), FAILURE);
-	s->operators = ft_realloc(s->operators, s->operator_count
+	s->operators = ft_realloc(s->operators, (op.cmd_count - 1)
 			* sizeof(t_operators), op.cmd_count * sizeof(t_operators));
 	if (!s->operators)
 	{
@@ -55,7 +55,6 @@ static int	count_op_cmds(t_shellstate *s, int *cmd_count)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	}
 	ft_memcpy(s->operators, op.ops, op.cmd_count * sizeof(t_operators));
-	s->operator_count = op.cmd_count - 1;
 	*cmd_count = op.cmd_count;
 	return (free(op.ops), SUCCESS);
 }
@@ -118,7 +117,6 @@ int	ft_parseinput(t_shellstate *s)
 		return (set_exit_status(s, SYNTAX_ERROR), FAILURE);
 	while (s->parsed_args[s->cmd_count])
 		s->cmd_count++;
-	s->operator_count = s->cmd_count - 1;
 	s->parsed_cmds = ft_calloc(s->cmd_count + 1, sizeof(t_list *));
 	if (!s->parsed_cmds)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
