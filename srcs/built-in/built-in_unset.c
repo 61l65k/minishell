@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static void	remove_env_var(char *var_key, t_shellstate *s)
+void	remove_env_var(char *var_key, t_shellstate *s)
 {
 	const size_t	len = ft_strlen(var_key);
 	int				i;

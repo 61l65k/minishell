@@ -24,5 +24,6 @@ bool	env_entry_is_valid(const char *entry);
 bool	env_name_is_valid(const char *name);
 int		ft_setenv(const char *name, const char *value, t_shellstate *state);
 int		ft_setenv_entry(const char *entry, t_shellstate *state);
+void	remove_env_var(char *var_key, t_shellstate *s);
 
 #endif
