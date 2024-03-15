@@ -61,7 +61,6 @@ void	ft_free_resets(t_shellstate *state)
 	if (state->operators)
 		free(state->operators);
 	state->operators = NULL;
-	state->operator_count = 0;
 }
 
 /**

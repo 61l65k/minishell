@@ -43,7 +43,6 @@ typedef struct s_shellstate
 	t_list						**parsed_cmds;
 	t_operators					*operators;
 	int							cmd_count;
-	int							operator_count;
 	int							last_exit_status;
 	bool						is_child_process;
 	char						**envp;
