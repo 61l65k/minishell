@@ -20,6 +20,7 @@ static int	handle_non_quoted(t_lsthelper *lh)
 		lh->arg = ft_strndup(lh->start + lh->arg_start, lh->arg_len);
 		if (!lh->arg)
 			return (ft_lstclear(&lh->head, free), FAILURE);
+		// printf("ARG: %s\n", lh->arg);
 		if (lh->arg[0] == '(')
 		{
 			lh->arg = ft_trimparentheses(lh, true);

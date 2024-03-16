@@ -97,6 +97,7 @@ void	handle_subshell(t_shellstate *s, t_exechelper *eh)
 		ft_free_exit(s, ERR_FORK, EXIT_FAILURE);
 	if (pid == 0)
 	{
+		// printf("IN CHILD\n");
 		s->in_subshell = true;
 		s->parsed_cmds[eh->i]->sub_type = SUB_NONE;
 		ret = ft_executecmd(s);
@@ -120,7 +121,19 @@ int	ft_executecmd(t_shellstate *state)
 	t_exechelper	eh;
 	int				offset;
 
+	// t_list			*tmp;
+	/*for (t_list **lst = state->parsed_cmds; *lst; lst++)
+	{
+		tmp = *lst;
+		while (tmp)
+		{
+			printf("cont:%s subtype:%d optype:%d iotype %d\n",
+				tmp->content,tmp->sub_type, tmp->op_type, tmp->io_type);
+			tmp = tmp->next;
+		}
+	}*/
 	eh = (t_exechelper){0};
+	// printf("CURRENT i:%d\n", eh.i);
 	state->last_exit_status = 0;
 	while (state->parsed_cmds[eh.i] != NULL)
 	{
@@ -132,6 +145,7 @@ int	ft_executecmd(t_shellstate *state)
 			offset = calculate_subshell_offset(&eh, state);
 			handle_subshell(state, &eh);
 			eh.i += offset;
+			state->last_exit_status = eh.subshell_exit_status;
 		}
 		else
 		{

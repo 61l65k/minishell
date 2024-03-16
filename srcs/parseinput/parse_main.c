@@ -49,6 +49,15 @@ static int	validate_input(t_shellstate *s, t_parsehelper *ph)
 	ph->command_count = 1;
 	if (validation_loop(s, ph) == FAILURE)
 		return (FAILURE);
+	ph->in_double_quote = false;
+	ph->in_double_quote = false;
+	ph->j = 0;
+	ph->i = -1;
+	ph->alloc_size = ft_strlen(s->input_string) + 1;
+	ph->commands = ft_calloc(ph->command_count + 10, sizeof(char *));
+	ph->curr_cmd = ft_calloc(ph->alloc_size, 1);
+	if (!ph->commands || !ph->curr_cmd)
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	return (SUCCESS);
 }
 
@@ -56,15 +65,6 @@ static char	**split_input(t_shellstate *s, t_parsehelper *ph)
 {
 	if (validate_input(s, ph) != SUCCESS)
 		return (NULL);
-	ph->in_double_quote = false;
-	ph->in_double_quote = false;
-	ph->j = 0;
-	ph->i = -1;
-	ph->alloc_size = ft_strlen(s->input_string) + 1;
-	ph->commands = ft_calloc(ph->command_count + 1, sizeof(char *));
-	ph->curr_cmd = ft_calloc(ph->alloc_size, 1);
-	if (!ph->commands || !ph->curr_cmd)
-		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	while (s->input_string[++ph->i] != '\0')
 		parse_character(ph, s);
 	ph->curr_cmd[ph->j] = '\0';
@@ -76,6 +76,8 @@ static char	**split_input(t_shellstate *s, t_parsehelper *ph)
 	}
 	if (ph->command_index < ph->command_count)
 		ph->commands[ph->command_index] = NULL;
+	// for (int i = 0; ph->commands[i]; i++)
+	//	printf("commands[%d]: %s\n", i, ph->commands[i]);
 	return (free(ph->curr_cmd), ph->commands);
 }
 
@@ -113,7 +115,7 @@ int	ft_parseinput(t_shellstate *s)
 		return (set_exit_status(s, SYNTAX_ERROR), FAILURE);
 	while (s->parsed_args[s->cmd_count])
 		s->cmd_count++;
-	s->parsed_cmds = ft_calloc(s->cmd_count + 4, sizeof(t_list *));
+	s->parsed_cmds = ft_calloc(s->cmd_count + 20, sizeof(t_list *));
 	if (!s->parsed_cmds)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	return (process_str_to_lst(s));

@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
 #include <stdbool.h>
@@ -63,6 +64,8 @@ void	init_char_flags(int *flags, char *c, t_parsehelper *h)
 	*flags |= (*c == '$') << ENVVAR_BIT;
 	if (!h->in_single_quote && !h->in_double_quote)
 	{
+		*flags |= ((*c == '(' && *(c + 1) == '(') || (*c == ')' && *(c
+						- 1) == ')')) << SUBSHELL_BIT;
 		*flags |= (*c == '~' && *(c - 1) == ' ' && (*(c + 1) == ' ' || *(c
 						+ 1) == '\0' || *(c + 1) == '/')) << TILDA_BIT;
 		*flags |= (*c == '|' && *(c + 1) != '|') << PIPE_BIT;
@@ -103,7 +106,7 @@ char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
 	return (var_value);
 }
 
-const char	*get_operator_str(int f)
+const char	*get_operator_str(int f, char c)
 {
 	if (get_flag(f, PIPE_BIT))
 		return ("|");
@@ -111,5 +114,9 @@ const char	*get_operator_str(int f)
 		return ("&&");
 	if (get_flag(f, OR_BIT))
 		return ("||");
+	if (get_flag(f, SUBSHELL_BIT) && c == '(')
+		return ("(");
+	if (get_flag(f, SUBSHELL_BIT) && c == ')')
+		return (")");
 	return (NULL);
 }

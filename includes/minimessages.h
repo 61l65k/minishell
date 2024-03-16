@@ -45,7 +45,8 @@ typedef enum e_charflag_bits
 	OR_BIT,
 	QUOTE_BIT,
 	REDIR_BIT,
-	TILDA_BIT
+	TILDA_BIT,
+	SUBSHELL_BIT,
 }		t_charflag_bits;
 
 enum	e_errors

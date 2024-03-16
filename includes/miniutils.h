@@ -139,7 +139,7 @@ char						*get_env_var_value(t_shellstate *s,
 								t_parsehelper *ph, bool *free_var_value);
 int							get_flag(int flags, int bit_position);
 t_operators					get_op_type(const char *str, bool use_strstr);
-const char					*get_operator_str(int f);
+const char					*get_operator_str(int f, char c);
 char						*ft_trimparentheses(t_lsthelper *lh, bool start);
 void						dup_forward_fd(t_shellstate *s, t_exechelper *eh);
 #endif

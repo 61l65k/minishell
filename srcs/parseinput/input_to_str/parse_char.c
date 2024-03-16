@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
@@ -59,9 +60,9 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *s)
 {
 	const char	*c = &s->input_string[ph->i];
 	const bool	space_before = (ph->i > 0) && (*(c - 1) != ' ' && *(c
-				- 1) != '\t');
+					- 1) != '\t');
 	const bool	space_after = (*(c + 1) != ' ' && *(c + 1) != '\t' && *(c
-				+ 1) != '\0');
+					+ 1) != '\0');
 	const bool	is_double_redir = (*(c + 1) == *c);
 
 	ensure_mem_for_buff(ph, s, 5, ph->curr_cmd);
@@ -79,14 +80,15 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *s)
 
 static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 {
-	const char	*operator_str = get_operator_str(f);
+	const char	*operator_str = get_operator_str(f, s->input_string[ph->i]);
 
 	if (get_flag(f, REDIR_BIT))
 		separate_redir_with_spaces(ph, s);
 	if (operator_str)
 	{
 		ph->curr_cmd[ph->j] = '\0';
-		ph->commands[ph->command_index++] = ft_strdup(ph->curr_cmd);
+		if (!is_spaces(ph->curr_cmd))
+			ph->commands[ph->command_index++] = ft_strdup(ph->curr_cmd);
 		ph->commands[ph->command_index++] = ft_strdup(operator_str);
 		ph->j = 0;
 		if (f & ((1 << AND_BIT) | (1 << OR_BIT)))
@@ -94,8 +96,7 @@ static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 	}
 	else if (get_flag(f, ENVVAR_BIT))
 		expand_env_variable(ph, s);
-	else if (!(f & ((1 << AND_BIT) | (1 << OR_BIT) | (1 << PIPE_BIT) \
-			| (1 << REDIR_BIT))))
+	else if (!(f & ((1 << AND_BIT) | (1 << OR_BIT) | (1 << PIPE_BIT) | (1 << REDIR_BIT))))
 	{
 		ensure_mem_for_buff(ph, s, 1, ph->curr_cmd);
 		ph->curr_cmd[ph->j++] = s->input_string[ph->i];
