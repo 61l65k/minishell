@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
 
@@ -29,7 +30,7 @@ static int	validation_loop(t_shellstate *s, t_parsehelper *ph)
 		{
 			if (check_parentheses(&parentheses_depth, s, ph) == FAILURE)
 				return (FAILURE);
-			append_operator(check_for_op(ph, s, -1), s, ph);
+			ph->command_count += (check_for_op(ph, s, -1) != OP_NONE);
 		}
 		ph->i++;
 	}
@@ -37,6 +38,7 @@ static int	validation_loop(t_shellstate *s, t_parsehelper *ph)
 		return (ft_putstr_fd(ERR_QUOTES, STDERR_FILENO), FAILURE);
 	if (parentheses_depth != 0)
 		return (ft_putstr_fd(ERR_PARENTHESES, STDERR_FILENO), FAILURE);
+	ph->command_count += ph->command_count - 1;
 	return (SUCCESS);
 }
 
@@ -52,27 +54,27 @@ static int	validate_input(t_shellstate *s, t_parsehelper *ph)
 	return (SUCCESS);
 }
 
-static char	**split_input(t_shellstate *state, t_parsehelper *ph)
+static char	**split_input(t_shellstate *s, t_parsehelper *ph)
 {
-	if (validate_input(state, ph) != SUCCESS)
+	if (validate_input(s, ph) != SUCCESS)
 		return (NULL);
 	ph->in_double_quote = false;
 	ph->in_double_quote = false;
 	ph->j = 0;
 	ph->i = -1;
-	ph->alloc_size = ft_strlen(state->input_string) + 1;
+	ph->alloc_size = ft_strlen(s->input_string) + 1;
 	ph->commands = ft_calloc(ph->command_count + 1, sizeof(char *));
 	ph->curr_cmd = ft_calloc(ph->alloc_size, 1);
 	if (!ph->commands || !ph->curr_cmd)
-		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-	while (state->input_string[++ph->i] != '\0')
-		parse_character(ph, state);
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	while (s->input_string[++ph->i] != '\0')
+		parse_character(ph, s);
 	ph->curr_cmd[ph->j] = '\0';
 	if (ph->j > 0 && ph->command_index < ph->command_count)
 	{
 		ph->commands[ph->command_index++] = ft_strdup(ph->curr_cmd);
 		if (!ph->commands[ph->command_index - 1])
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	}
 	if (ph->command_index < ph->command_count)
 		ph->commands[ph->command_index] = NULL;
@@ -83,6 +85,7 @@ static int	process_str_to_lst(t_shellstate *s)
 {
 	int	i;
 
+	// t_list	*tmp;
 	i = -1;
 	while (++i < s->cmd_count)
 	{
@@ -100,6 +103,15 @@ static int	process_str_to_lst(t_shellstate *s)
 	free_and_null_str_array(&s->parsed_args);
 	if (!s->parsed_cmds[0])
 		return (set_exit_status(s, SUCCESS), FAILURE);
+	/*for (t_list **lst = s->parsed_cmds; *lst; lst++)
+	{
+		tmp = *lst;
+		while (tmp)
+		{
+			printf("tmp->content: %s\n", (char *)tmp->content);
+			tmp = tmp->next;
+		}
+	}*/
 	return (SUCCESS);
 }
 

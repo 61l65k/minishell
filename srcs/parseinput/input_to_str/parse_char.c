@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
 
@@ -58,9 +59,9 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *state)
 {
 	const char	*c = &state->input_string[ph->i];
 	const bool	space_before = (ph->i > 0) && (*(c - 1) != ' ' && *(c
-				- 1) != '\t');
+					- 1) != '\t');
 	const bool	space_after = (*(c + 1) != ' ' && *(c + 1) != '\t' && *(c
-				+ 1) != '\0');
+					+ 1) != '\0');
 	const bool	is_double_redir = (*(c + 1) == *c);
 
 	ensure_mem_for_buff(ph, state, 5, ph->curr_cmd);
@@ -78,18 +79,26 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *state)
 
 static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 {
+	const char	*operator_str = NULL;
+
 	if (f & (1 << REDIR_BIT))
 		separate_redir_with_spaces(ph, s);
-	else if ((f & (1 << PIPE_BIT)) || (f & (1 << AND_BIT))
-		|| (f & (1 << OR_BIT)))
+	else if (get_flag(f, PIPE_BIT))
+		operator_str = "|";
+	else if (get_flag(f, AND_BIT))
+		operator_str = "&&";
+	else if (get_flag(f, OR_BIT))
+		operator_str = "||";
+	if (operator_str)
 	{
 		ph->curr_cmd[ph->j] = '\0';
 		ph->commands[ph->command_index++] = ft_strdup(ph->curr_cmd);
+		ph->commands[ph->command_index++] = ft_strdup(operator_str);
 		ph->j = 0;
-		if ((f & (1 << AND_BIT)) || (f & (1 << OR_BIT)))
+		if (f & ((1 << AND_BIT) | (1 << OR_BIT)))
 			ph->i++;
 	}
-	else if (f & (1 << ENVVAR_BIT))
+	else if (get_flag(f, ENVVAR_BIT))
 	{
 		expand_env_variable(ph, s);
 	}
@@ -111,16 +120,16 @@ void	parse_character(t_parsehelper *ph, t_shellstate *s)
 	int	flags;
 
 	init_char_flags(&flags, &s->input_string[ph->i], ph);
-	if (flags & (1 << TILDA_BIT))
+	if (get_flag(flags, TILDA_BIT))
 		handle_tilda(ph, s);
-	else if ((flags & (1 << ENVVAR_BIT)) && ft_checkdollar(s, ph))
+	else if ((flags & get_flag(flags, ENVVAR_BIT)) && ft_checkdollar(s, ph))
 		flags &= ~(1 << ENVVAR_BIT);
-	else if (!(flags & (1 << QUOTE_BIT)) && (ph->in_single_quote
+	else if (!(get_flag(flags, QUOTE_BIT)) && (ph->in_single_quote
 			|| ph->in_double_quote))
 	{
-		if (flags & (1 << ESCAPED_BIT))
+		if (get_flag(flags, ESCAPED_BIT))
 			handle_escape_sequence(ph, s->input_string);
-		else if (ph->in_double_quote && (flags & (1 << ENVVAR_BIT)))
+		else if (ph->in_double_quote && (flags & get_flag(flags, ENVVAR_BIT)))
 		{
 			expand_env_variable(ph, s);
 		}

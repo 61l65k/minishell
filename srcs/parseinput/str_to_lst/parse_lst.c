@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
+#include "miniutils.h"
 
 static int	handle_non_quoted(t_lsthelper *lh)
 {
@@ -76,5 +78,7 @@ t_list	*str_to_lst(const char *str, t_shellstate *s)
 	while (lh.end > lh.start && (*lh.end == ' ' || *lh.end == '\t'))
 		lh.end--;
 	lh.length = lh.end - lh.start + 1;
+	if (get_op_type(lh.start) != OP_NONE)
+		return (assign_io_type(&lh, ft_lstnew(ft_strdup(lh.start))), lh.head);
 	return (allocate_lst(&lh, s));
 }
