@@ -79,16 +79,10 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *s)
 
 static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 {
-	const char	*operator_str = NULL;
+	const char	*operator_str = get_operator_str(f);
 
 	if (get_flag(f, REDIR_BIT))
 		separate_redir_with_spaces(ph, s);
-	else if (get_flag(f, PIPE_BIT))
-		operator_str = "|";
-	else if (get_flag(f, AND_BIT))
-		operator_str = "&&";
-	else if (get_flag(f, OR_BIT))
-		operator_str = "||";
 	if (operator_str)
 	{
 		ph->curr_cmd[ph->j] = '\0';
@@ -99,23 +93,15 @@ static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 			ph->i++;
 	}
 	else if (get_flag(f, ENVVAR_BIT))
-	{
 		expand_env_variable(ph, s);
-	}
-	else if (!(get_flag(f, REDIR_BIT) || get_flag(f, PIPE_BIT) || get_flag(f,
-				AND_BIT) || get_flag(f, OR_BIT)))
+	else if (!(f & ((1 << AND_BIT) | (1 << OR_BIT) | (1 << PIPE_BIT) \
+			| (1 << REDIR_BIT))))
 	{
 		ensure_mem_for_buff(ph, s, 1, ph->curr_cmd);
 		ph->curr_cmd[ph->j++] = s->input_string[ph->i];
 	}
 }
 
-/**
- * @brief Parses the characer from input string.
- * & Handles single and double quotes,
-	escape sequences and environment variables. And turns the the
- *
- */
 void	parse_character(t_parsehelper *ph, t_shellstate *s)
 {
 	int	flags;

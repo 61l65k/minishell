@@ -102,3 +102,14 @@ char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
 	}
 	return (var_value);
 }
+
+const char	*get_operator_str(int f)
+{
+	if (get_flag(f, PIPE_BIT))
+		return ("|");
+	if (get_flag(f, AND_BIT))
+		return ("&&");
+	if (get_flag(f, OR_BIT))
+		return ("||");
+	return (NULL);
+}
