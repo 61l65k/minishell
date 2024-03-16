@@ -1,0 +1,13 @@
+(echo "A1" && echo "A2") && echo "A3"
+(false && echo "B1") || (echo "B2" && echo "B3")
+echo "C1" || echo "C2" && echo "C3" || echo "C4"
+(echo "D1" && exit 1) || echo "D2"
+(echo "E1" && (echo "E2" || echo "E3")) && echo "E4"
+((echo "F1" || (echo "F2" && false)) && echo "F3") || echo "F4"
+(echo "G1" && (exit 2)) || (echo "G2" && (exit 3) || echo "G3")
+echo "I1" && false && echo "I2" || echo "I3"
+(echo "J1" && echo "J2" && exit 0) || (echo "J3" && exit 1)
+(grep "Hello" myfile.txt || echo "Hello" > myfile.txt) && cat myfile.txt
+(ls && [ ! -f "important.txt" ]) && touch important.txt || echo "No changes made."
+(rm myoldfile.txt && touch mynewfile.txt) || ls
+(cd /nonexistent && ls) || echo "Cannot change directory."

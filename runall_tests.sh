@@ -9,6 +9,7 @@ make
 echo "Moving to tester directory..."
 cd minishell_tester
 ./tester ../Extras/test_cases_all
+./tester ../Extras/test_cases_andorparen
 
 cd "$CURRENT_DIR"
 
