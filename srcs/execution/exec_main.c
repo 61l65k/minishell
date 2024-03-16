@@ -10,9 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
-#include "ft_printf/ft_printf.h"
-#include "minimessages.h"
 #include "minishell.h"
 
 /**
@@ -126,10 +123,10 @@ int	ft_executecmd(t_shellstate *state)
 		eh.curr_cmd = state->parsed_cmds[eh.i];
 		if (g_signal_flag || state->last_exit_status == SIGINT_EXIT)
 			break ;
-		if (is_pipeline((const t_list **)state->parsed_cmds) == true)
+		if (is_pipeline(state, eh.i))
 			handle_fork(state, &eh);
-		else if (builtin_main(state,
-				state->parsed_cmds[eh.i]) == BI_NOT_BUILTIN)
+		else if (builtin_main(state, state->parsed_cmds[eh.i])
+			== BI_NOT_BUILTIN)
 			handle_fork(state, &eh);
 		check_operators(&eh, state);
 		eh.pipe_doc = 0;
