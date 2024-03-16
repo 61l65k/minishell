@@ -1,3 +1,7 @@
+echo 1 && echo 2 || echo 3 || echo 4
+echo 1 && echo 2 || echo 3 && echo 4
+echo 1 || echo 2 && echo 3 || echo 4
+echo 1 || echo 2 && echo 3 && echo 4 || echo 5
 (echo "A1" && echo "A2") && echo "A3"
 (false && echo "B1") || (echo "B2" && echo "B3")
 echo "C1" || echo "C2" && echo "C3" || echo "C4"
