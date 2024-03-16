@@ -46,7 +46,7 @@ LDFLAGS_DARWIN = -lreadline -L${READ_LINE_PATH}/lib
 HEADER_DARWIN = -I${READ_LINE_PATH}/include -Iincludes -Ilibft
 
 # Default flags for Linux
-CFLAGS_LINUX = -Werror -Wall -Wextra
+CFLAGS_LINUX = -g -Werror -Wall -Wextra
 LDFLAGS_LINUX = -lreadline
 HEADER_LINUX = -Iincludes -Ilibft
 

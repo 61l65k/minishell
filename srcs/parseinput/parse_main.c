@@ -112,7 +112,7 @@ int	ft_parseinput(t_shellstate *s)
 		return (set_exit_status(s, SYNTAX_ERROR), FAILURE);
 	while (s->parsed_args[s->cmd_count])
 		s->cmd_count++;
-	s->parsed_cmds = ft_calloc(s->cmd_count + 1, sizeof(t_list *));
+	s->parsed_cmds = ft_calloc(s->cmd_count + 4, sizeof(t_list *));
 	if (!s->parsed_cmds)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	return (process_str_to_lst(s));
