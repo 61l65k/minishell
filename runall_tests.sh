@@ -8,22 +8,12 @@ echo "Moving to tester directory..."
 cd minishell_tester
 
 # Running tests
-echo "Running basic all test!"
-./tester
-echo "Running tester syntax!"
-./tester syntax
-echo "Running builtins tests..."
+echo "Running non bonus tests..."
 ./tester builtins
-echo "Builtins tests completed."
-echo "Running pipes tests..."
 ./tester pipes
-echo "Pipes tests completed."
-echo "Running redirects tests..."
 ./tester redirects
-echo "Redirects tests completed."
-echo "Running extras tests..."
 ./tester extras
-echo "Extras tests completed."
+./tester syntax
 
 # Go back to minishell directory and rename minishell for bonus tests
 echo "Renaming minishell to minishell_bonus for bonus tests..."
@@ -47,5 +37,5 @@ mv minishell_bonus minishell
 echo "All tests completed."
 
 echo "Running Norminette"
-norminette
+norminette | grep -v "OK!"
 
