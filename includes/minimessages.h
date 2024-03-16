@@ -48,13 +48,6 @@ typedef enum e_charflag_bits
 	TILDA_BIT
 }		t_charflag_bits;
 
-typedef enum e_subtype
-{
-	SUB_NONE,
-	SUB_START,
-	SUB_END,
-}		t_subtype;
-
 enum	e_errors
 {
 	NO_ERROR,

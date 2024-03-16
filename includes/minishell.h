@@ -46,6 +46,7 @@ typedef struct s_shellstate
 	bool						is_child_process;
 	char						**envp;
 	t_vec						pid;
+	bool						in_subshell;
 }								t_shellstate;
 
 extern volatile sig_atomic_t	g_signal_flag;

@@ -13,7 +13,6 @@
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# include "minimessages.h"
 # ifdef __linux__
 #  include <linux/limits.h>
 #  include <stdint.h>
@@ -25,6 +24,13 @@
 # include <stddef.h>
 # include <stdlib.h>
 # include <unistd.h>
+
+typedef enum e_subtype
+{
+	SUB_NONE,
+	SUB_START,
+	SUB_END,
+}					t_subtype;
 
 typedef enum e_io_type
 {

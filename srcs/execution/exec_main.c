@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin.h"
 #include "ft_printf/ft_printf.h"
+#include "minimessages.h"
 #include "minishell.h"
 
 /**

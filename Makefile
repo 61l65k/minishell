@@ -9,16 +9,16 @@ SRCS =  /built-in/built-in_cd.c \
 		/env/env_utils.c \
 		/env/ft_getenv.c \
 		/env/ft_setenv.c \
-		/execution/exec_builtin.c \
-		/execution/exec_builtin_io_apply.c \
-		/execution/exec_builtin_io_cleanup.c \
-		/execution/exec_builtin_io_heredoc.c \
-		/execution/exec_builtin_io_parse.c \
-		/execution/exec_cmd.c \
-		/execution/exec_heredoc.c \
+		/execution/exec_builtin/exec_builtin.c \
+		/execution/exec_builtin/exec_builtin_io_apply.c \
+		/execution/exec_builtin/exec_builtin_io_cleanup.c \
+		/execution/exec_builtin/exec_builtin_io_heredoc.c \
+		/execution/exec_builtin/exec_builtin_io_parse.c \
+		/execution/ft_execvp.c \
+		/execution/exec_basic/exec_heredoc.c \
 		/execution/exec_main.c \
 		/execution/exec_main_utils.c \
-		/execution/exec_redirectors.c \
+		/execution/exec_basic/exec_redirectors.c \
 		/execution/exec_wait.c \
 		/free_exit.c \
 		/main.c \

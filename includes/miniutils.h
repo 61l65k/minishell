@@ -51,6 +51,7 @@ typedef struct s_exechelper
 	int						i;
 	bool					pipe_doc;
 	const t_list			*curr_cmd;
+	int						subshell_exit_status;
 }							t_exechelper;
 
 typedef struct s_redirecthelper
