@@ -52,16 +52,6 @@ typedef struct s_exechelper
 	const t_list			*curr_cmd;
 }							t_exechelper;
 
-typedef struct s_envhelper
-{
-	char					*var_name;
-	int						var_name_len;
-	char					*var_value;
-	bool					free_var_value;
-	int						val_len;
-	int						flags;
-}							t_envhelper;
-
 typedef struct s_redirecthelper
 {
 	int						fd;
@@ -144,4 +134,6 @@ int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
 void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 int							handle_wildcard(t_lsthelper *lh);
+char						*get_env_var_value(t_shellstate *s,
+								t_parsehelper *ph, bool *free_var_value);
 #endif

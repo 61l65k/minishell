@@ -32,53 +32,35 @@ static void	handle_escape_sequence(t_parsehelper *ph, const char *input_string)
 		ph->curr_cmd[ph->j++] = input_string[ph->i];
 }
 
-void	get_env_var_value(t_shellstate *state, t_envhelper *eh,
-		t_parsehelper *ph)
+static void	expand_env_variable(t_parsehelper *ph, t_shellstate *s)
 {
-	if (state->input_string[ph->i] == '?')
-	{
-		eh->var_value = ft_itoa(state->last_exit_status);
-		if (!eh->var_value)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		eh->free_var_value = true;
-	}
-	else
-	{
-		eh->var_name_len = ft_envlen(state->input_string + ph->i);
-		eh->var_name = ft_strndup(state->input_string + ph->i,
-				eh->var_name_len);
-		if (!eh->var_name)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		ph->i += eh->var_name_len - 1;
-		eh->var_value = ft_getenv(eh->var_name, state->envp);
-	}
-}
+	char	*var_value;
+	int		val_len;
+	bool	free_var_value;
 
-static void	expand_env_variable(t_parsehelper *ph, t_shellstate *s,
-		t_envhelper *eh)
-{
 	ph->i += 1;
-	get_env_var_value(s, eh, ph);
-	if (eh->var_value)
+	var_value = get_env_var_value(s, ph, &free_var_value);
+	if (var_value)
 	{
-		eh->val_len = ft_strlen(eh->var_value);
-		ensure_mem_for_buff(ph, s, ft_strlen(ph->curr_cmd) + eh->val_len + 1,
+		val_len = ft_strlen(var_value);
+		ensure_mem_for_buff(ph, s, ft_strlen(ph->curr_cmd) + val_len + 1,
 			ph->curr_cmd);
-		ft_strncat(ph->curr_cmd, eh->var_value, eh->val_len);
+		ft_strncat(ph->curr_cmd, "\"", 1);
+		ft_strncat(ph->curr_cmd, var_value, val_len);
+		ft_strncat(ph->curr_cmd, "\"", 1);
 		ph->j = ft_strlen(ph->curr_cmd);
+		if (free_var_value)
+			free(var_value);
 	}
-	free(eh->var_name);
-	if (eh->free_var_value)
-		free(eh->var_value);
 }
 
 static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *state)
 {
 	const char	*c = &state->input_string[ph->i];
 	const bool	space_before = (ph->i > 0) && (*(c - 1) != ' ' && *(c
-					- 1) != '\t');
+				- 1) != '\t');
 	const bool	space_after = (*(c + 1) != ' ' && *(c + 1) != '\t' && *(c
-					+ 1) != '\0');
+				+ 1) != '\0');
 	const bool	is_double_redir = (*(c + 1) == *c);
 
 	ensure_mem_for_buff(ph, state, 5, ph->curr_cmd);
@@ -94,28 +76,27 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *state)
 		ph->curr_cmd[ph->j++] = ' ';
 }
 
-static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *state,
-		int flags, t_envhelper *eh)
+static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 {
-	if (flags & (1 << REDIR_BIT))
-		separate_redir_with_spaces(ph, state);
-	else if ((flags & (1 << PIPE_BIT)) || (flags & (1 << AND_BIT))
-		|| (flags & (1 << OR_BIT)))
+	if (f & (1 << REDIR_BIT))
+		separate_redir_with_spaces(ph, s);
+	else if ((f & (1 << PIPE_BIT)) || (f & (1 << AND_BIT))
+		|| (f & (1 << OR_BIT)))
 	{
 		ph->curr_cmd[ph->j] = '\0';
 		ph->commands[ph->command_index++] = ft_strdup(ph->curr_cmd);
 		ph->j = 0;
-		if ((flags & (1 << AND_BIT)) || (flags & (1 << OR_BIT)))
+		if ((f & (1 << AND_BIT)) || (f & (1 << OR_BIT)))
 			ph->i++;
 	}
-	else if (flags & (1 << ENVVAR_BIT))
+	else if (f & (1 << ENVVAR_BIT))
 	{
-		expand_env_variable(ph, state, eh);
+		expand_env_variable(ph, s);
 	}
 	else
 	{
-		ensure_mem_for_buff(ph, state, 1, ph->curr_cmd);
-		ph->curr_cmd[ph->j++] = state->input_string[ph->i];
+		ensure_mem_for_buff(ph, s, 1, ph->curr_cmd);
+		ph->curr_cmd[ph->j++] = s->input_string[ph->i];
 	}
 }
 
@@ -127,10 +108,8 @@ static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *state,
  */
 void	parse_character(t_parsehelper *ph, t_shellstate *s)
 {
-	t_envhelper	eh;
-	int			flags;
+	int	flags;
 
-	eh = (t_envhelper){0};
 	init_char_flags(&flags, &s->input_string[ph->i], ph);
 	if (flags & (1 << TILDA_BIT))
 		handle_tilda(ph, s);
@@ -143,12 +122,12 @@ void	parse_character(t_parsehelper *ph, t_shellstate *s)
 			handle_escape_sequence(ph, s->input_string);
 		else if (ph->in_double_quote && (flags & (1 << ENVVAR_BIT)))
 		{
-			expand_env_variable(ph, s, &eh);
+			expand_env_variable(ph, s);
 		}
 		else
 			ph->curr_cmd[ph->j++] = s->input_string[ph->i];
 	}
 	else
-		handle_non_quoted_char(ph, s, flags, &eh);
+		handle_non_quoted_char(ph, s, flags);
 	ph->curr_cmd[ph->j] = '\0';
 }

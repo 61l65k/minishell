@@ -85,3 +85,32 @@ void	init_char_flags(int *flags, char *c, t_parsehelper *h)
 				|| (*c == '<' && *(c + 1) == '<')) << REDIR_BIT;
 	}
 }
+
+char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
+		bool *free_var_value)
+{
+	char	*var_value;
+	char	*var_name;
+	int		var_name_len;
+
+	var_name_len = 0;
+	*free_var_value = false;
+	if (s->input_string[ph->i] == '?')
+	{
+		*free_var_value = true;
+		var_value = ft_itoa(s->last_exit_status);
+		if (!var_value)
+			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	}
+	else
+	{
+		var_name_len = ft_envlen((char *)s->input_string + ph->i);
+		var_name = ft_strndup(s->input_string + ph->i, var_name_len);
+		if (!var_name)
+			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+		var_value = ft_getenv(var_name, s->envp);
+		ph->i += var_name_len - 1;
+		free(var_name);
+	}
+	return (var_value);
+}

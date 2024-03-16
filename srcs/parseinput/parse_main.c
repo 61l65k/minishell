@@ -44,7 +44,7 @@ static int	validate_input(t_shellstate *s, t_parsehelper *ph)
 {
 	ph->alloc_size = 100;
 	ph->command_count = 1;
-	s->operators = malloc(ph->alloc_size * sizeof(t_operators));
+	s->operators = ft_calloc(ph->alloc_size, sizeof(t_operators));
 	if (!s->operators)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	if (validation_loop(s, ph) == FAILURE)
