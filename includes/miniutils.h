@@ -141,5 +141,5 @@ int							get_flag(int flags, int bit_position);
 t_operators					get_op_type(const char *str, bool use_strstr);
 const char					*get_operator_str(int f);
 char						*ft_trimparentheses(t_lsthelper *lh, bool start);
-
+void						dup_forward_fd(t_shellstate *s, t_exechelper *eh);
 #endif

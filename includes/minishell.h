@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include "builtin.h"
+# include "env_utils.h"
 # include "io_type.h"
 # include "libft.h"
 # include "minimessages.h"
@@ -22,6 +23,8 @@
 # include <dirent.h>
 # include <errno.h>
 # include <fcntl.h>
+# include <readline/history.h>
+# include <readline/readline.h>
 # include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -32,9 +35,6 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-# include <readline/history.h>
-# include <readline/readline.h>
-# include "env_utils.h"
 
 typedef struct s_shellstate
 {
@@ -82,5 +82,7 @@ bool							is_spaces(const char *str);
 bool							ambiguous_redirect(t_shellstate *s);
 void							ft_signal_handler(int signo, siginfo_t *info,
 									void *context);
+int								calculate_subshell_offset(t_exechelper *eh,
+									t_shellstate *s);
 ;
 #endif

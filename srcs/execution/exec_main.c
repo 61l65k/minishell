@@ -13,28 +13,6 @@
 #include "minishell.h"
 
 /**
- * @brief Duplicates the fd's forward if we are in a pipeline.
- * so next command can read from it.
- * & closes the pipefd if we are not in a pipeline.
- */
-static void	dup_forward_fd(t_shellstate *s, t_exechelper *eh)
-{
-	const t_list	*next_lst = s->parsed_cmds[eh->i + 1];
-
-	if (eh->fd_in != 0)
-	{
-		dup2(eh->fd_in, STDIN_FILENO);
-		close(eh->fd_in);
-	}
-	if (eh->i < s->cmd_count - 1 && next_lst->op_type == OP_PIPE)
-	{
-		close(eh->pipefd[0]);
-		dup2(eh->pipefd[1], STDOUT_FILENO);
-		close(eh->pipefd[1]);
-	}
-}
-
-/**
  * @brief Sets up fd's for the child before executing the command.
  */
 static void	handle_child_process(t_shellstate *s, t_exechelper *eh)
@@ -108,13 +86,39 @@ static void	handle_fork(t_shellstate *s, t_exechelper *eh)
 	}
 }
 
+void	handle_subshell(t_shellstate *s, t_exechelper *eh)
+{
+	int		ret;
+	pid_t	pid;
+
+	ret = 0;
+	pid = fork();
+	if (pid < 0)
+		ft_free_exit(s, ERR_FORK, EXIT_FAILURE);
+	if (pid == 0)
+	{
+		s->in_subshell = true;
+		s->parsed_cmds[eh->i]->sub_type = SUB_NONE;
+		ret = ft_executecmd(s);
+		exit(ret);
+	}
+	else
+	{
+		waitpid(pid, &ret, 0);
+		eh->subshell_exit_status = WEXITSTATUS(ret);
+		s->parsed_cmds[eh->i]->sub_type = SUB_NONE;
+	}
+}
+
 /**
  * @brief Executes the parsed commands and handles all operators.
  * & Returns the exit status of the last command.
  */
+
 int	ft_executecmd(t_shellstate *state)
 {
 	t_exechelper	eh;
+	int				offset;
 
 	eh = (t_exechelper){0};
 	state->last_exit_status = 0;
@@ -123,14 +127,23 @@ int	ft_executecmd(t_shellstate *state)
 		eh.curr_cmd = state->parsed_cmds[eh.i];
 		if (g_signal_flag || state->last_exit_status == SIGINT_EXIT)
 			break ;
-		if (is_pipeline(state, eh.i))
-			handle_fork(state, &eh);
-		else if (builtin_main(state, state->parsed_cmds[eh.i])
-			== BI_NOT_BUILTIN)
-			handle_fork(state, &eh);
-		check_operators(&eh, state);
-		eh.pipe_doc = 0;
-		eh.i++;
+		if (eh.curr_cmd && eh.curr_cmd->sub_type == SUB_START)
+		{
+			offset = calculate_subshell_offset(&eh, state);
+			handle_subshell(state, &eh);
+			eh.i += offset;
+		}
+		else
+		{
+			if (is_pipeline(state, eh.i) == true)
+				handle_fork(state, &eh);
+			else if (builtin_main(state,
+					state->parsed_cmds[eh.i]) == BI_NOT_BUILTIN)
+				handle_fork(state, &eh);
+			check_operators(&eh, state);
+			eh.pipe_doc = 0;
+			eh.i++;
+		}
 	}
 	wait_remaining_children(state);
 	return (state->last_exit_status);
