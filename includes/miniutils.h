@@ -136,4 +136,6 @@ void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 int							handle_wildcard(t_lsthelper *lh);
 char						*get_env_var_value(t_shellstate *s,
 								t_parsehelper *ph, bool *free_var_value);
+int							get_flag(int flags, int bit_position);
+t_operators					get_op_type(const char *str);
 #endif

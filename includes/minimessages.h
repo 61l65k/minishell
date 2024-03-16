@@ -48,19 +48,6 @@ typedef enum e_charflag_bits
 	TILDA_BIT
 }		t_charflag_bits;
 
-typedef enum e_operators
-{
-	OP_NONE,
-	OP_AND,
-	OP_OR,
-	OP_HEREDOC,
-	OP_APPEND,
-	OP_PIPE,
-	OP_REDIRECT_OUT,
-	OP_REDIRECT_IN,
-	OP_OPERATOR_COUNT
-}		t_operators;
-
 enum	e_errors
 {
 	NO_ERROR,

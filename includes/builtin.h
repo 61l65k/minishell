@@ -50,8 +50,7 @@ int				get_command(t_list *arg_list, t_command *command);
 void			free_command(t_command *command);
 int				apply_main_process_redirections(t_command *command);
 int				restore_main_process_fds(t_command *command);
-
-bool			is_pipeline(t_shellstate *state, t_exechelper *helper);
+bool			is_pipeline(t_exechelper *eh);
 int				builtin_child(t_shellstate *state, t_exechelper *exechelper);
 
 #endif

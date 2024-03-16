@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stdbool.h>
 
 void	print_syntax_err(const char *token, const char *backup)
 {
@@ -55,6 +56,7 @@ bool	is_valid_syntax(t_shellstate *state)
 	int	i;
 
 	i = 0;
+	return (true);
 	while (state->parsed_cmds[i])
 	{
 		if (is_valid_redirect_syntax(

@@ -16,8 +16,8 @@ int	update_fds(char *filename, t_redirecthelper *rh, bool fd_out)
 {
 	if (rh->fd == -1 && filename)
 	{
-		ft_fprintf(STDERR_FILENO,
-			"minishell: %s: %s\n", filename, strerror(errno));
+		ft_fprintf(STDERR_FILENO, "minishell: %s: %s\n", filename,
+			strerror(errno));
 		if (rh->last_out_fd != -1)
 			close(rh->last_out_fd);
 		return (FAILURE);
@@ -101,6 +101,7 @@ int	handle_redirect(t_exechelper *eh)
 		if (eh->curr_cmd->type != IO_NONE && redir(&rh, eh))
 			return (FAILURE);
 		eh->curr_cmd = eh->curr_cmd->next;
+		printf("PERKELE\n");
 	}
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }

@@ -10,39 +10,45 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 /**
  * @brief Checks the operators and skips the commands if needed.
  */
-void	check_operators(t_exechelper *h, t_shellstate *s)
+void	check_operators(t_exechelper *eh, t_shellstate *s)
 {
-	if (h->i < s->cmd_count - 1)
+	const t_list	*next_lst = s->parsed_cmds[eh->i + 1];
+
+	if (next_lst)
 	{
-		if (s->operators[h->i] == OP_AND && s->last_exit_status != 0)
+		if (next_lst && next_lst->op_type == OP_AND && s->last_exit_status != 0)
 		{
-			while (h->i < s->cmd_count - 1 && s->operators[h->i] != OP_OR)
-				h->i++;
+			while (next_lst && next_lst->op_type != OP_OR)
+				next_lst = s->parsed_cmds[eh->i++];
 		}
-		else if (s->operators[h->i] == OP_OR && s->last_exit_status == 0)
+		else if (next_lst && next_lst->op_type == OP_OR && s->last_exit_status == 0)
 		{
-			while (h->i < s->cmd_count - 1 && s->operators[h->i] != OP_AND)
-				h->i++;
+			while (next_lst && next_lst->op_type != OP_AND)
+				next_lst = s->parsed_cmds[eh->i++];
 		}
 	}
+	if (next_lst && next_lst->op_type != OP_NONE)
+		eh->i++;
 }
 
-bool	check_pipedoc(t_shellstate *s, t_exechelper *h)
+bool	check_pipedoc(t_shellstate *s, t_exechelper *eh)
 {
-	const t_list	*l = s->parsed_cmds[h->i];
+	const t_list	*l = s->parsed_cmds[eh->i];
+	const t_list	*next_lst = s->parsed_cmds[eh->i + 1];
 
-	if (h->i < s->cmd_count - 1 && s->operators[h->i] == OP_PIPE)
+	if (eh->i < s->cmd_count - 1 && next_lst->op_type == OP_PIPE)
 	{
 		while (l)
 		{
 			if (ft_strcmp(l->content, "<<") == 0)
 			{
-				h->pipe_doc = true;
+				eh->pipe_doc = true;
 				return (true);
 			}
 			l = l->next;

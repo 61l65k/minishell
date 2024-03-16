@@ -34,11 +34,25 @@ typedef enum e_io_type
 	IO_HEREDOC
 }					t_io_type;
 
+typedef enum e_operators
+{
+	OP_NONE,
+	OP_AND,
+	OP_OR,
+	OP_HEREDOC,
+	OP_APPEND,
+	OP_PIPE,
+	OP_REDIRECT_OUT,
+	OP_REDIRECT_IN,
+	OP_OPERATOR_COUNT
+}					t_operators;
+
 typedef struct s_list
 {
 	char			*content;
 	bool			ambiguous_redirect;
 	t_io_type		type;
+	t_operators		op_type;
 	struct s_list	*next;
 }					t_list;
 
