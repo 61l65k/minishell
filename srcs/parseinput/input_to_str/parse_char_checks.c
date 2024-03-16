@@ -33,9 +33,9 @@ int	check_parentheses(int *paren_depth, t_shellstate *s, t_parsehelper *ph)
 {
 	const char	*current_char = &s->input_string[ph->i];
 	const int	prev_index = adjust_index_for_parentheses_check(s->input_string,
-				ph->i - 1, false);
+			ph->i - 1, false);
 	const int	next_index = adjust_index_for_parentheses_check(s->input_string,
-				ph->i + 1, true);
+			ph->i + 1, true);
 
 	if (*current_char == '(')
 	{

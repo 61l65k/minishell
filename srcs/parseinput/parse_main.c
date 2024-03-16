@@ -91,7 +91,7 @@ static int	process_str_to_lst(t_shellstate *s)
 			if ((i == 0 && is_spaces(s->parsed_args[i])))
 				return (free_and_null_str_array(&s->parsed_args),
 					set_exit_status(s, SUCCESS), SUCCESS);
-			print_syntax_err("PERSE", s->parsed_args[i]);
+			print_syntax_err("ERROR", s->parsed_args[i]);
 			set_exit_status(s, SYNTAX_ERROR);
 			return (free_and_null_str_array(&s->parsed_args), FAILURE);
 		}

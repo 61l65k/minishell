@@ -61,7 +61,7 @@ bool	is_valid_syntax(t_shellstate *state)
 	{
 		if (is_valid_redirect_syntax(
 				state->parsed_cmds[i],
-				0)
+				state->parsed_cmds[i]->op_type)
 			== false)
 		{
 			state->last_exit_status = SYNTAX_ERROR;

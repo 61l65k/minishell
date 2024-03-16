@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "builtin.h"
+#include "libft.h"
 #include "minishell.h"
 
 /**
@@ -121,7 +122,7 @@ t_builtin_func	get_builtin_func(t_builtin_type type)
 bool	is_pipeline(const t_list **list)
 {
 	const t_list	**lst = list;
-	const t_list 	*curr = *lst;
+	const t_list	*curr = *lst;
 
 	if (lst && *lst)
 	{

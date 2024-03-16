@@ -27,7 +27,8 @@ void	check_operators(t_exechelper *eh, t_shellstate *s)
 			while (next_lst && next_lst->op_type != OP_OR)
 				next_lst = s->parsed_cmds[eh->i++];
 		}
-		else if (next_lst && next_lst->op_type == OP_OR && s->last_exit_status == 0)
+		else if (next_lst && next_lst->op_type == OP_OR
+			&& s->last_exit_status == 0)
 		{
 			while (next_lst && next_lst->op_type != OP_AND)
 				next_lst = s->parsed_cmds[eh->i++];
