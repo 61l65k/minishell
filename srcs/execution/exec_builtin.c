@@ -119,20 +119,16 @@ t_builtin_func	get_builtin_func(t_builtin_type type)
  * If in pipeline, we need to fork even if the command is a built-in.
  */
 
-bool	is_pipeline(const t_list **list)
+bool	is_pipeline(t_shellstate *state, int curr_cmd_index)
 {
-	const t_list	**lst = list;
-	const t_list	*curr = *lst;
+	int	i;
 
-	if (lst && *lst)
+	i = 0;
+	while (i <= curr_cmd_index + 1 && state->parsed_cmds[i] != NULL)
 	{
-		while (*lst)
-		{
-			if (curr->op_type == OP_PIPE)
-				return (true);
-			lst += 1;
-			curr = *lst;
-		}
+		if (state->parsed_cmds[i]->op_type == OP_PIPE)
+			return (true);
+		i++;
 	}
 	return (false);
 }
