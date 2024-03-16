@@ -109,14 +109,14 @@ void	parse_character(t_parsehelper *ph, t_shellstate *s)
 	init_char_flags(&flags, &s->input_string[ph->i], ph);
 	if (get_flag(flags, TILDA_BIT))
 		handle_tilda(ph, s);
-	else if ((flags & get_flag(flags, ENVVAR_BIT)) && ft_checkdollar(s, ph))
+	else if ((get_flag(flags, ENVVAR_BIT)) && ft_checkdollar(s, ph))
 		flags &= ~(1 << ENVVAR_BIT);
 	else if (!(get_flag(flags, QUOTE_BIT)) && (ph->in_single_quote
 			|| ph->in_double_quote))
 	{
 		if (get_flag(flags, ESCAPED_BIT))
 			handle_escape_sequence(ph, s->input_string);
-		else if (ph->in_double_quote && (flags & get_flag(flags, ENVVAR_BIT)))
+		else if (ph->in_double_quote && get_flag(flags, ENVVAR_BIT))
 		{
 			expand_env_variable(ph, s);
 		}
