@@ -10,9 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minimessages.h"
 #include "minishell.h"
-#include "miniutils.h"
 
 static int	handle_non_quoted(t_lsthelper *lh)
 {
@@ -21,7 +20,19 @@ static int	handle_non_quoted(t_lsthelper *lh)
 		lh->arg = ft_strndup(lh->start + lh->arg_start, lh->arg_len);
 		if (!lh->arg)
 			return (ft_lstclear(&lh->head, free), FAILURE);
-		if (ft_strchr(lh->arg, '*'))
+		if (lh->arg[0] == '(')
+		{
+			lh->arg = ft_trimparentheses(lh, true);
+			if (assign_node_types(lh, ft_lstnew(lh->arg), SUB_START) == FAILURE)
+				return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
+		}
+		else if (lh->arg[ft_strlen(lh->arg) - 1] == ')')
+		{
+			lh->arg = ft_trimparentheses(lh, false);
+			if (assign_node_types(lh, ft_lstnew(lh->arg), SUB_END) == FAILURE)
+				return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
+		}
+		else if (ft_strchr(lh->arg, '*'))
 		{
 			lh->wcard.dir = opendir(".");
 			if (!lh->wcard.dir || handle_wildcard(lh) == FAILURE)
@@ -29,7 +40,7 @@ static int	handle_non_quoted(t_lsthelper *lh)
 		}
 		else
 		{
-			if (assign_io_type(lh, ft_lstnew(lh->arg)) == FAILURE)
+			if (assign_node_types(lh, ft_lstnew(lh->arg), SUB_NONE) == FAILURE)
 				return (free(lh->arg), ft_lstclear(&lh->head, free), FAILURE);
 		}
 	}

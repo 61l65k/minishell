@@ -13,6 +13,7 @@
 #ifndef MINIUTILS_H
 # define MINIUTILS_H
 # include "libft.h"
+# include "minimessages.h"
 # include <dirent.h>
 # include <stdbool.h>
 # ifdef __darwin__
@@ -22,7 +23,7 @@
 
 typedef struct s_shellstate	t_shellstate;
 typedef enum e_operators	t_operators;
-
+typedef enum e_subtype		t_subtype;
 enum						e_returnvalues
 {
 	SUCCESS = 0,
@@ -128,7 +129,8 @@ t_operators					check_for_op(t_parsehelper *op, t_shellstate *state,
 int							check_parentheses(int *paren_depth, t_shellstate *s,
 								t_parsehelper *ph);
 bool						is_prev_redirector(const t_list *prev);
-int							assign_io_type(t_lsthelper *lh, t_list *new_node);
+int							assign_node_types(t_lsthelper *lh, t_list *new_node,
+								t_subtype subtype);
 size_t						str_arr_len(const char **arr);
 void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 int							handle_wildcard(t_lsthelper *lh);
@@ -137,4 +139,6 @@ char						*get_env_var_value(t_shellstate *s,
 int							get_flag(int flags, int bit_position);
 t_operators					get_op_type(const char *str, bool use_strstr);
 const char					*get_operator_str(int f);
+char						*ft_trimparentheses(t_lsthelper *lh, bool start);
+
 #endif

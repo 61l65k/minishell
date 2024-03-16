@@ -21,7 +21,7 @@ t_list	*ft_lstnew(void *content)
 		return (NULL);
 	node->content = content;
 	node->ambiguous_redirect = false;
-	node->type = IO_NONE;
+	node->io_type = IO_NONE;
 	node->next = NULL;
 	return (node);
 }

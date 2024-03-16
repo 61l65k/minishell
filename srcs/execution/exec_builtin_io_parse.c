@@ -48,7 +48,7 @@ static bool	found_io_node(t_io *io_node, t_list *curr, t_list *next)
 	io_node->fd = -1;
 	if (curr && next)
 	{
-		io_node->type = curr->type;
+		io_node->type = curr->io_type;
 		if (io_node->type == IO_NONE)
 			return (false);
 		io_node->filename = next->content;
@@ -88,7 +88,7 @@ void	remove_redirections_from_args(char **args, t_list *arg_list)
 	current_node = arg_list;
 	while (args[i] && current_node)
 	{
-		if (current_node->type != IO_NONE)
+		if (current_node->io_type != IO_NONE)
 		{
 			current_node = current_node->next;
 			i++;

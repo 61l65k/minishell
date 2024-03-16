@@ -14,6 +14,7 @@
 #include "minimessages.h"
 #include "minishell.h"
 #include "miniutils.h"
+#include <stdio.h>
 
 static int	validation_loop(t_shellstate *s, t_parsehelper *ph)
 {

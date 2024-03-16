@@ -41,22 +41,22 @@ static int	redir(t_redirecthelper *rh, t_exechelper *eh)
 {
 	const t_list	*node = eh->curr_cmd;
 
-	if (node->type == IO_OUT_TRUNC || node->type == IO_OUT_APPEND)
+	if (node->io_type == IO_OUT_TRUNC || node->io_type == IO_OUT_APPEND)
 	{
 		rh->flags = (O_WRONLY | O_CREAT | O_TRUNC);
-		if (node->type == IO_OUT_APPEND)
+		if (node->io_type == IO_OUT_APPEND)
 			rh->flags = (O_WRONLY | O_CREAT | O_APPEND);
 		rh->fd = open(node->next->content, rh->flags, 0644);
 		if (update_fds(node->next->content, rh, true) == FAILURE)
 			return (FAILURE);
 	}
-	else if (node->type == IO_INPUT)
+	else if (node->io_type == IO_INPUT)
 	{
 		rh->fd = open(node->next->content, O_RDONLY);
 		if (update_fds(node->next->content, rh, false) == FAILURE)
 			return (FAILURE);
 	}
-	else if (node->type == IO_HEREDOC)
+	else if (node->io_type == IO_HEREDOC)
 	{
 		handle_heredoc(rh, node->next->content, eh);
 	}
@@ -100,7 +100,7 @@ int	handle_redirect(t_exechelper *eh)
 			return (ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT,
 					eh->curr_cmd->next->content), FAILURE);
 		}
-		if (eh->curr_cmd->type != IO_NONE && redir(&rh, eh))
+		if (eh->curr_cmd->io_type != IO_NONE && redir(&rh, eh))
 			return (FAILURE);
 		eh->curr_cmd = eh->curr_cmd->next;
 	}

@@ -13,6 +13,7 @@
 #ifndef LIBFT_H
 # define LIBFT_H
 
+# include "minimessages.h"
 # ifdef __linux__
 #  include <linux/limits.h>
 #  include <stdint.h>
@@ -51,8 +52,9 @@ typedef struct s_list
 {
 	char			*content;
 	bool			ambiguous_redirect;
-	t_io_type		type;
+	t_io_type		io_type;
 	t_operators		op_type;
+	t_subtype		sub_type;
 	struct s_list	*next;
 }					t_list;
 

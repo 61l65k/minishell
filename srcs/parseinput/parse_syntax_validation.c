@@ -27,12 +27,12 @@ void	print_syntax_err(const char *token, const char *backup)
 
 static bool	is_valid_redirect_syntax(t_list *arg_list, t_operators op)
 {
-	t_list		*curr;
+	t_list	*curr;
 
 	curr = arg_list;
 	while (curr)
 	{
-		if (curr->type != IO_NONE)
+		if (curr->io_type != IO_NONE)
 		{
 			if (curr->next == NULL || curr->next->content == NULL)
 			{
@@ -40,7 +40,7 @@ static bool	is_valid_redirect_syntax(t_list *arg_list, t_operators op)
 				return (false);
 			}
 			curr = curr->next;
-			if (curr->type != IO_NONE)
+			if (curr->io_type != IO_NONE)
 			{
 				print_syntax_err(curr->content, "newline");
 				return (false);
@@ -59,10 +59,8 @@ bool	is_valid_syntax(t_shellstate *state)
 	return (true);
 	while (state->parsed_cmds[i])
 	{
-		if (is_valid_redirect_syntax(
-				state->parsed_cmds[i],
-				state->parsed_cmds[i]->op_type)
-			== false)
+		if (is_valid_redirect_syntax(state->parsed_cmds[i],
+				state->parsed_cmds[i]->op_type) == false)
 		{
 			state->last_exit_status = SYNTAX_ERROR;
 			return (false);

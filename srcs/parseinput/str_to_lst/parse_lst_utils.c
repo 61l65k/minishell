@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "minimessages.h"
 #include "minishell.h"
 
 t_operators	get_op_type(const char *str, bool use_strstr)
@@ -38,7 +39,7 @@ t_operators	get_op_type(const char *str, bool use_strstr)
 	return (OP_NONE);
 }
 
-int	assign_io_type(t_lsthelper *lh, t_list *new_node)
+int	assign_node_types(t_lsthelper *lh, t_list *new_node, t_subtype subtype)
 {
 	if (!new_node)
 		return (FAILURE);
@@ -51,8 +52,9 @@ int	assign_io_type(t_lsthelper *lh, t_list *new_node)
 			lh->current->next = lh->new_node;
 		lh->current = lh->new_node;
 	}
+	new_node->sub_type = subtype;
 	new_node->op_type = get_op_type(new_node->content, false);
-	new_node->type = get_io_type(new_node->content);
+	new_node->io_type = get_io_type(new_node->content);
 	return (SUCCESS);
 }
 
