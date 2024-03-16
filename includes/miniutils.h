@@ -128,8 +128,6 @@ t_operators					check_for_op(t_parsehelper *op, t_shellstate *state,
 int							check_parentheses(int *paren_depth, t_shellstate *s,
 								t_parsehelper *ph);
 bool						is_prev_redirector(const t_list *prev);
-void						append_operator(t_operators operator_type,
-								t_shellstate *s, t_parsehelper *ph);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
 void						handle_tilda(t_parsehelper *h, t_shellstate *state);
@@ -137,5 +135,5 @@ int							handle_wildcard(t_lsthelper *lh);
 char						*get_env_var_value(t_shellstate *s,
 								t_parsehelper *ph, bool *free_var_value);
 int							get_flag(int flags, int bit_position);
-t_operators					get_op_type(const char *str);
+t_operators					get_op_type(const char *str, bool use_strstr);
 #endif

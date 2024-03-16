@@ -57,7 +57,9 @@ static int	redir(t_redirecthelper *rh, t_exechelper *eh)
 			return (FAILURE);
 	}
 	else if (node->type == IO_HEREDOC)
+	{
 		handle_heredoc(rh, node->next->content, eh);
+	}
 	return (SUCCESS);
 }
 
@@ -101,7 +103,6 @@ int	handle_redirect(t_exechelper *eh)
 		if (eh->curr_cmd->type != IO_NONE && redir(&rh, eh))
 			return (FAILURE);
 		eh->curr_cmd = eh->curr_cmd->next;
-		printf("PERKELE\n");
 	}
 	return (apply_fd_redirections(rh.last_out_fd, rh.last_in_fd));
 }

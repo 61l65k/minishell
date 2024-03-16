@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "builtin.h"
 #include "minishell.h"
 
 /**
@@ -117,20 +118,19 @@ t_builtin_func	get_builtin_func(t_builtin_type type)
  * If in pipeline, we need to fork even if the command is a built-in.
  */
 
-bool	is_pipeline(t_exechelper *eh)
+bool	is_pipeline(const t_list **list)
 {
-	const t_list	*tmp = eh->curr_cmd;
-	int				i;
+	const t_list	**lst = list;
+	const t_list 	*curr = *lst;
 
-	i = 0;
-	if (tmp && tmp->next)
+	if (lst && *lst)
 	{
-		while (tmp && i <= eh->i)
+		while (*lst)
 		{
-			if (tmp->op_type == OP_PIPE)
+			if (curr->op_type == OP_PIPE)
 				return (true);
-			tmp = tmp->next;
-			i++;
+			lst += 1;
+			curr = *lst;
 		}
 	}
 	return (false);

@@ -55,16 +55,16 @@ static void	expand_env_variable(t_parsehelper *ph, t_shellstate *s)
 	}
 }
 
-static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *state)
+static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *s)
 {
-	const char	*c = &state->input_string[ph->i];
+	const char	*c = &s->input_string[ph->i];
 	const bool	space_before = (ph->i > 0) && (*(c - 1) != ' ' && *(c
-					- 1) != '\t');
+				- 1) != '\t');
 	const bool	space_after = (*(c + 1) != ' ' && *(c + 1) != '\t' && *(c
-					+ 1) != '\0');
+				+ 1) != '\0');
 	const bool	is_double_redir = (*(c + 1) == *c);
 
-	ensure_mem_for_buff(ph, state, 5, ph->curr_cmd);
+	ensure_mem_for_buff(ph, s, 5, ph->curr_cmd);
 	if (space_before)
 		ph->curr_cmd[ph->j++] = ' ';
 	ph->curr_cmd[ph->j++] = *c;
@@ -81,7 +81,7 @@ static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 {
 	const char	*operator_str = NULL;
 
-	if (f & (1 << REDIR_BIT))
+	if (get_flag(f, REDIR_BIT))
 		separate_redir_with_spaces(ph, s);
 	else if (get_flag(f, PIPE_BIT))
 		operator_str = "|";
@@ -102,7 +102,8 @@ static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 	{
 		expand_env_variable(ph, s);
 	}
-	else
+	else if (!(get_flag(f, REDIR_BIT) || get_flag(f, PIPE_BIT) || get_flag(f,
+				AND_BIT) || get_flag(f, OR_BIT)))
 	{
 		ensure_mem_for_buff(ph, s, 1, ph->curr_cmd);
 		ph->curr_cmd[ph->j++] = s->input_string[ph->i];

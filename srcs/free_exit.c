@@ -59,9 +59,6 @@ void	ft_free_resets(t_shellstate *state)
 	free_str_array(state->parsed_args);
 	state->parsed_args = NULL;
 	state->cmd_count = 0;
-	if (state->operators)
-		free(state->operators);
-	state->operators = NULL;
 }
 
 /**

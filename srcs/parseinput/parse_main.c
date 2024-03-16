@@ -46,11 +46,8 @@ static int	validate_input(t_shellstate *s, t_parsehelper *ph)
 {
 	ph->alloc_size = 100;
 	ph->command_count = 1;
-	s->operators = ft_calloc(ph->alloc_size, sizeof(t_operators));
-	if (!s->operators)
-		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 	if (validation_loop(s, ph) == FAILURE)
-		return (free(s->operators), FAILURE);
+		return (FAILURE);
 	return (SUCCESS);
 }
 
@@ -85,7 +82,6 @@ static int	process_str_to_lst(t_shellstate *s)
 {
 	int	i;
 
-	// t_list	*tmp;
 	i = -1;
 	while (++i < s->cmd_count)
 	{
@@ -95,7 +91,7 @@ static int	process_str_to_lst(t_shellstate *s)
 			if ((i == 0 && is_spaces(s->parsed_args[i])))
 				return (free_and_null_str_array(&s->parsed_args),
 					set_exit_status(s, SUCCESS), SUCCESS);
-			print_syntax_err(op_to_str(s->operators[i]), s->parsed_args[i]);
+			print_syntax_err("PERSE", s->parsed_args[i]);
 			set_exit_status(s, SYNTAX_ERROR);
 			return (free_and_null_str_array(&s->parsed_args), FAILURE);
 		}
@@ -103,15 +99,6 @@ static int	process_str_to_lst(t_shellstate *s)
 	free_and_null_str_array(&s->parsed_args);
 	if (!s->parsed_cmds[0])
 		return (set_exit_status(s, SUCCESS), FAILURE);
-	/*for (t_list **lst = s->parsed_cmds; *lst; lst++)
-	{
-		tmp = *lst;
-		while (tmp)
-		{
-			printf("tmp->content: %s\n", (char *)tmp->content);
-			tmp = tmp->next;
-		}
-	}*/
 	return (SUCCESS);
 }
 

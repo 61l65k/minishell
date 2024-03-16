@@ -13,16 +13,28 @@
 #include "libft.h"
 #include "minishell.h"
 
-t_operators	get_op_type(const char *str)
+t_operators	get_op_type(const char *str, bool use_strstr)
 {
 	if (!str)
 		return (OP_NONE);
-	if (ft_strcmp(str, "|") == 0)
-		return (OP_PIPE);
-	if (ft_strcmp(str, "&&") == 0)
-		return (OP_AND);
-	if (ft_strcmp(str, "||") == 0)
-		return (OP_OR);
+	if (use_strstr)
+	{
+		if (ft_strnstr(str, "|", ft_strlen(str)))
+			return (OP_PIPE);
+		if (ft_strnstr(str, "&&", ft_strlen(str)))
+			return (OP_AND);
+		if (ft_strnstr(str, "||", ft_strlen(str)))
+			return (OP_OR);
+	}
+	else
+	{
+		if (ft_strcmp(str, "|") == 0)
+			return (OP_PIPE);
+		if (ft_strcmp(str, "&&") == 0)
+			return (OP_AND);
+		if (ft_strcmp(str, "||") == 0)
+			return (OP_OR);
+	}
 	return (OP_NONE);
 }
 
@@ -39,7 +51,7 @@ int	assign_io_type(t_lsthelper *lh, t_list *new_node)
 			lh->current->next = lh->new_node;
 		lh->current = lh->new_node;
 	}
-	new_node->op_type = get_op_type(new_node->content);
+	new_node->op_type = get_op_type(new_node->content, false);
 	new_node->type = get_io_type(new_node->content);
 	return (SUCCESS);
 }
