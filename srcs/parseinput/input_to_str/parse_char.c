@@ -33,20 +33,23 @@ static void	handle_escape_sequence(t_parsehelper *ph, const char *input_string)
 
 static void	expand_env_variable(t_parsehelper *ph, t_shellstate *s)
 {
-	char	*var_value;
-	int		val_len;
-	bool	free_var_value;
+	char		*var_value;
+	int			val_len;
+	bool		free_var_value;
+	const bool	should_quote = !ph->in_double_quote;
 
 	ph->i += 1;
 	var_value = get_env_var_value(s, ph, &free_var_value);
 	if (var_value)
 	{
 		val_len = ft_strlen(var_value);
-		ensure_mem_for_buff(ph, s, ft_strlen(ph->curr_cmd) + val_len + 1,
-			ph->curr_cmd);
-		ft_strncat(ph->curr_cmd, "\"", 1);
+		ensure_mem_for_buff(ph, s, ft_strlen(ph->curr_cmd) + val_len + 5, \
+		ph->curr_cmd);
+		if (should_quote)
+			ft_strncat(ph->curr_cmd, "\"", 1);
 		ft_strncat(ph->curr_cmd, var_value, val_len);
-		ft_strncat(ph->curr_cmd, "\"", 1);
+		if (should_quote)
+			ft_strncat(ph->curr_cmd, "\"", 1);
 		ph->j = ft_strlen(ph->curr_cmd);
 		if (free_var_value)
 			free(var_value);
