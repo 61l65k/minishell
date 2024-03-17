@@ -76,11 +76,23 @@ void	set_exit_status(t_shellstate *state, int status)
 	state->last_exit_status = status;
 }
 
-void	expand_exit_status(t_shellstate *s,
-	char *var_value, bool *free_var_value)
+char	*get_var_value_from_env(t_shellstate *s, t_parsehelper *ph)
 {
-	*free_var_value = true;
-	var_value = ft_itoa(s->last_exit_status);
-	if (!var_value)
+	char	*var_value;
+	char	*var_name;
+	int		var_name_len;
+
+	var_name_len = ft_envlen((char *)s->input_string + ph->i);
+	var_name = ft_strndup(s->input_string + ph->i, var_name_len);
+	if (!var_name)
 		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	var_value = ft_getenv(var_name, s->envp);
+	ph->i += var_name_len - 1;
+	if (var_value == NULL && ph->was_redirect)
+	{
+		ph->was_redirect = false;
+		return (var_name);
+	}
+	free(var_name);
+	return (var_value);
 }

@@ -88,10 +88,7 @@ char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
 		bool *free_var_value)
 {
 	char	*var_value;
-	char	*var_name;
-	int		var_name_len;
 
-	var_name_len = 0;
 	*free_var_value = false;
 	if (s->input_string[ph->i] == '?')
 	{
@@ -102,18 +99,7 @@ char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
 	}
 	else
 	{
-		var_name_len = ft_envlen((char *)s->input_string + ph->i);
-		var_name = ft_strndup(s->input_string + ph->i, var_name_len);
-		if (!var_name)
-			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-		var_value = ft_getenv(var_name, s->envp);
-		ph->i += var_name_len - 1;
-		if (var_value == NULL && ph->was_redirect)
-		{
-			ph->was_redirect = false;
-			return (var_name);
-		}
-		free(var_name);
+		var_value = get_var_value_from_env(s, ph);
 	}
 	return (var_value);
 }

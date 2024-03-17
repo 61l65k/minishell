@@ -82,5 +82,4 @@ bool							is_spaces(const char *str);
 bool							ambiguous_redirect(t_shellstate *s);
 void							ft_signal_handler(int signo, siginfo_t *info,
 									void *context);
-;
 #endif
