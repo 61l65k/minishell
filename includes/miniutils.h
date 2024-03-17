@@ -40,6 +40,7 @@ typedef struct s_parsehelper
 	size_t					j;
 	size_t					i;
 	size_t					alloc_size;
+	bool					was_redirect;
 }							t_parsehelper;
 
 typedef struct s_exechelper
@@ -136,4 +137,6 @@ void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 int							handle_wildcard(t_lsthelper *lh);
 char						*get_env_var_value(t_shellstate *s,
 								t_parsehelper *ph, bool *free_var_value);
+void						expand_exit_status(t_shellstate *s,
+								char *var_value, bool *free_var_value);
 #endif

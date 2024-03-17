@@ -75,3 +75,12 @@ void	set_exit_status(t_shellstate *state, int status)
 {
 	state->last_exit_status = status;
 }
+
+void	expand_exit_status(t_shellstate *s,
+	char *var_value, bool *free_var_value)
+{
+	*free_var_value = true;
+	var_value = ft_itoa(s->last_exit_status);
+	if (!var_value)
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+}

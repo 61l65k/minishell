@@ -38,6 +38,7 @@ static void	expand_env_variable(t_parsehelper *ph, t_shellstate *s)
 	bool		free_var_value;
 	const bool	should_quote = !ph->in_double_quote;
 
+	free_var_value = false;
 	ph->i += 1;
 	var_value = get_env_var_value(s, ph, &free_var_value);
 	if (var_value)
@@ -65,6 +66,7 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *state)
 				+ 1) != '\0');
 	const bool	is_double_redir = (*(c + 1) == *c);
 
+	ph->was_redirect = true;
 	ensure_mem_for_buff(ph, state, 5, ph->curr_cmd);
 	if (space_before)
 		ph->curr_cmd[ph->j++] = ' ';
@@ -98,16 +100,13 @@ static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 	else
 	{
 		ensure_mem_for_buff(ph, s, 1, ph->curr_cmd);
+		if (ph->was_redirect && ph->curr_cmd[ph->j] != ' ' \
+			&& ph->curr_cmd[ph->j])
+			ph->was_redirect = false;
 		ph->curr_cmd[ph->j++] = s->input_string[ph->i];
 	}
 }
 
-/**
- * @brief Parses the characer from input string.
- * & Handles single and double quotes,
-	escape sequences and environment variables. And turns the the
- *
- */
 void	parse_character(t_parsehelper *ph, t_shellstate *s)
 {
 	int	flags;
@@ -120,6 +119,7 @@ void	parse_character(t_parsehelper *ph, t_shellstate *s)
 	else if (!(flags & (1 << QUOTE_BIT)) && (ph->in_single_quote
 			|| ph->in_double_quote))
 	{
+		ph->was_redirect = false;
 		if (flags & (1 << ESCAPED_BIT))
 			handle_escape_sequence(ph, s->input_string);
 		else if (ph->in_double_quote && (flags & (1 << ENVVAR_BIT)))

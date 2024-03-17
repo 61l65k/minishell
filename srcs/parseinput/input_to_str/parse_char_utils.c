@@ -108,6 +108,11 @@ char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
 			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
 		var_value = ft_getenv(var_name, s->envp);
 		ph->i += var_name_len - 1;
+		if (var_value == NULL && ph->was_redirect)
+		{
+			ph->was_redirect = false;
+			return (var_name);
+		}
 		free(var_name);
 	}
 	return (var_value);
