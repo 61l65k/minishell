@@ -77,7 +77,8 @@ void	set_exit_status(t_shellstate *state, int status)
 	state->last_exit_status = status;
 }
 
-char	*get_var_value_from_env(t_shellstate *s, t_parsehelper *ph)
+char	*get_var_value_from_env(t_shellstate *s, t_parsehelper *ph,
+		bool *free_var_value)
 {
 	char	*var_value;
 	char	*var_name;
@@ -91,6 +92,7 @@ char	*get_var_value_from_env(t_shellstate *s, t_parsehelper *ph)
 	ph->i += var_name_len - 1;
 	if (var_value == NULL && ph->was_redirect)
 	{
+		*free_var_value = true;
 		ph->was_redirect = false;
 		var_value = ft_strjoin(AMBIGIOUS_RESET, var_name);
 		if (!var_value)

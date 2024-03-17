@@ -140,5 +140,6 @@ char						*get_env_var_value(t_shellstate *s,
 void						expand_exit_status(t_shellstate *s,
 								char *var_value, bool *free_var_value);
 char						*get_var_value_from_env(t_shellstate *s,
-								t_parsehelper *ph);
+								t_parsehelper *ph,
+								bool *free_var_value);
 #endif

@@ -99,7 +99,7 @@ char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
 	}
 	else
 	{
-		var_value = get_var_value_from_env(s, ph);
+		var_value = get_var_value_from_env(s, ph, free_var_value);
 	}
 	return (var_value);
 }
