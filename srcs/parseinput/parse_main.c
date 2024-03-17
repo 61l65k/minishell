@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
-#include "miniutils.h"
 
 static int	validation_loop(t_shellstate *s, t_parsehelper *ph)
 {

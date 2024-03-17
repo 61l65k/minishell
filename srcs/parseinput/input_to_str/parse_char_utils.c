@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "miniutils.h"
-#include <stdbool.h>
 
 void	append_operator(t_operators operator_type, t_shellstate *s,
 		t_parsehelper *ph)

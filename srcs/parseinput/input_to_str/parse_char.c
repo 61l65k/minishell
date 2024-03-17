@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "miniutils.h"
 
 static void	handle_escape_sequence(t_parsehelper *ph, const char *input_string)
 {

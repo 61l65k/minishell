@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
 
 /**
  * @brief Frees all & Exit the shell. Prints msg with perror if exit_code != 0.
