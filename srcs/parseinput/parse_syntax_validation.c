@@ -91,7 +91,11 @@ char	*get_var_value_from_env(t_shellstate *s, t_parsehelper *ph)
 	if (var_value == NULL && ph->was_redirect)
 	{
 		ph->was_redirect = false;
-		return (var_name);
+		var_value = ft_strjoin(RESET_E, var_name);
+		if (!var_value)
+			return (free(var_name), ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE),
+				NULL);
+		return (free(var_name), var_value);
 	}
 	free(var_name);
 	return (var_value);

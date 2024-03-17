@@ -78,3 +78,22 @@ t_list	*str_to_lst(const char *str, t_shellstate *s)
 	lh.length = lh.end - lh.start + 1;
 	return (allocate_lst(&lh, s));
 }
+
+void	ambigious_check(t_shellstate *s)
+{
+	t_list	**list;
+	t_list	*tmp;
+
+	list = s->parsed_cmds;
+	while (*list)
+	{
+		tmp = *list;
+		while (tmp)
+		{
+			if (ft_strncmp(tmp->content, RESET_E, ft_strlen(RESET_E)) == 0)
+				tmp->ambiguous_redirect = true;
+			tmp = tmp->next;
+		}
+		list++;
+	}
+}
