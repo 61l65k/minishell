@@ -6,13 +6,11 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/17 12:31:43 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/17 12:54:06 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
 #include "minishell.h"
-#include <unistd.h>
 
 /**
  * @brief Takes input from the user and stores it in state->input_string.
@@ -38,6 +36,19 @@ static void	ft_takeinput(t_shellstate *state)
 	check_g_signal_flag(state);
 }
 
+static void	t_shellstate_init(t_shellstate *state, const char **envp)
+{
+	state->envp = ft_strdup_array(envp);
+	if (state->envp == NULL)
+		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+	if (vec_new(&state->pid, 10, sizeof(pid_t)) == -1)
+		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+	if (isatty(STDIN_FILENO))
+	{
+		remove_env_var("OLDPWD", state);
+	}
+}
+
 int	main(int argc, char **argv, const char **envp)
 {
 	t_shellstate	state;
@@ -45,14 +56,10 @@ int	main(int argc, char **argv, const char **envp)
 	(void)argc;
 	(void)argv;
 	setup_terminal();
-	state = (t_shellstate){0};
 	init_signals();
-	state.envp = ft_strdup_array(envp);
-	vec_new(&state.pid, 10, sizeof(pid_t));
-	if (!state.envp || state.pid.memory == NULL)
-		ft_free_exit(&state, ERR_MALLOC, EXIT_FAILURE);
-	if (isatty(STDIN_FILENO))
-		remove_env_var("OLDPWD", &state);
+	state = (t_shellstate){0};
+	t_shellstate_init(&state, envp);
+	(void)envp;
 	while (1)
 	{
 		ft_free_resets(&state);
