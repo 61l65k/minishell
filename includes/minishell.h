@@ -78,7 +78,7 @@ void							check_operators(t_exechelper *h,
 void							check_g_signal_flag(t_shellstate *s);
 void							set_exit_status(t_shellstate *state,
 									int status);
-bool							is_spaces(const char *str);
+bool							is_spaces(const char *str, size_t n);
 bool							ambiguous_redirect(t_shellstate *s);
 void							ft_signal_handler(int signo, siginfo_t *info,
 									void *context);

@@ -80,16 +80,14 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *s)
 
 static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 {
-	const char	*operator_str = get_operator_str(f, s->input_string[ph->i]);
+	const char	*operator_str = get_operator_str(f);
 
 	if (get_flag(f, REDIR_BIT))
 		separate_redir_with_spaces(ph, s);
 	if (operator_str)
 	{
-		ph->curr_cmd[ph->j] = '\0';
-		if (!is_spaces(ph->curr_cmd))
-			ph->commands[ph->command_index++] = ft_strdup(ph->curr_cmd);
-		ph->commands[ph->command_index++] = ft_strdup(operator_str);
+		ph->commands[ph->cmd_indx++] = ft_strdup(ph->curr_cmd);
+		ph->commands[ph->cmd_indx++] = ft_strdup(operator_str);
 		ph->j = 0;
 		if (f & ((1 << AND_BIT) | (1 << OR_BIT)))
 			ph->i++;

@@ -50,22 +50,20 @@ void	ensure_mem_for_buff(t_parsehelper *ph, t_shellstate *s,
 	}
 }
 
-void	init_char_flags(int *flags, char *c, t_parsehelper *h)
+void	init_char_flags(int *flags, char *c, t_parsehelper *ph)
 {
 	*flags = 0;
-	if ((*c == '\'' && !h->in_double_quote) || (*c == '"'
-			&& !h->in_single_quote))
+	if ((*c == '\'' && !ph->in_double_quote) || (*c == '"'
+			&& !ph->in_single_quote))
 	{
-		h->in_single_quote ^= (*c == '\'');
-		h->in_double_quote ^= (*c == '"');
+		ph->in_single_quote ^= (*c == '\'');
+		ph->in_double_quote ^= (*c == '"');
 		*flags |= (1 << QUOTE_BIT);
 	}
 	*flags |= (*c == '\\') << ESCAPED_BIT;
 	*flags |= (*c == '$') << ENVVAR_BIT;
-	if (!h->in_single_quote && !h->in_double_quote)
+	if (!ph->in_single_quote && !ph->in_double_quote)
 	{
-		*flags |= ((*c == '(' && *(c + 1) == '(') || (*c == ')' && *(c
-						- 1) == ')')) << SUBSHELL_BIT;
 		*flags |= (*c == '~' && *(c - 1) == ' ' && (*(c + 1) == ' ' || *(c
 						+ 1) == '\0' || *(c + 1) == '/')) << TILDA_BIT;
 		*flags |= (*c == '|' && *(c + 1) != '|') << PIPE_BIT;
@@ -106,7 +104,7 @@ char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
 	return (var_value);
 }
 
-const char	*get_operator_str(int f, char c)
+const char	*get_operator_str(int f)
 {
 	if (get_flag(f, PIPE_BIT))
 		return ("|");
@@ -114,9 +112,5 @@ const char	*get_operator_str(int f, char c)
 		return ("&&");
 	if (get_flag(f, OR_BIT))
 		return ("||");
-	if (get_flag(f, SUBSHELL_BIT) && c == '(')
-		return ("(");
-	if (get_flag(f, SUBSHELL_BIT) && c == ')')
-		return (")");
 	return (NULL);
 }

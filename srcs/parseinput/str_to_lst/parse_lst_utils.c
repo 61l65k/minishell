@@ -77,17 +77,18 @@ int	ft_isspace(char c)
 	return (0);
 }
 
-bool	is_spaces(const char *str)
+bool	is_spaces(const char *str, size_t n)
 {
-	if (!str || !*str)
+	size_t	count;
+
+	count = 0;
+	if (!str)
 		return (false);
-	while (*str)
+	while (str[count] && (n == 0 || count < n))
 	{
-		if (!ft_isspace(*str))
-		{
+		if (!ft_isspace(str[count]))
 			return (false);
-		}
-		str++;
+		count++;
 	}
 	return (true);
 }

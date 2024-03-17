@@ -37,10 +37,12 @@ typedef struct s_parsehelper
 	int						command_count;
 	char					**commands;
 	char					*curr_cmd;
-	int						command_index;
+	int						cmd_indx;
 	size_t					j;
 	size_t					i;
 	size_t					alloc_size;
+	int						needed_splits;
+	int						parentheses_depth;
 }							t_parsehelper;
 
 typedef struct s_exechelper
@@ -110,7 +112,6 @@ char						**ft_strdup_array(const char **arr);
 void						free_str_array(char **str_arr);
 void						free_and_null_str_array(char ***str_arr_ptr);
 int							ft_parseinput(t_shellstate *state);
-char						*trim_spaces(const char *str);
 t_list						*str_to_lst(const char *str, t_shellstate *s);
 int							ft_isenv_var(int c);
 void						parse_character(t_parsehelper *h,
@@ -119,7 +120,7 @@ void						ensure_mem_for_buff(t_parsehelper *ph,
 								t_shellstate *s, size_t additional_length,
 								void *buff);
 void						init_char_flags(int *flags, char *c,
-								t_parsehelper *h);
+								t_parsehelper *ph);
 int							handle_redirect(t_exechelper *eh);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
@@ -127,7 +128,7 @@ bool						need_handling(t_lsthelper *t, bool check_quoted);
 int							handle_quoted(t_lsthelper *t);
 t_operators					check_for_op(t_parsehelper *op, t_shellstate *state,
 								int index);
-int							check_parentheses(int *paren_depth, t_shellstate *s,
+int							check_parentheses(t_shellstate *s,
 								t_parsehelper *ph);
 bool						is_prev_redirector(const t_list *prev);
 int							assign_node_types(t_lsthelper *lh, t_list *new_node,
@@ -139,7 +140,11 @@ char						*get_env_var_value(t_shellstate *s,
 								t_parsehelper *ph, bool *free_var_value);
 int							get_flag(int flags, int bit_position);
 t_operators					get_op_type(const char *str, bool use_strstr);
-const char					*get_operator_str(int f, char c);
+const char					*get_operator_str(int f);
 char						*ft_trimparentheses(t_lsthelper *lh, bool start);
 void						dup_forward_fd(t_shellstate *s, t_exechelper *eh);
+char						**separate_parentheses(t_parsehelper *ph,
+								t_shellstate *s);
+char						*trim_spaces(char *str);
+void						remove_empty_and_trim_strings(char **commands);
 #endif

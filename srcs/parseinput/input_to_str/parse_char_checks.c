@@ -12,50 +12,6 @@
 
 #include "minishell.h"
 
-int	adjust_index_for_parentheses_check(const char *str, int i, bool adjust_next)
-{
-	if (adjust_next)
-	{
-		while (str[i] && str[i] == ' ')
-			i++;
-	}
-	else
-	{
-		while (i >= 0 && str[i] == ' ')
-			i--;
-		if (i > 0 && (str[i] == '&' || (str[i] == '|' && str[i - 1] == '|')))
-			i--;
-	}
-	return (i);
-}
-
-int	check_parentheses(int *paren_depth, t_shellstate *s, t_parsehelper *ph)
-{
-	const char	*current_char = &s->input_string[ph->i];
-	const int	prev_index = adjust_index_for_parentheses_check(s->input_string,
-			ph->i - 1, false);
-	const int	next_index = adjust_index_for_parentheses_check(s->input_string,
-			ph->i + 1, true);
-
-	if (*current_char == '(')
-	{
-		if (ph->i != 0 && prev_index >= 0 && check_for_op(ph, s,
-				prev_index) == OP_NONE && *(current_char - 1) != '(')
-			return (print_syntax_err("(", NULL), FAILURE);
-		*paren_depth += 1;
-	}
-	else if (*current_char == ')')
-	{
-		if (*paren_depth <= 0)
-			return (print_syntax_err(")", NULL), FAILURE);
-		if (s->input_string[next_index] != '\0' && check_for_op(ph, s,
-				next_index) == OP_NONE && *(current_char + 1) != ')')
-			return (print_syntax_err(")", NULL), FAILURE);
-		*paren_depth -= 1;
-	}
-	return (SUCCESS);
-}
-
 void	handle_tilda(t_parsehelper *h, t_shellstate *state)
 {
 	const char	*tilda = ft_getenv("HOME", state->envp);

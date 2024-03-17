@@ -25,6 +25,8 @@ SRCS =  /built-in/built-in_cd.c \
 		/parseinput/input_to_str/parse_char.c \
 		/parseinput/input_to_str/parse_char_checks.c \
 		/parseinput/input_to_str/parse_char_utils.c \
+		/parseinput/input_to_str/parse_parentheses.c \
+		/parseinput/input_to_str/parse_parentheses_utils.c \
 		/parseinput/parse_main.c \
 		/parseinput/parse_syntax_validation.c \
 		/parseinput/str_to_lst/parse_lst.c \

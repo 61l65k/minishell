@@ -120,20 +120,20 @@ int	ft_executecmd(t_shellstate *state)
 {
 	t_exechelper	eh;
 	int				offset;
+	t_list			*tmp;
 
-	// t_list			*tmp;
-	/*for (t_list **lst = state->parsed_cmds; *lst; lst++)
+	for (t_list **lst = state->parsed_cmds; *lst; lst++)
 	{
 		tmp = *lst;
 		while (tmp)
 		{
-			printf("cont:%s subtype:%d optype:%d iotype %d\n",
-				tmp->content,tmp->sub_type, tmp->op_type, tmp->io_type);
+			printf("cont:%s subtype:%d optype:%d iotype %d\n", tmp->content,
+				tmp->sub_type, tmp->op_type, tmp->io_type);
 			tmp = tmp->next;
 		}
-	}*/
+	}
 	eh = (t_exechelper){0};
-	// printf("CURRENT i:%d\n", eh.i);
+	printf("CURRENT i:%d\n", eh.i);
 	state->last_exit_status = 0;
 	while (state->parsed_cmds[eh.i] != NULL)
 	{
