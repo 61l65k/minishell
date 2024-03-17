@@ -93,8 +93,10 @@ int	handle_redirect(t_exechelper *eh)
 	ft_memset(&rh, -1, sizeof(rh));
 	while (eh->curr_cmd)
 	{
-		if (eh->curr_cmd->next && eh->curr_cmd->next->ambiguous_redirect)
+		if (eh->curr_cmd->next && eh->curr_cmd->next->ambiguous_redirect \
+			&& ft_strcmp(eh->curr_cmd->content, "<<"))
 		{
+			printf("curr content: %s\n", eh->curr_cmd->content);
 			return (ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT,
 					eh->curr_cmd->next->content), FAILURE);
 		}
