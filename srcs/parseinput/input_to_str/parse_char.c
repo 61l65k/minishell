@@ -44,8 +44,8 @@ static void	expand_env_variable(t_parsehelper *ph, t_shellstate *s)
 	if (var_value)
 	{
 		val_len = ft_strlen(var_value);
-		ensure_mem_for_buff(ph, s, ft_strlen(ph->curr_cmd) + val_len + 5, \
-		ph->curr_cmd);
+		ensure_mem_for_buff(ph, s, ft_strlen(ph->curr_cmd) + val_len + 10,
+			ph->curr_cmd);
 		if (should_quote)
 			ft_strncat(ph->curr_cmd, "\"", 1);
 		ft_strncat(ph->curr_cmd, var_value, val_len);
@@ -67,7 +67,7 @@ static void	separate_redir_with_spaces(t_parsehelper *ph, t_shellstate *state)
 	const bool	is_double_redir = (*(c + 1) == *c);
 
 	ph->was_redirect = true;
-	ensure_mem_for_buff(ph, state, 5, ph->curr_cmd);
+	ensure_mem_for_buff(ph, state, 8, ph->curr_cmd);
 	if (space_before)
 		ph->curr_cmd[ph->j++] = ' ';
 	ph->curr_cmd[ph->j++] = *c;
@@ -100,7 +100,7 @@ static void	handle_non_quoted_char(t_parsehelper *ph, t_shellstate *s, int f)
 	else
 	{
 		ensure_mem_for_buff(ph, s, 1, ph->curr_cmd);
-		if (ph->was_redirect && ph->curr_cmd[ph->j] != ' ' \
+		if (ph->was_redirect && ph->curr_cmd[ph->j] != ' '
 			&& ph->curr_cmd[ph->j])
 			ph->was_redirect = false;
 		ph->curr_cmd[ph->j++] = s->input_string[ph->i];
@@ -131,5 +131,6 @@ void	parse_character(t_parsehelper *ph, t_shellstate *s)
 	}
 	else
 		handle_non_quoted_char(ph, s, flags);
+	ensure_mem_for_buff(ph, s, 5, ph->curr_cmd);
 	ph->curr_cmd[ph->j] = '\0';
 }
