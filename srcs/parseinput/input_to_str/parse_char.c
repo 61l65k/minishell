@@ -119,7 +119,6 @@ void	parse_character(t_parsehelper *ph, t_shellstate *s)
 	else if (!(flags & (1 << QUOTE_BIT)) && (ph->in_single_quote
 			|| ph->in_double_quote))
 	{
-		ph->was_redirect = false;
 		if (flags & (1 << ESCAPED_BIT))
 			handle_escape_sequence(ph, s->input_string);
 		else if (ph->in_double_quote && (flags & (1 << ENVVAR_BIT)))
