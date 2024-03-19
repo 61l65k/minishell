@@ -52,7 +52,7 @@ void	builtin_unset(char **args, t_shellstate *state)
 		{
 			state->last_exit_status = 1;
 			ft_fprintf(STDERR_FILENO,
-				"minishell: export: `%s': not a valid identifier\n", args[i]);
+				"minishell: unset: `%s': not a valid identifier\n", args[i]);
 			continue ;
 		}
 		ptr_to_value = ft_getenv(args[i], state->envp);
