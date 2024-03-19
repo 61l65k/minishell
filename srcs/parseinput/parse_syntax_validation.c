@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minimessages.h"
 #include "minishell.h"
 
 void	print_syntax_err(const char *token, const char *backup)
