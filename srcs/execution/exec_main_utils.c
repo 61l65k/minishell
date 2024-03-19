@@ -40,7 +40,7 @@ bool	check_pipedoc(t_shellstate *s, t_exechelper *h)
 	{
 		while (l)
 		{
-			if (ft_strcmp(l->content, "<<") == 0)
+			if (l->type == IO_HEREDOC)
 			{
 				h->pipe_doc = true;
 				return (true);
