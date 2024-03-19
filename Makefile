@@ -9,6 +9,7 @@ SRCS =  /built-in/built-in_cd.c \
 		/env/env_utils.c \
 		/env/ft_getenv.c \
 		/env/ft_setenv.c \
+		/env/shell_level.c \
 		/execution/exec_builtin.c \
 		/execution/exec_builtin_io_apply.c \
 		/execution/exec_builtin_io_cleanup.c \
