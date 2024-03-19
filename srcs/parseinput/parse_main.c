@@ -96,7 +96,7 @@ static int	process_str_to_lst(t_shellstate *s)
 		}
 	}
 	free_and_null_str_array(&s->parsed_args);
-	ambigious_check(s);
+	mark_ambigious_env_redirects(s);
 	if (!s->parsed_cmds[0])
 		return (set_exit_status(s, SUCCESS), FAILURE);
 	return (SUCCESS);
