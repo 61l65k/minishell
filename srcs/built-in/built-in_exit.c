@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 12:33:49 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/15 22:31:48 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/19 22:10:19 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ long	str_to_long(const char *str, int *overflow)
 	return (result * sign);
 }
 
-static int	is_numeric(const char *str)
+int	is_numeric(const char *str)
 {
 	size_t	i;
 

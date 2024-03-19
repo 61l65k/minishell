@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/17 12:54:06 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/19 22:25:58 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static void	t_shellstate_init(t_shellstate *state, const char **envp)
 	if (isatty(STDIN_FILENO))
 	{
 		remove_env_var("OLDPWD", state);
+		update_shell_level(state);
 	}
 }
 
