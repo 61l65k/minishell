@@ -67,6 +67,12 @@ bool	is_valid_syntax(t_shellstate *state)
 		}
 		i++;
 	}
+	if (i > 0 && state->operators[i - 1] != OP_NONE)
+	{
+		print_syntax_err(op_to_str(state->operators[i - 1]), "newline");
+		state->last_exit_status = SYNTAX_ERROR;
+		return (false);
+	}
 	state->last_exit_status = 0;
 	return (true);
 }
