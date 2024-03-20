@@ -79,7 +79,7 @@ t_list	*str_to_lst(const char *str, t_shellstate *s)
 	return (allocate_lst(&lh, s));
 }
 
-void	mark_ambigious_env_redirects(t_shellstate *s)
+void	mark_ambiguous_env_redirects(t_shellstate *s)
 {
 	t_list		**list;
 	t_list		*tmp;

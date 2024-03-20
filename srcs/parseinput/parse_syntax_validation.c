@@ -93,7 +93,7 @@ char	*get_var_value_from_env(t_shellstate *s, t_parsehelper *ph,
 	{
 		*free_var_value = true;
 		ph->was_redirect = false;
-		var_value = ft_strjoin(AMBIGIOUS_RESET, var_name);
+		var_value = ft_strjoin(AMBIGUOUS_RESET, var_name);
 		if (!var_value)
 			return (free(var_name), ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE),
 				NULL);
