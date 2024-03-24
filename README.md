@@ -1,8 +1,14 @@
 # Minishell
 
-<img src="./images/bash_logo.png" alt="Bash Logo" width="100"/>
-<img src="./images/zsh_logo.png" alt="Zsh Logo" width="75"/>
-<img src="./images/terminal.png" alt="Terminal Logo" width="100"/>
+
+<div>
+  <img src="./images/bash_logo.png" alt="Bash Logo" width="100" style="display: inline;"/>
+  <img src="./images/zsh_logo.png" alt="Zsh Logo" width="75" style="display: inline;"/>
+  <img src="./images/terminal.png" alt="Terminal Logo" width="100" style="display: inline;"/>
+  <img src="./images/cshell_logo.png" alt="Csh Logo" width="75" style="display: inline;"/>
+  <img src="./images/kornshell _logo.png" alt="Ksh Logo" width="75" style="display: inline;"/>
+  <img src="./images/powershell_logo.png" alt="Pwrshl Logo" width="120" style="display: inline;"/>
+</div>
 
 ## Description
 
