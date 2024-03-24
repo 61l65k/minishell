@@ -24,7 +24,7 @@ static void	handle_home(t_shellstate *state, char *cwd)
 	}
 	else if (chdir(home_path) == -1)
 	{
-		state->last_exit_status = errno;
+		state->last_exit_status = 1;
 		ft_fprintf(STDERR_FILENO,
 			"minishell: cd: %s: %s\n", home_path, strerror(errno));
 		return ;

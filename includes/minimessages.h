@@ -27,13 +27,14 @@ delimited by end-of-file (wanted `%s')\n"
 # define ERR_HEREDOC_DELIMITER \
 	"minishell: syntax error near unexpected \
 token `newline'\n"
+# define AMBIGUOUS_RESET "\001\033[0m\002$"
 # define SIGINT_EXIT 130
 # ifdef __APPLE__
-#  define EXIT_INVALID_ARG 255
 #  define MAC_OS 1
+#  define EXIT_INVALID_ARG 255
 # else
-#  define EXIT_INVALID_ARG 2
 #  define MAC_OS 0
+#  define EXIT_INVALID_ARG 2
 # endif
 
 typedef enum e_charflag_bits

@@ -6,11 +6,10 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 12:17:20 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/08 16:34:27 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/19 22:25:58 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtin.h"
 #include "minishell.h"
 
 /**
@@ -27,10 +26,28 @@ static void	ft_takeinput(t_shellstate *state)
 	ft_strncat(prompt, RESET_E "$ ", sizeof(prompt));
 	state->input_string = readline(prompt);
 	if (state->input_string == NULL)
-		ft_free_exit(state, "exit", EXIT_SUCCESS);
+	{
+		if (isatty(STDIN_FILENO))
+			ft_fprintf(STDERR_FILENO, "exit\n");
+		ft_free_exit(state, NULL, EXIT_SUCCESS);
+	}
 	if (ft_strlen(state->input_string))
 		add_history(state->input_string);
 	check_g_signal_flag(state);
+}
+
+static void	t_shellstate_init(t_shellstate *state, const char **envp)
+{
+	state->envp = ft_strdup_array(envp);
+	if (state->envp == NULL)
+		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+	if (vec_new(&state->pid, 10, sizeof(pid_t)) == -1)
+		ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
+	if (isatty(STDIN_FILENO))
+	{
+		remove_env_var("OLDPWD", state);
+		update_shell_level(state);
+	}
 }
 
 int	main(int argc, char **argv, const char **envp)
@@ -40,12 +57,10 @@ int	main(int argc, char **argv, const char **envp)
 	(void)argc;
 	(void)argv;
 	setup_terminal();
-	state = (t_shellstate){0};
 	init_signals();
-	state.envp = ft_strdup_array(envp);
-	vec_new(&state.pid, 10, sizeof(pid_t));
-	if (!state.envp || state.pid.memory == NULL)
-		ft_free_exit(&state, ERR_MALLOC, EXIT_FAILURE);
+	state = (t_shellstate){0};
+	t_shellstate_init(&state, envp);
+	(void)envp;
 	while (1)
 	{
 		ft_free_resets(&state);

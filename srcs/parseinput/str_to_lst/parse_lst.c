@@ -78,3 +78,30 @@ t_list	*str_to_lst(const char *str, t_shellstate *s)
 	lh.length = lh.end - lh.start + 1;
 	return (allocate_lst(&lh, s));
 }
+
+void	mark_ambiguous_env_redirects(t_shellstate *s)
+{
+	t_list		**list;
+	t_list		*tmp;
+	const int	reset_e_len = ft_strlen(RESET_E);
+	size_t		remaining_len;
+
+	list = s->parsed_cmds;
+	while (*list)
+	{
+		tmp = *list;
+		while (tmp)
+		{
+			if (ft_strncmp(tmp->content, RESET_E, reset_e_len) == 0)
+			{
+				tmp->ambiguous_redirect = true;
+				remaining_len = ft_strlen(tmp->content) - reset_e_len;
+				ft_memmove(tmp->content, tmp->content + reset_e_len,
+					remaining_len + 1);
+				tmp->content[remaining_len] = '\0';
+			}
+			tmp = tmp->next;
+		}
+		list++;
+	}
+}

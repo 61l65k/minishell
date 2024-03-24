@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 23:48:56 by apyykone          #+#    #+#             */
-/*   Updated: 2024/03/08 17:42:49 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/15 22:25:12 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	ft_free_exit(t_shellstate *state, const char *msg, int exit_code)
 	if (msg && exit_code != EXIT_SUCCESS)
 		perror(msg);
 	else if (msg)
-		printf("%s\n", msg);
+		ft_fprintf(STDERR_FILENO, "%s\n", msg);
 	if (state->pid.len > 0)
 		wait_remaining_children(state);
 	ft_free_resets(state);
@@ -61,7 +61,6 @@ void	ft_free_resets(t_shellstate *state)
 	if (state->operators)
 		free(state->operators);
 	state->operators = NULL;
-	state->operator_count = 0;
 }
 
 /**

@@ -6,7 +6,7 @@
 /*   By: ttakala <ttakala@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 23:26:52 by ttakala           #+#    #+#             */
-/*   Updated: 2024/03/13 15:15:50 by ttakala          ###   ########.fr       */
+/*   Updated: 2024/03/17 23:09:12 by ttakala          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	dup_fd(t_io *io)
 
 int	open_file(t_io *io)
 {
-	if (io->ambiguous_redirect == true)
+	if (io->ambiguous_redirect == true && io->type != IO_HEREDOC)
 	{
 		ft_fprintf(STDERR_FILENO, ERR_AMBIGUOUS_REDIRECT, io->filename);
 		return (-1);

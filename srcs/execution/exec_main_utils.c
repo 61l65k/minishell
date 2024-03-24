@@ -17,16 +17,16 @@
  */
 void	check_operators(t_exechelper *h, t_shellstate *s)
 {
-	if (h->i < s->operator_count)
+	if (h->i < s->cmd_count - 1)
 	{
 		if (s->operators[h->i] == OP_AND && s->last_exit_status != 0)
 		{
-			while (h->i < s->operator_count && s->operators[h->i] != OP_OR)
+			while (h->i < s->cmd_count - 1 && s->operators[h->i] != OP_OR)
 				h->i++;
 		}
 		else if (s->operators[h->i] == OP_OR && s->last_exit_status == 0)
 		{
-			while (h->i < s->operator_count && s->operators[h->i] != OP_AND)
+			while (h->i < s->cmd_count - 1 && s->operators[h->i] != OP_AND)
 				h->i++;
 		}
 	}
@@ -40,7 +40,7 @@ bool	check_pipedoc(t_shellstate *s, t_exechelper *h)
 	{
 		while (l)
 		{
-			if (ft_strcmp(l->content, "<<") == 0)
+			if (l->type == IO_HEREDOC)
 			{
 				h->pipe_doc = true;
 				return (true);

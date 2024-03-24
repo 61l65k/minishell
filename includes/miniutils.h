@@ -40,19 +40,8 @@ typedef struct s_parsehelper
 	size_t					j;
 	size_t					i;
 	size_t					alloc_size;
+	bool					was_redirect;
 }							t_parsehelper;
-
-typedef struct s_operatorhelper
-{
-	bool					in_single_quote;
-	bool					in_double_quote;
-	size_t					i;
-	size_t					ops_i;
-	int						cmd_count;
-	t_operators				*ops;
-	size_t					operators_capacity;
-	int						paren_depth;
-}							t_operatorhelper;
 
 typedef struct s_exechelper
 {
@@ -63,16 +52,6 @@ typedef struct s_exechelper
 	bool					pipe_doc;
 	const t_list			*curr_cmd;
 }							t_exechelper;
-
-typedef struct s_envhelper
-{
-	char					*var_name;
-	int						var_name_len;
-	char					*var_value;
-	bool					free_var_value;
-	int						val_len;
-	int						flags;
-}							t_envhelper;
 
 typedef struct s_redirecthelper
 {
@@ -135,24 +114,32 @@ t_list						*str_to_lst(const char *str, t_shellstate *s);
 int							ft_isenv_var(int c);
 void						parse_character(t_parsehelper *h,
 								t_shellstate *state);
-void						ensure_mem_for_buff(t_parsehelper *h,
-								t_shellstate *state, size_t additional_length);
-void						init_char_flags(t_envhelper *eh, char *c,
+void						ensure_mem_for_buff(t_parsehelper *ph,
+								t_shellstate *s, size_t additional_length,
+								void *buff);
+void						init_char_flags(int *flags, char *c,
 								t_parsehelper *h);
 int							handle_redirect(t_exechelper *eh);
 int							ft_checkdollar(t_shellstate *s, t_parsehelper *h);
 void						ft_isquotedredirector(t_list *node);
 bool						need_handling(t_lsthelper *t, bool check_quoted);
 int							handle_quoted(t_lsthelper *t);
-t_operators					check_for_op(t_operatorhelper *op,
-								t_shellstate *state, int index);
-int							check_parentheses(t_operatorhelper *op,
-								t_shellstate *s);
+t_operators					check_for_op(t_parsehelper *op, t_shellstate *state,
+								int index);
+int							check_parentheses(int *paren_depth, t_shellstate *s,
+								t_parsehelper *ph);
 bool						is_prev_redirector(const t_list *prev);
-void						ensure_mem_cpy_op(t_operatorhelper *op,
-								t_operators operator_type, t_shellstate *state);
+void						append_operator(t_operators operator_type,
+								t_shellstate *s, t_parsehelper *ph);
 int							assign_io_type(t_lsthelper *lh, t_list *new_node);
 size_t						str_arr_len(const char **arr);
 void						handle_tilda(t_parsehelper *h, t_shellstate *state);
 int							handle_wildcard(t_lsthelper *lh);
+char						*get_env_var_value(t_shellstate *s,
+								t_parsehelper *ph, bool *free_var_value);
+void						expand_exit_status(t_shellstate *s,
+								char *var_value, bool *free_var_value);
+char						*get_var_value_from_env(t_shellstate *s,
+								t_parsehelper *ph,
+								bool *free_var_value);
 #endif

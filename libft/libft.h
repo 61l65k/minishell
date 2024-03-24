@@ -53,7 +53,6 @@ int					ft_isenv_var(int c);
 int					ft_strcmp(const char *s1, const char *s2);
 double				ft_atof(const char *str);
 long				ft_atol(const char *str);
-int					ft_isenv_var(int c);
 int					ft_isprint(int c);
 int					ft_isdigit(int c);
 int					ft_isalpha(int c);

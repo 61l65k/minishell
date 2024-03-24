@@ -16,7 +16,8 @@ int	update_fds(char *filename, t_redirecthelper *rh, bool fd_out)
 {
 	if (rh->fd == -1 && filename)
 	{
-		perror(filename);
+		ft_fprintf(STDERR_FILENO,
+			"minishell: %s: %s\n", filename, strerror(errno));
 		if (rh->last_out_fd != -1)
 			close(rh->last_out_fd);
 		return (FAILURE);
@@ -92,7 +93,8 @@ int	handle_redirect(t_exechelper *eh)
 	ft_memset(&rh, -1, sizeof(rh));
 	while (eh->curr_cmd)
 	{
-		if (eh->curr_cmd->next && eh->curr_cmd->next->ambiguous_redirect)
+		if (eh->curr_cmd->next && eh->curr_cmd->next->ambiguous_redirect \
+			&& eh->curr_cmd->type != IO_HEREDOC)
 		{
 			return (ft_fprintf(2, ERR_AMBIGUOUS_REDIRECT,
 					eh->curr_cmd->next->content), FAILURE);

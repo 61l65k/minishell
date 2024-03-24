@@ -12,87 +12,94 @@
 
 #include "minishell.h"
 
-void	ensure_mem_cpy_op(t_operatorhelper *op, t_operators operator_type,
-		t_shellstate *s)
+void	append_operator(t_operators operator_type, t_shellstate *s,
+		t_parsehelper *ph)
 {
-	size_t		new_capacity;
-	t_operators	*new_operators;
-
-	if (operator_type == OP_NONE)
-		return ;
-	if (operator_type == OP_HEREDOC || operator_type == OP_APPEND
-		|| operator_type == OP_OR || operator_type == OP_AND)
-		op->i++;
-	if ((size_t)op->cmd_count >= op->operators_capacity)
+	if (operator_type != OP_NONE)
 	{
-		new_capacity = op->operators_capacity * 2;
-		new_operators = ft_realloc(op->ops, op->operators_capacity
-				* sizeof(t_operators), new_capacity * sizeof(t_operators));
-		if (!new_operators)
-			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
-		op->ops = new_operators;
-		op->operators_capacity = new_capacity;
+		ph->i += (operator_type == OP_OR || operator_type == OP_AND);
+		ensure_mem_for_buff(ph, s, 1, s->operators);
+		s->operators[ph->j++] = operator_type;
+		ph->command_count++;
 	}
-	op->ops[op->ops_i++] = operator_type;
-	op->cmd_count++;
 }
 
-t_operators	check_for_op(t_operatorhelper *op, t_shellstate *state, int index)
+t_operators	check_for_op(t_parsehelper *ph, t_shellstate *s, int index)
 {
 	int	i;
 
-	i = op->i;
+	i = ph->i;
 	if (index != -1)
 		i = index;
-	if (ft_strncmp(state->input_string + i, "&&", 2) == 0)
+	if (ft_strncmp(s->input_string + i, "&&", 2) == 0)
 		return (OP_AND);
-	if (ft_strncmp(state->input_string + i, "||", 2) == 0)
+	if (ft_strncmp(s->input_string + i, "||", 2) == 0)
 		return (OP_OR);
-	if (state->input_string[i] == '|')
+	if (s->input_string[i] == '|')
 		return (OP_PIPE);
 	return (OP_NONE);
 }
 
-void	ensure_mem_for_buff(t_parsehelper *h, t_shellstate *state,
-		size_t additional_length)
+void	ensure_mem_for_buff(t_parsehelper *ph, t_shellstate *s,
+		size_t additional_length, void *buff)
 {
 	size_t	required_size;
 	size_t	new_size;
-	char	*new_command;
+	void	*new_command;
 
-	required_size = h->j + additional_length + 1;
-	if (required_size > h->alloc_size)
+	required_size = ph->j + additional_length + 1;
+	if (required_size > ph->alloc_size)
 	{
 		new_size = required_size * 2;
-		new_command = ft_realloc(h->curr_cmd, h->alloc_size, new_size);
+		new_command = ft_realloc(buff, ph->alloc_size, new_size);
 		if (!new_command)
-			ft_free_exit(state, ERR_MALLOC, EXIT_FAILURE);
-		h->curr_cmd = new_command;
-		h->alloc_size = new_size;
+			return (ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE));
+		ph->curr_cmd = new_command;
+		ph->alloc_size = new_size;
 	}
 }
 
-void	init_char_flags(t_envhelper *eh, char *c, t_parsehelper *h)
+void	init_char_flags(int *flags, char *c, t_parsehelper *h)
 {
-	*eh = (t_envhelper){0};
+	*flags = 0;
 	if ((*c == '\'' && !h->in_double_quote) || (*c == '"'
 			&& !h->in_single_quote))
 	{
 		h->in_single_quote ^= (*c == '\'');
 		h->in_double_quote ^= (*c == '"');
-		eh->flags |= (1 << QUOTE_BIT);
+		*flags |= (1 << QUOTE_BIT);
 	}
-	eh->flags |= (*c == '\\') << ESCAPED_BIT;
-	eh->flags |= (*c == '$') << ENVVAR_BIT;
+	*flags |= (*c == '\\') << ESCAPED_BIT;
+	*flags |= (*c == '$') << ENVVAR_BIT;
 	if (!h->in_single_quote && !h->in_double_quote)
 	{
-		eh->flags |= (*c == '~' && *(c - 1) == ' ' && (*(c + 1) == ' ' || *(c
+		*flags |= (*c == '~' && *(c - 1) == ' ' && (*(c + 1) == ' ' || *(c
 						+ 1) == '\0' || *(c + 1) == '/')) << TILDA_BIT;
-		eh->flags |= (*c == '|' && *(c + 1) != '|') << PIPE_BIT;
-		eh->flags |= (*c == '&' && *(c + 1) == '&') << AND_BIT;
-		eh->flags |= (*c == '|' && *(c + 1) == '|') << OR_BIT;
-		eh->flags |= ((*c == '>' && (*(c + 1) != '>')) || (*c == '<' && (*(c
+		*flags |= (*c == '|' && *(c + 1) != '|') << PIPE_BIT;
+		*flags |= (*c == '&' && *(c + 1) == '&') << AND_BIT;
+		*flags |= (*c == '|' && *(c + 1) == '|') << OR_BIT;
+		*flags |= ((*c == '>' && (*(c + 1) != '>')) || (*c == '<' && (*(c
 							+ 1) != '<')) || (*c == '>' && *(c + 1) == '>')
 				|| (*c == '<' && *(c + 1) == '<')) << REDIR_BIT;
 	}
+}
+
+char	*get_env_var_value(t_shellstate *s, t_parsehelper *ph,
+		bool *free_var_value)
+{
+	char	*var_value;
+
+	*free_var_value = false;
+	if (s->input_string[ph->i] == '?')
+	{
+		*free_var_value = true;
+		var_value = ft_itoa(s->last_exit_status);
+		if (!var_value)
+			ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	}
+	else
+	{
+		var_value = get_var_value_from_env(s, ph, free_var_value);
+	}
+	return (var_value);
 }

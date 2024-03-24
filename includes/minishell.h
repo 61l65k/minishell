@@ -43,7 +43,6 @@ typedef struct s_shellstate
 	t_list						**parsed_cmds;
 	t_operators					*operators;
 	int							cmd_count;
-	int							operator_count;
 	int							last_exit_status;
 	bool						is_child_process;
 	char						**envp;
@@ -83,5 +82,5 @@ bool							is_spaces(const char *str);
 bool							ambiguous_redirect(t_shellstate *s);
 void							ft_signal_handler(int signo, siginfo_t *info,
 									void *context);
-;
+void							mark_ambiguous_env_redirects(t_shellstate *s);
 #endif

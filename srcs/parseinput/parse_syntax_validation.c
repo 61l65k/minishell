@@ -67,6 +67,12 @@ bool	is_valid_syntax(t_shellstate *state)
 		}
 		i++;
 	}
+	if (i > 0 && state->operators[i - 1] != OP_NONE)
+	{
+		print_syntax_err(op_to_str(state->operators[i - 1]), "newline");
+		state->last_exit_status = SYNTAX_ERROR;
+		return (false);
+	}
 	state->last_exit_status = 0;
 	return (true);
 }
@@ -74,4 +80,30 @@ bool	is_valid_syntax(t_shellstate *state)
 void	set_exit_status(t_shellstate *state, int status)
 {
 	state->last_exit_status = status;
+}
+
+char	*get_var_value_from_env(t_shellstate *s, t_parsehelper *ph,
+		bool *free_var_value)
+{
+	char	*var_value;
+	char	*var_name;
+	int		var_name_len;
+
+	var_name_len = ft_envlen((char *)s->input_string + ph->i);
+	var_name = ft_strndup(s->input_string + ph->i, var_name_len);
+	if (!var_name)
+		ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE);
+	var_value = ft_getenv(var_name, s->envp);
+	ph->i += var_name_len - 1;
+	if (var_value == NULL && ph->was_redirect)
+	{
+		*free_var_value = true;
+		ph->was_redirect = false;
+		var_value = ft_strjoin(AMBIGUOUS_RESET, var_name);
+		if (!var_value)
+			return (free(var_name), ft_free_exit(s, ERR_MALLOC, EXIT_FAILURE),
+				NULL);
+	}
+	free(var_name);
+	return (var_value);
 }

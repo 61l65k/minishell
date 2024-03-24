@@ -33,7 +33,12 @@ static char	*get_full_path(char **env_paths_arr, const char *file)
 	while (*env_paths_arr)
 	{
 		result = ft_strjoin(*env_paths_arr, file_with_slash);
-		if (access(result, X_OK) == 0 && !is_directory(result))
+		if (result == NULL)
+		{
+			free(file_with_slash);
+			return (NULL);
+		}
+		if (access(result, F_OK) == 0 && !is_directory(result))
 		{
 			free(file_with_slash);
 			return (result);
@@ -42,7 +47,7 @@ static char	*get_full_path(char **env_paths_arr, const char *file)
 		env_paths_arr++;
 	}
 	free(file_with_slash);
-	return (NULL);
+	return (ft_strdup(file));
 }
 
 static char	*get_path_to_file(const char *file, const char *env_path)
@@ -60,8 +65,6 @@ static char	*get_path_to_file(const char *file, const char *env_path)
 	if (str_arr_paths[0])
 	{
 		full_path = get_full_path(str_arr_paths, file);
-		if (!full_path)
-			full_path = ft_strdup(file);
 		free_str_array(str_arr_paths);
 		return (full_path);
 	}
@@ -97,7 +100,7 @@ void	ft_execvp(const char *file, char *const argv[], char *const envp[])
 	else if (ft_strchr(cmd_path, '/') == NULL)
 		exec_error_exit(cmd_path, "command not found", 127);
 	else if (is_directory(cmd_path))
-		exec_error_exit(cmd_path, "Is a directory", 126);
+		exec_error_exit(cmd_path, "is a directory", 126);
 	else if (access(cmd_path, F_OK) != 0)
 		exec_error_exit(cmd_path, "No such file or directory", 127);
 	else if (access(cmd_path, X_OK) != 0)
