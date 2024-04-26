@@ -1,5 +1,5 @@
-# Minishell
-
+# Minishell 
+## Developed with [toke5](https://github.com/toke5) 
 
 <div>
   <img src="./images/bash_logo.png" alt="Bash Logo" width="100" style="display: inline;"/>
@@ -37,3 +37,4 @@ Minishell is an ambitious shell implementation written in C. This comprehensive 
    ```bash
    git clone [URL]
    cd minishell && make && ./minishell
+   ```
